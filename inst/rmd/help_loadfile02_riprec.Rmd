@@ -1,0 +1,63 @@
+---
+output: html_document
+---
+
+Carica un file .csv con tre colonne:
+  - una colonna con il nome o i nomi dei parametri di interesse;
+  - una colonna con i valori numerici derivanti dalle misure effettuate per i diversi parametri.
+  
+Non sono ammessi né meno di 6 valori, né più di 30 valori per ogni coppia di parametro e gruppo. 
+  
+
+
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Concentrazione  |
+|:--------------|:-:|----------------:|
+| Cu            | , | 15.1            |
+| Cu            | , | 15.8            |
+| Cu            | , | 15.6            |
+| Cu            | , | 16.1            |
+| Cu            | , | 15.2            |
+| Cu            | , | 15.9            |
+| Cu            | , | 18.0            |
+| Cu            | , | 17.8            |
+| Cu            | , | 17.6            |
+| Cu            | , | 18.5            |
+| Cu            | , | 18.4            |
+| Cu            | , | 18.3            |
+| Zn            | , | 200.1           |
+| Zn            | , | 225.4           |
+| Zn            | , | 231.1           |
+| Zn            | , | 198.6           |
+| Zn            | , | 205.6           |
+| Zn            | , | 215.9           |
+| Zn            | , | 150.5           |
+| Zn            | , | 148.2           |
+| Zn            | , | 152.6           |
+| Zn            | , | 160.0           |
+| Zn            | , | 158.4           |
+| Zn            | , | 157.9           |
+
+</div>
+</details>
+
+

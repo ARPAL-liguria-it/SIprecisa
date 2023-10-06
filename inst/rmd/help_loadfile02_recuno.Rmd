@@ -4,11 +4,10 @@ output: html_document
 
 Carica un file .csv con tre colonne:
   - una colonna con il nome o i nomi dei parametri di interesse;
-  - una colonna con il nome dei due gruppi da confrontare;
   - una colonna con i valori numerici derivanti dalle misure effettuate per i diversi parametri;
   - una colonna con i valori numerici di incertezza estesa associati alle misure.
   
-È ammesso un solo valore numerico per ogni coppia di parametro e gruppo.
+È ammesso un solo valore numerico per ogni parametro.
   
 Ad esempio:
 <style>
@@ -27,10 +26,10 @@ Ad esempio:
   <span class="table-number"></span>
 </div>
 
-| Parametro     | , | Gruppo        | , | Concentrazione  | , | Uext |
-|:--------------|:-:|:--------------|:-:|----------------:|:-:|-----:|
-| Cu            | , | strumento 1   | , | 15.1            | , | 2.3  |
-| Cu            | , | strumento 2   | , | 22.3            | , | 3.5  |
-| Zn            | , | strumento 1   | , | 200.1           | , | 10.2 |
-| Zn            | , | strumento 2   | , | 185.9           | , | 8.4  |
+| Parametro     | , | Concentrazione  | , | Uext |
+|:--------------|:-:|:---------------:|:-:|-----:|
+| Cu            | , | 15.1            | , | 2.3  |
+| Cu            | , | 22.3            | , | 3.5  |
+| Zn            | , | 200.1           | , | 10.2 |
+| Zn            | , | 185.9           | , | 8.4  |
 

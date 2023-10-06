@@ -17,7 +17,6 @@
 #'  \itemize{
 #'    \item{file} a fileInput widget for uploading the file;
 #'    \item{parvar} a selectizeInput widget for selecting the column name of the imported dataset hosting the parameter labels;
-#'    \item{groupvar} a selectizeInput widget for selecting the column name of the imported dataset hosting the grouping labels;
 #'    \item{responsevar} a selectizeInput widget for selecting the column name of the imported dataset hosting the numerical response values;
 #'    \item{uncertaintyvar} a selectizeInput widget for selecting the column name of the imported dataset hosting the numerical
 #'    extended uncertainty values;
@@ -65,16 +64,7 @@ mod_loadfile02_ui <- function(id) {
             multiple = FALSE,
             options = list(maxItems = 1)
           ),
-          ## 2. Select the grouping variable
-          selectizeInput(
-            ns("groupvar"),
-            label = "Gruppo",
-            selected = NULL,
-            choices = NULL,
-            multiple = FALSE,
-            options = list(maxItems = 1)
-          ),
-          ## 3. Select the variable for response
+          ## 2. Select the variable for response
           selectizeInput(
             ns("responsevar"),
             label = "Risposte",
@@ -174,7 +164,6 @@ mod_loadfile02_ui <- function(id) {
 #'    \item{data} is the imported data.frame;
 #'    \item{parvar} is the data.frame column name in which parameters are stored;
 #'    \item{parlist} is the list of parameters provided by the data.frame;
-#'    \item{groupvar} is the data.frame column name in which groub labels are stored;
 #'    \item{responsevar} is the data.frame column name in which the response numerical values are stored;
 #'    \item{uncertaintyvar} is the data.frame column name in which the extended uncertainty numerical values are stored.
 #'  }
@@ -199,11 +188,10 @@ mod_loadfile02_server <- function(id, r) {
 
       switch(
         r$aim01$aim,
-        "2samples" = includeMarkdown(system.file("rmd", "help_loadfile02_2samples.Rmd", package = "SIconfronta")),
-        "2samples_par" = includeMarkdown(system.file("rmd", "help_loadfile02_2samples_par.Rmd", package = "SIconfronta")),
-        "1sample_mu" = includeMarkdown(system.file("rmd", "help_loadfile02_1sample_mu.Rmd", package = "SIconfronta")),
-        "1sample_sigma" = includeMarkdown(system.file("rmd", "help_loadfile02_1sample_sigma.Rmd", package = "SIconfronta")),
-        "2values_unc" = includeMarkdown(system.file("rmd", "help_loadfile02_2values_unc.Rmd", package = "SIconfronta"))
+        "riprec" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
+        "rip" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
+        "rec" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
+        "recuno" = includeMarkdown(system.file("rmd", "help_loadfile02_recuno.Rmd", package = "SIprecisa"))
       )
     })
 
@@ -240,21 +228,7 @@ mod_loadfile02_server <- function(id, r) {
     reqsumnum <- reactive({
       req(is_length_aim_one())
 
-      ifelse(r$aim01$aim == "2values_unc", 2, 1)
-    })
-
-    ## required number of groups
-    reqsumgroup <- reactive({
-      req(is_length_aim_one())
-
-      switch(
-        r$aim01$aim,
-        "2samples" = 2,
-        "2samples_par" = 1,
-        "1sample_mu" = 1,
-        "1sample_sigma" = 1,
-        "2values_unc" = 2
-      )
+      ifelse(r$aim01$aim == "recuno", 2, 1)
     })
 
     ## required minimum number of values
@@ -263,11 +237,10 @@ mod_loadfile02_server <- function(id, r) {
 
       switch(
         r$aim01$aim,
-        "2samples" = 5,
-        "2samples_par" = 5,
-        "1sample_mu" = 5,
-        "1sample_sigma" = 5,
-        "2values_unc" = 1
+        "riprec" = 6,
+        "rip" = 6,
+        "rec" = 6,
+        "recuno" = 1
       )
     })
 
@@ -277,11 +250,10 @@ mod_loadfile02_server <- function(id, r) {
 
       switch(
         r$aim01$aim,
-        "2samples" = 30,
-        "2samples_par" = 30,
-        "1sample_mu" = 30,
-        "1sample_sigma" = 30,
-        "2values_unc" = 1
+        "riprec" = 30,
+        "rip" = 30,
+        "rec" = 30,
+        "recuno" = 1
       )
     })
 
@@ -319,93 +291,50 @@ mod_loadfile02_server <- function(id, r) {
     ### checking how many character columns are in the dataset
     charok <- reactive({
       validate(
-        need(sumchar() == 2,
+        need(sumchar() == 1,
              message = sprintf(
-             "Hai fornito un dataset con %s colonn%s di testo ma ne servono 2.",
+             "Hai fornito un dataset con %s colonn%s di testo ma ne serve 1.",
              sumchar(),
              ifelse(sumchar() == 1, "a", "e")
              ))
       )
 
-      sumchar() == 2
+      sumchar() == 1
     })
 
-    ## max number of grouping levels
-    maxgroup <- reactive({
-      req(input$groupvar)
-
-      stats::aggregate(x = datafile()[[input$groupvar]] ,
-                       by = list(datafile()[[input$parvar]]),
-                       FUN = \(x) unique(x) |> length())$x |> max()
-    })
-
-    ## min number of grouping levels
-    mingroup <- reactive({
-      req(input$groupvar)
-
-      stats::aggregate(x = datafile()[[input$groupvar]] ,
-                       by = list(datafile()[[input$parvar]]),
-                       FUN = \(x) unique(x) |> length())$x |> min()
-    })
-
-    ### checking how many grouping levels are in the dataset
-    groupok <- reactive({
-      validate(
-        need(maxgroup() == reqsumgroup(),
-             message = sprintf(
-               "Hai fornito un dataset con un massimo di %s grupp%s ma ne %s.",
-               maxgroup(),
-               ifelse(maxgroup() == 1, "o", "i"),
-               ifelse(reqsumgroup() == 1, "serve 1", "servono 2")
-             )),
-        need(mingroup() == reqsumgroup(),
-             message = sprintf(
-               "Hai fornito un dataset con un minimo di %s grupp%s ma ne %s.",
-               mingroup(),
-               ifelse(mingroup() == 1, "o", "i"),
-               ifelse(reqsumgroup() == 1, "serve 1", "servono 2")
-             ))
-      )
-
-      maxgroup() == reqsumgroup() & mingroup() == reqsumgroup()
-
-    })
-
-    ## max number of values for each group and parameter pair
+    ## max number of values for each parameter
     maxvalues <- reactive({
-      req(input$groupvar)
       req(input$parvar)
       req(input$responsevar)
 
       stats::aggregate(x = datafile()[[input$responsevar]] ,
-                       by = list(datafile()[[input$parvar]], datafile()[[input$groupvar]]),
+                       by = list(datafile()[[input$parvar]]),
                        FUN = length)$x |> max()
     })
 
-    ## min number of values for each group and parameter pair
+    ## min number of values for each parameter
     minvalues <- reactive({
-      req(input$groupvar)
       req(input$parvar)
       req(input$responsevar)
 
       stats::aggregate(x = datafile()[[input$responsevar]] ,
-                       by = list(datafile()[[input$parvar]], datafile()[[input$groupvar]]),
+                       by = list(datafile()[[input$parvar]]),
                        FUN = length)$x |> min()
     })
 
-    ### checking how many values for the group and parameters pair are in the dataset
+    ### checking how many values for each parameters are in the dataset
     valuesok <- reactive({
       validate(
         need(maxvalues() <= reqmaxvalues(),
              message = sprintf(
-               "Hai fornito un dataset con un massimo di %s valor%s per coppia di analita e gruppo ma posso gestirne al massimo fino a %s.",
+               "Hai fornito un dataset con un massimo di %s valor%s per analita ma posso gestirne al massimo fino a %s.",
                maxvalues(),
                ifelse(maxvalues() == 1, "e", "i"),
                reqmaxvalues()
              )),
         need(minvalues() >= reqminvalues(),
              message = sprintf(
-               "Hai fornito un dataset con un minimo di %s valor%s per coppia di analita e gruppo ma non posso gestirne meno di %s.",
+               "Hai fornito un dataset con un minimo di %s valor%s per analita ma non posso gestirne meno di %s.",
                minvalues(),
                ifelse(minvalues() == 1, "e", "i"),
                reqminvalues()
@@ -419,7 +348,7 @@ mod_loadfile02_server <- function(id, r) {
 
     ## checking that is all fine
     dataok <- reactive({
-      charok() & numok() & groupok() & valuesok()
+      charok() & numok() & valuesok()
     })
 
 
@@ -436,7 +365,7 @@ mod_loadfile02_server <- function(id, r) {
       req(is_length_aim_one())
 
       ifelse(isTRUE(dataok()),
-             ifelse(r$aim01$aim == "2values_unc", "2values", "not_2values"),
+             ifelse(r$aim01$aim == "recunc", "2values", "not_2values"),
              "")
     })
 
@@ -478,17 +407,6 @@ mod_loadfile02_server <- function(id, r) {
       updateSelectizeInput(session,
                            "parvar",
                            selected = charcol()[1],
-                           choices = charcol())
-    })
-
-    ## update input for group variable
-    observeEvent(charcol(), {
-      req(isTRUE(charok()))
-
-      freezeReactiveValue(input, "groupvar")
-      updateSelectizeInput(session,
-                           "groupvar",
-                           selected = charcol()[2],
                            choices = charcol())
     })
 
@@ -572,7 +490,6 @@ mod_loadfile02_server <- function(id, r) {
       r$loadfile02$data <- datafile()
       r$loadfile02$parvar <- input$parvar
       r$loadfile02$parlist <- parlist()
-      r$loadfile02$groupvar <- input$groupvar
       r$loadfile02$responsevar <- input$responsevar
       r$loadfile02$uncertaintyvar <- input$uncertaintyvar
     })
