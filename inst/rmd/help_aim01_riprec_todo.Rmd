@@ -1,0 +1,46 @@
+---
+output: html_document
+---
+Prepara un file .csv organizzato su 2 colonne con separatore virgola (,) o punto e virgola (;):
+
+  1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
+  2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori misurati. Il separatore decimale deve essere il punto (.).
+  
+Non sono ammessi né meno di 6 valori, né più di 30 valori per ogni analita.
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Concentrazione  |
+|:--------------|:-:|----------------:|
+| Cu            | , | 15.1            |
+| Cu            | , | 15.8            |
+| Cu            | , | 15.6            |
+| Cu            | , | 16.1            |
+| Cu            | , | 15.2            |
+| Cu            | , | 15.9            |
+| Zn            | , | 200.1           |
+| Zn            | , | 225.4           |
+| Zn            | , | 231.1           |
+| Zn            | , | 198.6           |
+| Zn            | , | 205.6           |
+| Zn            | , | 215.9           |
+
+</div>
+</details>

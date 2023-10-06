@@ -1,7 +1,7 @@
 #' 01_aim UI Function
 #'
 #' @description A shiny Module for selecting which elaboration will be
-#' performed by the {SIconfronta} shinyAPP.
+#' performed by the {SIprecisa} shinyAPP.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @param r a {reactiveValues} list.
@@ -29,11 +29,10 @@ mod_aim01_ui <- function(id) {
           ns("aim"),
           label = NULL,
           choices = c(
-            "Confrontare due serie di dati complete" = "2samples",
-            "Confrontare due serie di dati di cui una completa e l'altra riassunta nei suoi parametri" = "2samples_par",
-            "Cofrontare una serie di dati con un valore medio noto esattamente" = "1sample_mu",
-            "Confrontare una serie di dati con un valore di deviazione standard noto esattamente" = "1sample_sigma",
-            "Confrontare due valori dotati di incertezza estesa" = "2values_unc"
+            "Stima di ripetibilit\u00E0 e recupero dalla stessa serie di misure" = "riprec",
+            "Stima della ripetibilit\u00E0 da una serie di misure" = "rip",
+            "Stima del recupero da una serie di misure" = "rec",
+            "Stima del recupero da un valore singolo" = "recuno"
           ),
           width = "100%"
         ),
@@ -51,61 +50,49 @@ mod_aim01_ui <- function(id) {
 
       id = ns("example"),
 
-      bslib::nav_panel("2samples",
+      bslib::nav_panel("riprec",
                        help_accordion(
                          todotitle = "Cosa ti serve",
                          tipstitle = "Suggerimento",
                          togettitle = "Cosa otterrai",
-                         todofile = "help_aim01_2samples_todo.Rmd",
+                         todofile = "help_aim01_riprec_todo.Rmd",
                          tipsfile = "help_aim01_tips.Rmd",
-                         togetfile = "help_aim01_2samples_toget.Rmd"
+                         togetfile = "help_aim01_riprec_toget.Rmd"
                        )
       ),
 
-      bslib::nav_panel("2samples_par",
+      bslib::nav_panel("rip",
                        help_accordion(
                          todotitle = "Cosa ti serve",
                          tipstitle = "Suggerimento",
                          togettitle = "Cosa otterrai",
-                         todofile = "help_aim01_2samples_par_todo.Rmd",
+                         todofile = "help_aim01_riprec_todo.Rmd",
                          tipsfile = "help_aim01_tips.Rmd",
-                         togetfile = "help_aim01_2samples_par_toget.Rmd"
+                         togetfile = "help_aim01_rip_toget.Rmd"
                        )
       ),
 
-      bslib::nav_panel("1sample_mu",
+      bslib::nav_panel("rec",
                        withMathJax(
                          help_accordion(
                            todotitle = "Cosa ti serve",
                            tipstitle = "Suggerimento",
                            togettitle = "Cosa otterrai",
-                           todofile = "help_aim01_1sample_mu_todo.Rmd",
+                           todofile = "help_aim01_riprec_todo.Rmd",
                            tipsfile = "help_aim01_tips.Rmd",
-                           togetfile = "help_aim01_1sample_mu_toget.Rmd"
+                           togetfile = "help_aim01_rec_toget.Rmd"
                          )
                        )),
 
-      bslib::nav_panel("1sample_sigma",
+      bslib::nav_panel("recuno",
                        withMathJax(
                          help_accordion(
                            todotitle = "Cosa ti serve",
                            tipstitle = "Suggerimento",
                            togettitle = "Cosa otterrai",
-                           todofile = "help_aim01_1sample_sigma_todo.Rmd",
+                           todofile = "help_aim01_recuno_todo.Rmd",
                            tipsfile = "help_aim01_tips.Rmd",
-                           togetfile = "help_aim01_1sample_sigma_toget.Rmd"
-                         )
-                       )),
-
-      bslib::nav_panel("2values_unc",
-                       withMathJax(
-                         help_accordion(
-                           todotitle = "Cosa ti serve",
-                           tipstitle = "Suggerimento",
-                           togettitle = "Cosa otterrai",
-                           todofile = "help_aim01_2values_unc_todo.Rmd",
-                           tipsfile = "help_aim01_tips.Rmd",
-                           togetfile = "help_aim01_2values_unc_toget.Rmd"
+                           togetfile = "help_aim01_recuno_toget.Rmd"
                          )
                        ))
     )
@@ -116,12 +103,11 @@ mod_aim01_ui <- function(id) {
 #' 01_aim Server Functions
 #'
 #' @description A shiny Module for selecting which elaboration will be
-#' performed by the {SIconfronta} shinyAPP.
+#' performed by the {SIprecisa} shinyAPP.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #' @return a reactiveValues with the option chosen in UI stored into \code{r$aim01$aim}.
-#'  Possible values are \code{"2samples"}, \code{"2samples_par"}, \code{"1sample_mu"},
-#'  \code{"1sample_sigma"} and \code{"2values_unc"}.
+#'  Possible values are \code{"riprec"}, \code{"rip"}, \code{"rec"} and \code{"recuno"}.
 #'
 #' @noRd
 #'

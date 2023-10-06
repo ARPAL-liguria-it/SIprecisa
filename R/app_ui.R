@@ -22,8 +22,8 @@ app_ui <- function(request) {
                               version = 5,
                               "navbar-bg" = "#2780E3",
                               "navbar-brand-font-size" = "2rem"),
-      title = "SI confronta",
-      window_title = "SI confronta",
+      title = "SI precisa",
+      window_title = "SI precisa",
       inverse = TRUE,
       fluid = TRUE,
       collapsible = TRUE,
@@ -32,7 +32,7 @@ app_ui <- function(request) {
       # Navbar items ----
       bslib::nav_panel("Scopo", value = "aim", mod_aim01_ui("scopo")),
       bslib::nav_panel("Dati", value = "data", mod_loadfile02_ui("dati")),
-      bslib::nav_panel("Confronti", value = "compare", mod_compare03_ui("confronto")),
+      bslib::nav_panel("Stime", value = "compare", mod_compare03_ui("confronto")),
       bslib::nav_panel("Report", value = "report", mod_report04_ui("report")),
       bslib::nav_spacer(),
       bslib::nav_menu("Leggimi",
@@ -79,7 +79,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "SI confronta",
+      app_title = "SI precisa",
     ),
     # Add here other external resources
     shinyjs::useShinyjs()

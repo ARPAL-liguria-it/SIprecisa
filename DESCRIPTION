@@ -11,6 +11,7 @@ BugReports: https://github.com/andreabz/SIprecisa/issues
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.4.1),
+    pkgload,
     shiny (>= 1.7.5)
 Suggests: 
     spelling,
