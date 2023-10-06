@@ -1,0 +1,8 @@
+---
+output: html_document
+---
+Per ogni analita otterrai i seguenti output:
+  
+  - un confronto grafico tra i due valori mediante _scatter plot_ (in alto);
+  - una tabella riassuntiva delle principali statistiche (in basso);
+  - il risultato del calcolo dell' $E_n$ (errore normalizzato, E _number_).

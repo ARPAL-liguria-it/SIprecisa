@@ -1,0 +1,16 @@
+---
+output: html_document
+---
+
+
+  1. Seleziona un analita;
+  2. digita le unità di misura;
+  3. digita il nome del secondo gruppo, il suo valore di media, deviazione standard e numerosità;
+  4. clicca su 'Calcola';
+  5. seleziona l'ipotesi alternativa da applicare ai test;
+  6. seleziona il livello di confidenza da applicare ai test;
+  7. rimuovi eventuali punti cliccando sul grafico;
+  8. salva il risultato;
+  9. passa all'analita successivo;
+  10. quando hai finito clicca su avanti per passare alla creazione del report.
+

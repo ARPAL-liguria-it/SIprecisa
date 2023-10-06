@@ -1,0 +1,39 @@
+analita;gruppo;valore
+yield;a;29.9
+yield;a;11.4
+yield;a;25.3
+yield;a;16.5
+yield;a;21.1
+yield;b;26.6
+yield;b;23.7
+yield;b;28.5
+yield;b;14.2
+yield;b;17.9
+yield;b;24.3
+load; a; 2.297
+load; a; 2.582
+load; a; 1.949
+load; a; 2.362
+load; a; 2.040
+load; a; 2.133
+load; a; 1.855
+load; a; 1.986
+load; a; 1.642
+load; a; 2.915
+load; b; 2.286
+load; b; 2.327
+load; b; 2.388
+load; b; 3.172
+load; b; 3.158
+load; b; 2.751
+load; b; 2.222
+load; b; 2.367
+load; b; 2.247
+load; b; 2.512
+load; b; 2.104
+load; b; 2.707
+load; c; 2.154
+load; c; 2.215
+load; c; 2.341
+load; c; 2.224
+load; c; 2.109

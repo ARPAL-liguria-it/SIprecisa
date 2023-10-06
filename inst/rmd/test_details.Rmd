@@ -1,0 +1,497 @@
+---
+title: "Validazione dei risultati"
+author: "Andrea Bazzano"
+date: "2023-08-10"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: true
+---
+
+## Verifiche eseguite nella fase di validazione dell'applicazione SIconfronta
+
+### Verifica per il test di normalità di Shapiro-Wilk
+
+Dati da Shapiro S. S., Wilk M. B., An analysis of variance test for normality (complete samples). Biometrika (1965), 52, 3 and 2, p. 591. Section 4 - Examples, pag. 606, Example 1. (<http://links.jstor.org/sici?sici=0006-3444%28196512%2952%3A3%2F4%3C591%3AAAOVTF%3E2.0.CO%3B2-B>).
+
+#### Input
+
+-   valori: 148, 154, 158, 160, 161, 162, 166, 170, 182, 195, 236.
+
+#### Valori attesi
+
+-   W = 0.79;
+-   p-value \< 0.01;
+-   esito = I valori non sono compatibili con una distribuzione normale.
+
+### Verifica per il test sui possibili valori anomali (GESD)
+
+Dati da Tietjen G. L., Moore R. H., Some Grubbs-Type Statistics for the Detection of Several Outliers. Technometrics (1972), 14, 3, pp. 583-597 (<https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h1.htm>).
+
+#### Input
+
+-   Valori: 199.31, 199.53, 200.19, 200.82, 201.92, 201.95, 202.18, 245.57;
+-   livello di significatività: 0.99.
+
+#### Valori attesi
+
+-   outliers: 245.57.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 16269-4:2019 - Statistical interpretation of data - Part 4: Detection and treatment of outliers. Section 4.3.2.
+
+#### Input:
+
+-   Valori: -2.21, -1.84, -0.95, -0.91, -0.36, -0.19, -0.11, -0.10, 0.18, 0.30, 0.43, 0.51, 0.64, 0.67, 0.93, 1.22, 1.35, 1.73, 5.80, 12.60;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   outliers: 12.6, 5.8.
+
+### Verifica per il test sul confronto tra le medie di due serie di dati
+
+Dati da Box G. E. P., Hunter J. S., Hunter W. G., Statistics for Experimenters - design, innovation, and discovery. Second Edition, Wiley 2005. pag. 78 and 101.
+
+#### Input per due serie di dati complete
+
+-   Valori:
+
+| parameter | fertilizer | pounds |
+|-----------|------------|--------|
+| yield     | a          | 29.9   |
+| yield     | a          | 11.4   |
+| yield     | a          | 25.3   |
+| yield     | a          | 16.5   |
+| yield     | a          | 21.1   |
+| yield     | b          | 26.6   |
+| yield     | b          | 23.7   |
+| yield     | b          | 28.5   |
+| yield     | b          | 14.2   |
+| yield     | b          | 17.9   |
+| yield     | b          | 24.3   |
+
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.95.
+
+#### Input per due serie di dati non complete
+
+-   media del primo gruppo: 20.84;
+-   deviazione standard del primo gruppo: 7.24555;
+-   numerosità del primo gruppo: 5;
+-   media del secondo gruppo: 22.53333;
+-   deviazione standard del secondo gruppo: 5.432004;
+-   numerosità del secondo gruppo: 6;
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   differenza tra le medie: 1.693 (-7.506, 10.89);
+-   gradi di libertà: 7.3369;
+-   $\alpha$: 0.975;
+-   $t$ calcolato: 0.4313;
+-   $t$ critico: 2.3428;
+-   $p$-value: 0.6787;
+-   esito: la media di b e la media di a non sono statisticamente differenti.
+
+#### Input per due serie di dati complete
+
+-   Valori: come nella sezione precedente;
+-   ipotesi alternativa: media di b \> media di a;
+-   livello di significatività: 0.95.
+
+#### Input per due serie di dati non complete
+
+-   media, deviazione standard e numerosità dei due gruppi: come nella sezione precedente
+-   ipotesi alternativa: media di b \> media di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   differenza tra le medie: 1.693 (-5.695, Inf);
+-   gradi di libertà: 7.3369;
+-   $\alpha$: 0.950;
+-   $t$ calcolato: 0.4313;
+-   $t$ critico: 1.8816;
+-   $p$-value: 0.3393;
+-   esito: la media di b e la media di a non sono statisticamente differenti.
+
+#### Input per due serie di dati complete
+
+-   Valori: come nella sezione precedente;
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.99.
+
+#### Input per due serie di dati non complete
+
+-   media, deviazione standard e numerosità dei due gruppi: come nella sezione precedente
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.99.
+
+#### Valori attesi
+
+-   differenza tra le medie: 1.693 (-11.84, 15.22);
+-   gradi di libertà: 7.3369;
+-   $\alpha$: 0.995;
+-   $t$ calcolato: 0.4313;
+-   $t$ critico: 3.4454;
+-   $p$-value: 0.6787;
+-   esito: la media di b e la media di a non sono statisticamente differenti.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetti C' e D', (pag. 39).
+
+#### Input per due serie di dati complete
+
+-   Valori:
+
+| parameter | group | load  |
+|-----------|-------|-------|
+| yarns     | a     | 2.297 |
+| yarns     | a     | 2.582 |
+| yarns     | a     | 1.949 |
+| yarns     | a     | 2.362 |
+| yarns     | a     | 2.040 |
+| yarns     | a     | 2.133 |
+| yarns     | a     | 1.855 |
+| yarns     | a     | 1.986 |
+| yarns     | a     | 1.642 |
+| yarns     | a     | 2.915 |
+| yarns     | b     | 2.286 |
+| yarns     | b     | 2.327 |
+| yarns     | b     | 2.388 |
+| yarns     | b     | 3.172 |
+| yarns     | b     | 3.158 |
+| yarns     | b     | 2.751 |
+| yarns     | b     | 2.222 |
+| yarns     | b     | 2.367 |
+| yarns     | b     | 2.247 |
+| yarns     | b     | 2.512 |
+| yarns     | b     | 2.104 |
+| yarns     | b     | 2.707 |
+
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.95.
+
+#### Input per due serie di dati non complete
+
+-   media del primo gruppo: 2.176;
+-   deviazione standard del primo gruppo: 0.3736308;
+-   numerosità del primo gruppo: 10;
+-   media del secondo gruppo: 2.520;
+-   deviazione standard del secondo gruppo: 0.3554434;
+-   numerosità del secondo gruppo: 12;
+-   ipotesi alternativa: media di b $\neq$ media di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   differenza tra le medie: 0.3440 (0.01633, 0.6716);
+-   gradi di libertà: 18.8994;
+-   $\alpha$: 0.975;
+-   $t$ calcolato: 2.1982;
+-   $t$ critico: 2.0938;
+-   $p$-value: 0.0406;
+-   esito: la media di b e la media di a sono statisticamente differenti.
+
+### Verifica per il test sul confronto tra la media di una serie di dati e un valore di riferimento
+
+Dati da UNI ISO 2854:1988, prospetto A', (pag. 37).
+
+#### Input
+
+-   Valori:
+
+| parameter | group | load  |
+|-----------|-------|-------|
+| yarns     | a     | 2.297 |
+| yarns     | a     | 2.582 |
+| yarns     | a     | 1.949 |
+| yarns     | a     | 2.362 |
+| yarns     | a     | 2.040 |
+| yarns     | a     | 2.133 |
+| yarns     | a     | 1.855 |
+| yarns     | a     | 1.986 |
+| yarns     | a     | 1.642 |
+| yarns     | a     | 2.915 |
+
+-   valore di riferimento: 2.40;
+-   ipotesi alternativa: valore di riferimento $\neq$ media di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   differenza tra le medie: 2.176 (1.909, 2.443);
+-   gradi di libertà: 9;
+-   $\alpha$: 0.975;
+-   $t$ calcolato: 1.8950;
+-   $t$ critico: 2.2622;
+-   $p$-value: 0.0906;
+-   esito: il valore di riferimento e la media di a non sono statisticamente differenti.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetto B', (pag. 37).
+
+#### Input
+
+-   Valori: come nella sezione precedente;
+-   valore di riferimento: 2.40;
+-   ipotesi alternativa: valore di riferimento $\neq$ media di a;
+-   livello di significatività: 0.99.
+
+#### Valori attesi
+
+-   differenza tra le medie: 2.176 (1.792, 2.560);
+-   gradi di libertà: 9;
+-   $\alpha$: 0.995;
+-   $t$ calcolato: 1.8950;
+-   $t$ critico: 3.2498;
+-   $p$-value: 0.0906;
+-   esito: il valore di riferimento e la media di a non sono statisticamente differenti.
+
+### Verifica per il test sul confronto tra le varianze di due serie di dati
+
+Dati da Support of Microsoft Excel F.TEST function (<https://support.microsoft.com/en-us/office/f-test-function-100a59e7-4108-46f8-8443-78ffacb6c0a7>).
+
+#### Input per due serie di dati complete
+
+-   Valori:
+
+| reference | group | value |
+|-----------|-------|-------|
+| ftest     | a     | 6     |
+| ftest     | a     | 7     |
+| ftest     | a     | 9     |
+| ftest     | a     | 15    |
+| ftest     | a     | 21    |
+| ftest     | b     | 20    |
+| ftest     | b     | 28    |
+| ftest     | b     | 31    |
+| ftest     | b     | 38    |
+| ftest     | b     | 40    |
+
+-   ipotesi alternativa: varianza di b $\neq$ varianza di a;
+-   livello di significatività: 0.95.
+
+#### Input per due serie di dati non complete
+
+-   deviazione standard del primo gruppo: 6.308724;
+-   numerosità del primo gruppo: 5;
+-   deviazione standard del secondo gruppo: 8.049845;
+-   numerosità del secondo gruppo: 5;
+-   ipotesi alternativa: varianza di b $\neq$ varianza di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   Rapporto tra varianze: 1.628 (0.1695, 15.64);
+-   gradi di libertà: 4, 4;
+-   $\alpha$: 0.975;
+-   $F$ calcolato: 1.6281;
+-   $F$ critico: 0.1041, 9.6045;
+-   $p$-value: 0.6483;
+-   esito: la varianza di a e la varianza di b non sono statisticamente differenti.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetto G, (pag. 40).
+
+#### Input per due serie di dati complete
+
+-   Valori:
+
+| parameter | group | load  |
+|-----------|-------|-------|
+| yarns     | a     | 2.297 |
+| yarns     | a     | 2.582 |
+| yarns     | a     | 1.949 |
+| yarns     | a     | 2.362 |
+| yarns     | a     | 2.040 |
+| yarns     | a     | 2.133 |
+| yarns     | a     | 1.855 |
+| yarns     | a     | 1.986 |
+| yarns     | a     | 1.642 |
+| yarns     | a     | 2.915 |
+| yarns     | b     | 2.286 |
+| yarns     | b     | 2.327 |
+| yarns     | b     | 2.388 |
+| yarns     | b     | 3.172 |
+| yarns     | b     | 3.158 |
+| yarns     | b     | 2.751 |
+| yarns     | b     | 2.222 |
+| yarns     | b     | 2.367 |
+| yarns     | b     | 2.247 |
+| yarns     | b     | 2.512 |
+| yarns     | b     | 2.104 |
+| yarns     | b     | 2.707 |
+
+-   ipotesi alternativa: varianza di a $\neq$ varianza di b;
+-   livello di significatività: 0.95.
+
+#### Input per due serie di dati non complete
+
+-   deviazione standard del primo gruppo: 0.3736308;
+-   numerosità del primo gruppo: 10;
+-   deviazione standard del secondo gruppo: 0.3554434;
+-   numerosità del secondo gruppo: 12;
+-   ipotesi alternativa: varianza di b $\neq$ varianza di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   Rapporto tra varianze: 1.105 (0.3080, 4.322);
+-   gradi di libertà: 9, 11;
+-   $\alpha$: 0.975;
+-   $F$ calcolato: 1.1049;
+-   $F$ critico: 0.2556, 3.5879;
+-   $p$-value: 0.8613;
+-   esito: la varianza di a e la varianza di b non sono statisticamente differenti.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetto H, (pag. 40).
+
+#### Input per due serie di dati complete
+
+-   Valori: come nella sezione precedente;
+-   ipotesi alternativa: varianza di a $\neq$ varianza di b;
+-   livello di significatività: 0.99.
+
+#### Input per due serie di dati non complete
+
+-   deviazione standard e numerosità dei due gruppi: come nella sezione precedente;
+-   ipotesi alternativa: varianza di b $\neq$ varianza di a;
+-   livello di significatività: 0.99.
+
+#### Valori attesi
+
+-   Rapporto tra varianze: 1.105 (0.1996, 6.977);
+-   gradi di libertà: 9, 11;
+-   $\alpha$: 0.995;
+-   $F$ calcolato: 1.1049;
+-   $F$ critico: 0.1584, 5.5368;
+-   $p$-value: 0.8613;
+-   esito: la varianza di a e la varianza di b non sono statisticamente differenti.
+
+### Verifica per il test sul confronto tra la varianza di una serie di dati e un valore di riferimento
+
+Dati da UNI ISO 2854:1988, prospetto E, (pag. 40).
+
+#### Input
+
+-   Valori:
+
+| parameter | group | load  |
+|-----------|-------|-------|
+| yarns     | a     | 2.297 |
+| yarns     | a     | 2.582 |
+| yarns     | a     | 1.949 |
+| yarns     | a     | 2.362 |
+| yarns     | a     | 2.040 |
+| yarns     | a     | 2.133 |
+| yarns     | a     | 1.855 |
+| yarns     | a     | 1.986 |
+| yarns     | a     | 1.642 |
+| yarns     | a     | 2.915 |
+
+-   valore di riferimento: 0.3000;
+-   ipotesi alternativa: valore di riferimento \> varianza di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   deviazione standard del campione: 0.3736 (0.2725, Inf);
+-   gradi di libertà: 9;
+-   $\alpha$: 0.950;
+-   $\chi^2$ calcolato: 13.9596;
+-   $\chi^2$ critico: 16.9190;
+-   $p$-value: 0.1238;
+-   esito: la varianza di a e la varianza di riferimento non sono statisticamente differenti
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetto F, (pag. 40).
+
+#### Input
+
+-   Valori: come nella sezione precedente;
+-   valore di riferimento: come nella sezione precedente;
+-   ipotesi alternativa: valore di riferimento $\neq$ varianza di a;
+-   livello di significatività: 0.95.
+
+#### Valori attesi
+
+-   deviazione standard del campione: 0.3736 (0.2570, 0.6821);
+-   gradi di libertà: 9;
+-   $\alpha$: 0.975;
+-   $\chi^2$ calcolato: 13.9596;
+-   $\chi^2$ critico: 2.7004, 19.0228;
+-   $p$-value: 0.2475;
+-   esito: la varianza di a e la varianza di riferimento non sono statisticamente differenti.
+
+------------------------------------------------------------------------
+
+Dati da UNI ISO 2854:1988, prospetto F, (pag. 40).
+
+#### Input
+
+-   Valori: come nella sezione precedente;
+-   valore di riferimento: come nella sezione precedente;
+-   ipotesi alternativa: valore di riferimento $\neq$ varianza di a;
+-   livello di significatività: 0.99.
+
+#### Valori attesi
+
+-   deviazione standard del campione: 0.3736 (0.2308, 0.8510);
+-   gradi di libertà: 9;
+-   $\alpha$: 0.995;
+-   $\chi^2$ calcolato: 13.9596;
+-   $\chi^2$ critico: 1.7349, 23.5894;
+-   $p$-value: 0.2475;
+-   esito: la varianza di a e la varianza di riferimento non sono statisticamente differenti.
+
+### Verifica per il test sul confronto tra due valori dotati di incertezza estesa
+
+Dati da ISO 13528:2022(E) Sezione E4.
+
+#### Input
+
+-   Valori:
+
+| reference | group | value | uncertainty |
+|-----------|-------|-------|-------------|
+| en        | L03   | 0.037 | 0.013       |
+| en        | pt    | 0.044 | 0.0082      |
+
+#### Valori attesi
+
+-   ipotesi alternativa: pt $\neq$ L03;
+-   differenza tra i valori: 0.007000 (-0.008370, 0.02237);
+-   $E_n$ calcolato: 0.4554;
+-   $E_n$ critico: 1.000;
+-   esito: pt e L03 non sono differenti
+
+------------------------------------------------------------------------
+
+Dati da ISO 13528:2022(E) Sezione E4.
+
+#### Input
+
+-   Valori:
+
+| reference | group | value  | uncertainty |
+|-----------|-------|--------|-------------|
+| en        | L12   | 0.0239 | 0.0036      |
+| en        | pt    | 0.044  | 0.0082      |
+
+#### Valori attesi
+
+-   ipotesi alternativa: pt $\neq$ L12;
+-   differenza tra i valori: 0.02010 (0.01114, 0.02906);
+-   $E_n$ calcolato: 2.244;
+-   $E_n$ critico: 1.000;
+-   esito: pt e L12 sono differenti.

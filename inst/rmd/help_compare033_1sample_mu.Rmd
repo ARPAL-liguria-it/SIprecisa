@@ -1,0 +1,24 @@
+---
+output: html_document
+---
+
+
+  1. Seleziona un analita;
+  2. digita le unità di misura;
+  3. digita il nome del valore di riferimento e il suo valore numerico;
+  4. clicca su 'Calcola';
+  5. seleziona l'ipotesi alternativa da applicare ai test;
+  6. seleziona il livello di confidenza da applicare ai test;
+  7. rimuovi eventuali punti cliccando sul grafico;
+  8. salva il risultato;
+  9. passa all'analita successivo;
+  10. quando hai finito clicca su avanti per passare alla creazione del report.
+  
+Per ogni analita otterrai i seguenti output:
+  
+  - un confronto grafico dei due gruppi di dati mediante boxplot (in alto);
+  - una tabella riassuntiva delle principali statistiche (in basso);
+  - i risultati dei seguenti test:
+    - verifica della normalità mediante test di Shapiro-Wilk (nella scheda normalità, sulla destra);
+    - verifica della presenza di valori anomali mediante il test *generalised extreme studentized deviate* (GESD) (nella scheda normalità, sulla destra);
+    - comparazione della medie dei risultati con il valore di riferimento mediante _t_-test (nella scheda media, sulla destra).

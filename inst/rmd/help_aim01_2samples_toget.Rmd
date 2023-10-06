@@ -1,0 +1,12 @@
+---
+output: html_document
+---
+Per ogni analita otterrai i seguenti output:
+  
+  - un confronto grafico dei due gruppi di dati mediante boxplot;
+  - una tabella riassuntiva delle principali statistiche;
+  - i risultati dei seguenti test:
+    - verifica della normalità mediante test di Shapiro-Wilk;
+    - verifica della presenza di valori anomali mediante il test *generalised extreme studentized deviate* (GESD);
+    - comparazione delle medie mediante $t$-test di Welch;
+    - comparazione delle varianze mediante test di Fisher.

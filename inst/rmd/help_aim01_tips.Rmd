@@ -1,0 +1,6 @@
+---
+output: html_document
+---
+Puoi creare i file .csv sia a mano in un editor di testo, come il Blocco note, 
+sia esportarlo da programmi quali LibreOffice Calc o Office Excel.
+Tieni presente che molti strumenti analitici permettono già di esportare i dati in questo formato.

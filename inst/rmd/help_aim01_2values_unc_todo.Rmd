@@ -1,0 +1,40 @@
+---
+output: html_document
+---
+Prepara un file .csv organizzato su 4 colonne con separatore virgola (,) o punto e virgola (;):
+
+  1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
+  2. la seconda colonna conterrà un'intestazione e una variabile testuale indicante il nome dei due gruppi da confrontare;
+  3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori impiegati per effettuare il confronto. Il separatore decimale deve essere il punto (.).
+  4. la quarta colonna conterrà un'intestazione e una variabile numerica indicante i valori di incertezza estesa associati ai risultati riportati nella terza colonna; anche qui il separatore decimale deve essere il punto (.).
+  
+È ammesso un solo valore numerico per ogni coppia di parametro e gruppo.
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Gruppo        | , | Concentrazione  | , | Uext |
+|:--------------|:-:|:--------------|:-:|----------------:|:-:|-----:|
+| Cu            | , | strumento 1   | , | 15.1            | , | 2.3  |
+| Cu            | , | strumento 2   | , | 22.3            | , | 3.5  |
+| Zn            | , | strumento 1   | , | 200.1           | , | 10.2 |
+| Zn            | , | strumento 2   | , | 185.9           | , | 8.4  |
+
+</div>
+</details>

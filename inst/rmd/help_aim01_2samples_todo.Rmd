@@ -1,0 +1,59 @@
+---
+output: html_document
+---
+Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto e virgola (;):
+
+  1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
+  2. la seconda colonna conterrà un'intestazione e una variabile testuale indicante il nome dei due gruppi che si vogliono confrontare;
+  3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori impiegati per effettuare il confronto. Il separatore decimale deve essere il punto (.).
+  
+Non sono ammessi né meno di 5 valori, né più di 30 valori per ogni coppia di parametro e gruppo.
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Gruppo        | , | Concentrazione  |
+|:--------------|:-:|:--------------|:-:|----------------:|
+| Cu            | , | strumento 1   | , | 15.1            |
+| Cu            | , | strumento 1   | , | 15.8            |
+| Cu            | , | strumento 1   | , | 15.6            |
+| Cu            | , | strumento 1   | , | 16.1            |
+| Cu            | , | strumento 1   | , | 15.2            |
+| Cu            | , | strumento 1   | , | 15.9            |
+| Cu            | , | strumento 2   | , | 18.0            |
+| Cu            | , | strumento 2   | , | 17.8            |
+| Cu            | , | strumento 2   | , | 17.6            |
+| Cu            | , | strumento 2   | , | 18.5            |
+| Cu            | , | strumento 2   | , | 18.4            |
+| Cu            | , | strumento 2   | , | 18.3            |
+| Zn            | , | strumento 1   | , | 200.1           |
+| Zn            | , | strumento 1   | , | 225.4           |
+| Zn            | , | strumento 1   | , | 231.1           |
+| Zn            | , | strumento 1   | , | 198.6           |
+| Zn            | , | strumento 1   | , | 205.6           |
+| Zn            | , | strumento 1   | , | 215.9           |
+| Zn            | , | strumento 2   | , | 150.5           |
+| Zn            | , | strumento 2   | , | 148.2           |
+| Zn            | , | strumento 2   | , | 152.6           |
+| Zn            | , | strumento 2   | , | 160.0           |
+| Zn            | , | strumento 2   | , | 158.4           |
+| Zn            | , | strumento 2   | , | 157.9           |
+
+</div>
+</details>

@@ -1,0 +1,11 @@
+/* Impostazioni CSS per l'app Shiny SIconfronta: dedicata al confronto tra valori */
+
+/* Regolo la dimensione dei font nella barra superiore (non funziona) */
+.nav-tabs > li > a {
+  font-size: 15px;
+}
+
+/* for fill datatables from https://github.com/rstudio/DT/issues/951 */
+.dataTables_scrollBody {
+  max-height: none !important;
+}
