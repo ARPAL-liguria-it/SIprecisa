@@ -32,7 +32,7 @@ app_ui <- function(request) {
       # Navbar items ----
       bslib::nav_panel("Scopo", value = "aim", mod_aim01_ui("scopo")),
       bslib::nav_panel("Dati", value = "data", mod_loadfile02_ui("dati")),
-      bslib::nav_panel("Stime", value = "compare", mod_compare03_ui("confronto")),
+      bslib::nav_panel("Stime", value = "estimate", mod_estimate03_ui("confronto")),
       bslib::nav_panel("Report", value = "report", mod_report04_ui("report")),
       bslib::nav_spacer(),
       bslib::nav_menu("Leggimi",
