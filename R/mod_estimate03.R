@@ -44,19 +44,19 @@ mod_estimate03_ui <- function(id) {
         id = ns("ctrls"),
 
         bslib::nav_panel("riprec",
-          mod_estimate031_riprec_inputs_ui(ns("riprec"))),
+          mod_estimate031_riprec_inputs_ui(ns("riprec")))#,
 
-        bslib::nav_panel("rip",
-          mod_estimate032_rip_inputs_ui(ns("rip"))
-        ),
-
-        bslib::nav_panel("rec",
-          mod_estimate033_rec_inputs_ui(ns("rec"))),
-
-        bslib::nav_panel("recuno",
-          mod_estimate035_recuno_inputs_ui(ns("recuno")))
-
-      ),
+      #   bslib::nav_panel("rip",
+      #     mod_estimate032_rip_inputs_ui(ns("rip"))
+      #   ),
+      #
+      #   bslib::nav_panel("rec",
+      #     mod_estimate033_rec_inputs_ui(ns("rec"))),
+      #
+      #   bslib::nav_panel("recuno",
+      #     mod_estimate035_recuno_inputs_ui(ns("recuno")))
+      #
+     ),
 
 
       # save and delete buttons ----
@@ -115,16 +115,16 @@ mod_estimate03_ui <- function(id) {
         id = ns("outputs"),
 
         bslib::nav_panel("riprec",
-          mod_estimate031_riprec_output_ui(ns("riprec"))),
+          mod_estimate031_riprec_output_ui(ns("riprec")))#,
 
-        bslib::nav_panel("rip",
-          mod_estimate032_rip_output_ui(ns("rip"))),
-
-        bslib::nav_panel("rec",
-          mod_estimate033_rec_output_ui(ns("rec"))),
-
-        bslib::nav_panel("recuno",
-          mod_estimate035_recuno_output_ui(ns("recuno")))
+        # bslib::nav_panel("rip",
+        #   mod_estimate032_rip_output_ui(ns("rip"))),
+        #
+        # bslib::nav_panel("rec",
+        #   mod_estimate033_rec_output_ui(ns("rec"))),
+        #
+        # bslib::nav_panel("recuno",
+        #   mod_estimate035_recuno_output_ui(ns("recuno")))
 
       )
     )
@@ -190,6 +190,8 @@ mod_estimate03_server <- function(id, r) {
       req(levels(r$loadfile02$parlist) != 0)
 
       parchoices <- c("", levels(r$loadfile02$parlist))
+
+      freezeReactiveValue(input, "parameter")
       updateSelectizeInput(session,
                            "parameter",
                            selected = "",
@@ -213,10 +215,10 @@ mod_estimate03_server <- function(id, r) {
     to_mod_estimate03x  <- reactive({
       switch (
         r$aim01$aim,
-        "riprec" = mod_estimate031_riprec_server("riprec", r),
-        "rip" = mod_estimate032_rip_server("rip", r),
-        "rec" = mod_estimate033_rec_server("rec", r),
-        "recuno" = mod_estimate035_recuno_server("recuno", r)
+        "riprec" = mod_estimate031_riprec_server("riprec", r)#,
+        # "rip" = mod_estimate032_rip_server("rip", r),
+        # "rec" = mod_estimate033_rec_server("rec", r),
+        # "recuno" = mod_estimate035_recuno_server("recuno", r)
       )
 
     })
@@ -228,24 +230,24 @@ mod_estimate03_server <- function(id, r) {
                                           response = r$loadfile02$responsevar,
                                           refvalue = r$estimate03x$refval,
                                           refuncertainty = r$estimate03x$refuncertainty,
-                                          udm = r$estimate03x$udm),
+                                          udm = r$estimate03x$udm)#,
 
-              "rip" = ggboxplot_rip(data = r$estimate03x$data,
-                                    response = r$loadfile02$responsevar,
-                                    udm = r$estimate03x$udm),
-
-              "rec" = ggboxplot_riprec(data = r$estimate03x$data,
-                                       response = r$loadfile02$responsevar,
-                                       refvalue = r$estimate03x$refval,
-                                       refuncertainty = r$estimate03x$refuncertainty,
-                                       udm = r$estimate03x$udm),
-
-              "recuno" = ggboxplot_recuno(data = r$estimate03x$data,
-                                          response = r$loadfile02$responsevar,
-                                          uncertainty = r$loadfile02$uncertaintyvar,
-                                          refvalue = r$estimate03x$refval,
-                                          refuncertainty = r$estimate03x$refuncertainty,
-                                          udm = r$estimate03x$udm)
+              # "rip" = ggboxplot_rip(data = r$estimate03x$data,
+              #                       response = r$loadfile02$responsevar,
+              #                       udm = r$estimate03x$udm),
+              #
+              # "rec" = ggboxplot_riprec(data = r$estimate03x$data,
+              #                          response = r$loadfile02$responsevar,
+              #                          refvalue = r$estimate03x$refval,
+              #                          refuncertainty = r$estimate03x$refuncertainty,
+              #                          udm = r$estimate03x$udm),
+              #
+              # "recuno" = ggboxplot_recuno(data = r$estimate03x$data,
+              #                             response = r$loadfile02$responsevar,
+              #                             uncertainty = r$loadfile02$uncertaintyvar,
+              #                             refvalue = r$estimate03x$refval,
+              #                             refuncertainty = r$estimate03x$refuncertainty,
+              #                             udm = r$estimate03x$udm)
       )
     })
 

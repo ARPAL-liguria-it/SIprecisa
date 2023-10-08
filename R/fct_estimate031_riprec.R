@@ -175,7 +175,7 @@ fct_gesd <- function(values,
 #'    the null and alternative hypothesis, respectively.}
 #'    \item{difference}{a named vector of numbers, being \code{mean},
 #'    \code{lwrci} and \code{uprci} the mean of the measurement value, and
-#'    the lower and upper end of its confidence interval, respectively.
+#'    the lower and upper end of its confidence interval, respectively.}
 #'    \item{test}{a named vector of numbers, being \code{dof}, \code{tsper},
 #'    \code{ttheo} and \code{pvalue} the degrees of freedom, the calculated value
 #'    of the \eqn{t} statistic, the tabulated value of the \eqn{t} statistic and
@@ -264,7 +264,7 @@ fct_ttest_riprec <- function(data,
 #' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param udm a character string with the unit of measurement.
 #'
-#' @return A {plotly} boxplot and an interval plotfor comparing the confidence
+#' @return A {plotly} boxplot and an interval plot for comparing the confidence
 #' interval of the supplied  measurement values with a reference value and
 #' its extended uncertainty.
 #'
@@ -300,9 +300,9 @@ boxplot_riprec <- function(data,
                          refvalue - refuncertainty,
                          refvalue + refuncertainty)
 
-  mean_confint <- lm(datanoutlier[[response]] ~ 1) |> confint()
+  mean_confint <- lm(datanoutlier$response ~ 1) |> confint()
 
-  measurement_confint <- c(mean(datanoutlier[[response]], na.rm = TRUE),
+  measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
                            mean_confint[1],
                            mean_confint[2])
 
@@ -313,7 +313,7 @@ boxplot_riprec <- function(data,
   )
 
   # boxplot for measurement values
-  myboxplot <- plotly::plot_ly(source = "boxplot") |>
+  myboxplot <- plotly::plot_ly() |>
     plotly::add_boxplot(
       data = datanoutlier,
       y = ~ response,
@@ -366,14 +366,15 @@ boxplot_riprec <- function(data,
       )
     )
 
-  plotly::subplot(myboxplot,
+  plotly::subplot(widths = c(0.3, 0.7),
+                  myboxplot,
                   mycomparison,
                   shareY = TRUE,
                   which_layout = 1) |>
   plotly::layout(annotations = list(
       list(x = 0 , y = 1.01, text = "Boxplot delle misure", align = "left",
            showarrow = F, xref='paper', yref='paper'),
-      list(x = 0.75 , y = 1.01, text = "Intervalli di confidenza delle medie", align = "left",
+      list(x = 1 , y = 1.01, text = "Intervalli di confidenza delle medie", align = "right",
            showarrow = F, xref='paper', yref='paper'))
     ) |>
   plotly::config(displayModeBar = FALSE,
@@ -381,33 +382,40 @@ boxplot_riprec <- function(data,
 
 }
 
-#' GGplot2 boxplots for comparing two groups of values
+#' ggplot2 boxplots for a a serie of data, and for comparing the confidence interval
+#' with a reference value and its extended uncertainty
 #'
-#' @description The function provides a simple {ggplot2} boxplot for comparing
-#' two groups of values
+#' @description The function provides a simple {ggplot2} boxplot for a serie
+#'  of data, and for comparing the confidence interval with a reference value
+#'  and its extended uncertainty.
 #'
-#' @param data input data.frame with a column named *key* with progressive integers,
-#' a column with a two level factor label for the two groups
-#' to be compared, a column with the numeric values for the two groups and a
-#' column named *rimosso* with "sì" or "no" values.
-#' @param group a character string for the label of the grouping variable.
+#' @param data input data.frame a numeric columns with the response and a
+#' character columns with outliers flag.
+#' The first column must be named as the response variable, while the second column
+#' must be named *rimosso*.
 #' @param response a character string with the label for the response numeric variable.
+#' @param refval a reference numeric value.
+#' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param udm a character string with the unit of measurement.
 #'
-#' @return A {ggplot2} boxplot for comparing two group of values. Raw data values
-#' are overlaid on top of the boxes.
+#' @return A {ggplot2} boxplot and an interval plot for comparing the confidence
+#' interval of the supplied  measurement values with a reference value and
+#' its extended uncertainty.
 #'
 #' @export
 #'
+#' @import patchwork
 #' @rawNamespace import(ggplot2, except = last_plot)
-ggboxplot_2samples <- function(data,
-                             group,
+ggboxplot_riprec <- function(data,
                              response,
+                             refvalue,
+                             refuncertainty,
                              udm) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    is.character(group),
+    is.numeric(refvalue),
+    is.numeric(refuncertainty),
     is.character(udm)
   )
 
@@ -415,27 +423,53 @@ ggboxplot_2samples <- function(data,
   cols <- c("s\u00EC" = "#999999", "no" = "black")
   data$rimosso <- factor(data$rimosso, levels = c("s\u00EC", "no"))
 
-  xlabtitle <- group
   ylabtitle <- paste0(response, ifelse(udm != "", paste0(" (", udm, ")"), ""))
 
-  quo_group <- ggplot2::ensym(group)
   quo_response <- ggplot2::ensym(response)
 
+  # scale for the y axis
+  enlarge <- 0.05 # proportion of increased axis lenght
+  minvalue <- min(data[[response]], na.rm = TRUE)
+  maxvalue <- max(data[[response]], na.rm = TRUE)
+  yrange <- maxvalue - minvalue
+  ymax <- maxvalue + enlarge * yrange
+  ymin <- minvalue - enlarge * yrange
 
-  ggplot2::ggplot() +
-    ggplot2::geom_boxplot(data = data[which(data$rimosso == "no"),],
-                          ggplot2::aes(x = !!quo_group,
+  datanoutlier <- data[which(data$rimosso == "no"),]
+
+  # 95% confidence interval for measurement values and the reference value
+  reference_confint <- c(refvalue,
+                         refvalue - refuncertainty,
+                         refvalue + refuncertainty)
+
+  mean_confint <- lm(datanoutlier[[response]] ~ 1) |> confint()
+
+  measurement_confint <- c(mean(datanoutlier[[response]], na.rm = TRUE),
+                           mean_confint[1],
+                           mean_confint[2])
+
+  myconfint <- data.frame(label = c("misure", "riferimento"),
+                          meanval = c(measurement_confint[1], reference_confint[1]),
+                          lwrval = c(measurement_confint[2], reference_confint[2]),
+                          uprval = c(measurement_confint[3], reference_confint[3])
+  )
+
+  myboxplot <- ggplot2::ggplot() +
+    ggplot2::geom_boxplot(data = datanoutlier,
+                          ggplot2::aes(x = "misure",
                                        y = !!quo_response),
                           fill = "white",
                           col = "black",
                           outlier.shape = NA) +
     ggplot2::geom_jitter(data = data,
-                         ggplot2::aes(x = !!quo_group,
+                         ggplot2::aes(x = "misure",
                                       y = !!quo_response,
                                       col = rimosso),
                          width = 0.2) +
-    ggplot2::labs(x = xlabtitle,
-                  y = ylabtitle) +
+    ggplot2::scale_y_continuous(limits = c(ymin, ymax)) +
+    ggplot2::labs(x = ggplot2::element_blank(),
+                  y = ylabtitle,
+                  title = "Boxplot delle misure") +
     ggplot2::scale_color_manual(values = cols,
                                 breaks = c("s\u00EC", "no"),
                                 labels = c("rimosso", "non rimosso"),
@@ -443,6 +477,26 @@ ggboxplot_2samples <- function(data,
                                 drop = FALSE) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "top")
+
+  mycomparison <- ggplot2::ggplot(
+    data = myconfint,
+    ggplot2::aes(x = label,
+                 y = meanval)
+    ) +
+    ggplot2::geom_point() +
+    ggplot2::geom_errorbar(
+      ggplot2::aes(ymin = lwrval,
+                   ymax = uprval),
+      width = 0
+      ) +
+    ggplot2::scale_y_continuous(limits = c(ymin, ymax)) +
+    ggplot2::labs(y = ggplot2::element_blank(),
+                  x = ggplot2::element_blank(),
+                  title = "Intervalli di confidenza delle medie") +
+    ggplot2::theme_bw()
+
+  myboxplot + mycomparison +
+    patchwork::plot_layout(widths = c(1, 3), nrow = 1)
 
 }
 
