@@ -100,7 +100,8 @@ mod_estimate031_riprec_inputs_ui <- function(id) {
 #' @import markdown
 #' @importFrom plotly plotlyOutput
 #' @importFrom DT DTOutput
-#' @importFrom bslib navset_hidden nav_panel card card_header card_body layout_columns navset_card_tab
+#' @importFrom bslib navset_hidden nav_panel card card_header card_body layout_columns navset_card_tab layout_column_wrap
+#' @importFrom htmltools css
 mod_estimate031_riprec_output_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -121,7 +122,14 @@ mod_estimate031_riprec_output_ui <- function(id) {
       bslib::layout_columns(
         bslib::card(
           bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva"),
-          bslib::card_body(plotly::plotlyOutput(ns("boxplot"))),
+
+          bslib::layout_column_wrap(
+            width = NULL,
+            style = htmltools::css(grid_template_columns = "1fr 2fr"),
+            bslib::card_body(plotly::plotlyOutput(ns("boxplot"))),
+            bslib::card_body(plotly::plotlyOutput(ns("confint")))
+          ),
+
           bslib::card_body(DT::DTOutput(ns("summarytable")))
         ),
 
@@ -136,7 +144,11 @@ mod_estimate031_riprec_output_ui <- function(id) {
             h4("Test per identificare possibili outliers (GESD)"),
             htmlOutput(ns("outliers"))
           ),
-          bslib::nav_panel("Bias",
+          bslib::nav_panel("Precisione",
+            htmlOutput(ns("preclist"))
+          ),
+          bslib::nav_panel("Esattezza",
+            #htmlOutput(ns("esatlist")),
             h4("Test per valutare la presenza di bias (t-test)"),
             htmlOutput(ns("ttest"))
           )
@@ -225,9 +237,9 @@ mod_estimate031_riprec_server <- function(id, r) {
           updateTextInput(session,
                           "udm",
                           value = r$estimate03[[r$estimate03$myparameter]]$udm)
-          updateTextInput(session,
-                          "refvalue",
-                          value = r$estimate03[[r$estimate03$myparameter]]$refvalue)
+          updateNumericInput(session,
+                             "refvalue",
+                             value = r$estimate03[[r$estimate03$myparameter]]$refvalue)
           updateNumericInput(session,
                              "refuncertainty",
                              value = r$estimate03[[r$estimate03$myparameter]]$refuncertainty)
@@ -255,7 +267,7 @@ mod_estimate031_riprec_server <- function(id, r) {
           freezeReactiveValue(input, "refvalue")
           freezeReactiveValue(input, "refuncertainty")
 
-          updateTextInput(session, "refvalue", value = 0)
+          updateNumericInput(session, "refvalue", value = 0)
           updateNumericInput(session, "refuncertainty", value = 0)
 
           r$estimate03x$click <- 0
@@ -343,9 +355,28 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     # min number of values
     minval <- reactive({
-      req(!is.null(selected_data()))
+      req(selected_data())
 
       dim(selected_data())[1]
+    })
+
+    ## reference value and uncertainty
+    observeEvent(input$submit, ignoreInit = TRUE, {
+      r$estimate03x$refvalue <- input$refvalue
+      r$estimate03x$refuncertainty <- input$refuncertainty
+
+      # validate the input
+      if (r$estimate03x$refvalue |> is.numeric() &
+          r$estimate03x$refuncertainty |> is.numeric() &
+          r$estimate03x$refvalue >= 0 &
+          r$estimate03x$refuncertainty >= 0) {
+
+        r$estimate03x$click <- 1
+
+      } else {
+
+        r$estimate03x$click <- 0
+      }
     })
 
     # reactive boxplot ----
@@ -367,6 +398,7 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
     output$boxplot <- plotly::renderPlotly({
+
       # if results have been saved, restore the boxplot
       if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
 
@@ -379,40 +411,70 @@ mod_estimate031_riprec_server <- function(id, r) {
       }
       })
 
+    # reactive confint plot ----
+    plotlyconfint <- reactive({
+      req(input_data())
+      req(r$estimate03x$refvalue)
+      req(r$estimate03x$refuncertainty)
+      req(r$estimate03x$significance)
+      req(r$estimate03x$click == 1)
+
+      confint_riprec(
+        data = input_data(),
+        response = r$loadfile02$responsevar,
+        udm = r$estimate03x$udm,
+        conflevel = as.numeric(r$estimate03x$significance),
+        refvalue = r$estimate03x$refvalue,
+        refuncertainty = r$estimate03x$refuncertainty
+      )
+
+    })
+
+    output$confint <- plotly::renderPlotly({
+
+      # if results have been saved, restore the boxplot
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
+
+        r$estimate03[[r$estimate03$myparameter]]$confint
+
+        # else a new boxplot is calculated and shown
+      } else {
+
+        plotlyconfint()
+      }
+    })
 
     # reactive summary table ----
-    # summarytable <- reactive({
-    #   req(selected_data())
-    #
-    #   rowsummary_riprec(
-    #     data = selected_data(),
-    #     response = "response",
-    #     udm = r$compare03x$udm,
-    #     refvalue = r$compare03x$refvalue,
-    #     refuncertainty = r$compare03x$refuncertainty
-    #   )
-    #
-    # })
-    #
-    # output$summarytable <- DT::renderDT({
-    #   # if results have been saved, restore the summarytable
-    #   if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
-    #
-    #     DT::datatable(r$estimate03[[r$estimate03$myparameter]]$summary,
-    #                   style = "bootstrap4",
-    #                   fillContainer = TRUE,
-    #                   options = list(dom = "t"),
-    #                   rownames = FALSE)
-    #   } else {
-    #
-    #     DT::datatable(summarytable(),
-    #                   style = "bootstrap4",
-    #                   fillContainer = TRUE,
-    #                   options = list(dom = "t"),
-    #                   rownames = FALSE)
-    #   }
-    #
-    # })
+    summarytable <- reactive({
+      req(input_data())
+
+      rowsummary_riprec(
+        data = input_data(),
+        response = "response",
+        udm = r$estimate03x$udm
+      )
+
+    })
+
+    output$summarytable <- DT::renderDT({
+      # if results have been saved, restore the summarytable
+      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+
+        DT::datatable(r$estimate03[[r$estimate03$myparameter]]$summary,
+                      style = "bootstrap4",
+                      fillContainer = TRUE,
+                      options = list(dom = "t"),
+                      rownames = FALSE)
+      } else {
+
+        DT::datatable(summarytable(),
+                      style = "bootstrap4",
+                      fillContainer = TRUE,
+                      options = list(dom = "t"),
+                      rownames = FALSE)
+      }
+
+    })
 
 
     # results of normality check ----
@@ -493,72 +555,120 @@ mod_estimate031_riprec_server <- function(id, r) {
 
 
     #### results for the t-test ----
-#     ttest_list <- reactive({
-#       req(selected_data())
-#       req(r$estimate03x$significance)
-#       req(r$estimate03x$alternative)
-#       # don't update if results have been saved
-#       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
-#             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
-#
-#       fct_ttest_riprec(
-#         selected_data(),
-#         "response",
-#         refvalue,
-#         refuncertainty,
-#         significance = as.numeric(r$estimate03x$significance)
-#       )
-#
-#     })
-#
-#     ttest_text <-
-# "<b>H0:</b> %s </br>
-# <b>H1:</b> %s
-# <ul>
-#   <li> Media delle misure (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
-#   <li> <i>t</i> sperimentale = %s </li>
-#   <li> <i>t</i> critico (\u03b1 = %s, \u03bd = %s) = %s </li>
-#   <li> <i>p</i>-value = %s </li>
-# </ul>
-# \u21e8 %s"
-#
-#     ttest_html <- reactive({
-#
-#       sprintf(
-#         ttest_text,
-#         ttest_list()$hypotheses[[1]],
-#         ttest_list()$hypotheses[[2]],
-#         ttest_list()$difference[[1]],
-#         r$estimate03x$udm,
-#         ttest_list()$difference[[2]],
-#         ttest_list()$difference[[3]],
-#         r$estimate03x$udm,
-#         ttest_list()$test[[3]],
-#         ttest_list()$test[[2]],
-#         ttest_list()$test[[1]],
-#         ttest_list()$test[[4]],
-#         ttest_list()$test[[5]],
-#         ttest_list()$result
-#       )
-#
-#     })
-#
-#     output$ttest <- renderText({
-#       validate(
-#         need(minval() >= 6,
-#              message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
-#       )
-#       # if results have been saved, restore the t-test results
-#       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
-#
-#         r$estimate03[[r$estimate03$myparameter]]$ttest_html
-#
-#       } else {
-#
-#         ttest_html()
-#       }
-#
-#       })
+    ttest_list <- reactive({
+      req(selected_data())
+      req(r$estimate03x$click == 1)
+      req(r$estimate03x$refvalue)
+      req(r$estimate03x$refuncertainty == 0)
+      # don't update if results have been saved
+      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
+          r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
+
+      fct_ttest_riprec(
+        data = selected_data(),
+        response = "response",
+        refvalue = r$estimate03x$refvalue,
+        significance = as.numeric(r$estimate03x$significance)
+      )
+
+    })
+
+
+    ttest_text <- "<b>H0:</b> %s </br>
+<b>H1:</b> %s
+<ul>
+  <li> Media delle misure (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
+  <li> <i>t</i> sperimentale = %s </li>
+  <li> <i>t</i> critico (\u03b1 = %s, \u03bd = %s) = %s </li>
+  <li> <i>p</i>-value = %s </li>
+</ul>
+\u21e8 %s"
+
+    ttest_html <- reactive({
+
+      sprintf(
+        ttest_text,
+        ttest_list()$hypotheses[[1]],
+        ttest_list()$hypotheses[[2]],
+        ttest_list()$mean[[1]],
+        r$estimate03x$udm,
+        ttest_list()$mean[[2]],
+        ttest_list()$mean[[3]],
+        r$estimate03x$udm,
+        ttest_list()$test[[3]],
+        ttest_list()$test[[2]],
+        ttest_list()$test[[1]],
+        ttest_list()$test[[4]],
+        ttest_list()$test[[5]],
+        ttest_list()$result
+      )
+
+    })
+
+
+    #### results for the En-test ----
+    entest_list <- reactive({
+      req(selected_data())
+      req(r$estimate03x$click == 1)
+      req(r$estimate03x$refvalue)
+      req(r$estimate03x$refuncertainty != 0)
+      # don't update if results have been saved
+      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
+          r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
+
+      fct_entest_riprec(
+        data = selected_data(),
+        response = "response",
+        refvalue = r$estimate03x$refvalue,
+        refuncertainty = r$estimate03x$refuncertainty
+        )
+
+    })
+
+
+    entest_text <- "<b>H0:</b> %s </br>
+<b>H1:</b> %s
+<ul>
+  <li> Differenza tra i due valori (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
+  <li> E<sub>n</sub> sperimentale = %s </li>
+  <li> E<sub>n</sub> critico = %s </li>
+</ul>
+\u21e8 %s"
+
+    entest_html <- reactive({
+
+      sprintf(
+        entest_text,
+        entest_list()$hypotheses[1],
+        entest_list()$hypotheses[2],
+        entest_list()$difference[1],
+        r$estimate03x$udm,
+        entest_list()$difference[2],
+        entest_list()$difference[3],
+        r$estimate03x$udm,
+        entest_list()$test[1],
+        entest_list()$test[2],
+        entest_list()$result
+      )
+
+    })
+
+    output$ttest <- renderText({
+      validate(
+        need(minval() >= 6,
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+      )
+      # if results have been saved, restore the t-test results
+      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+
+        r$estimate03[[r$estimate03$myparameter]]$ttest_html
+
+      } else {
+
+        ifelse(r$estimate03x$refuncertainty == 0, ttest_html(), entest_html())
+      }
+
+      })
 #
 #     # saving the outputs ----
 #

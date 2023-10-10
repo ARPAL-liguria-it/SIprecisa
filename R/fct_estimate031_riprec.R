@@ -163,6 +163,7 @@ fct_gesd <- function(values,
 #'   measurements should be included.
 #' @param response the name of a numeric vector in \code{data}.
 #'   Quotation (" ") is not required.
+#' @param refvalue reference value for the comparison.
 #' @param significance a number, typically either 0.90, 0.95 (default) or 0.99
 #'   indicating the confidence level for the test.
 #'
@@ -173,7 +174,7 @@ fct_gesd <- function(values,
 #'  \describe{
 #'    \item{hypotheses}{a named vector of strings, being \code{h0} and \code{h1}
 #'    the null and alternative hypothesis, respectively.}
-#'    \item{difference}{a named vector of numbers, being \code{mean},
+#'    \item{mean}{a named vector of numbers, being \code{mean},
 #'    \code{lwrci} and \code{uprci} the mean of the measurement value, and
 #'    the lower and upper end of its confidence interval, respectively.}
 #'    \item{test}{a named vector of numbers, being \code{dof}, \code{tsper},
@@ -249,12 +250,102 @@ fct_ttest_riprec <- function(data,
 
 }
 
-#' Plotly boxplots for a a serie of data, and for comparing the confidence interval
-#' with a reference value and its extended uncertainty
+#' Displays the results of an \eqn{E_n}-test for two values with
+#' extended uncertainties
+#'
+#' @description The function displays the results of a \eqn{E_n}-test for two
+#' values with extended uncertainty.
+#'  The returned text is suitable for the {SI confronta} {shiny} app.
+#'
+#' @param data a \code{data.frame} or \code{data.table} with the results
+#'   relevant for testing. A single-level grouping \code{factor} variable
+#'   and two \code{numeric} vectors with the measurements values and their
+#'   uncertainties should be included.
+#' @param response the name of a numeric vector in \code{data}.
+#'   Quotation (" ") is not required.
+#' @param refvalue reference value for the comparison.
+#' @param refuncertainty extended uncertainty for reference value.
+#'
+#' @details \eqn{E_n}-test is calculated with the following equation:
+#' \deqn{E_n = \frac{|x - y|}{\sqrt{U(x)^2 + U(y)^2}}}
+#' for \eqn{E_n \leq 1}, the difference of the two values \eqn{x} and \eqn{y} is
+#' accounted by their extended uncertainties (\eqn{U}) and the null hypothesis is
+#' not rejected. When \eqn{E_n > 1} the two values are different and the null
+#' hypothesis is rejected.
+#'
+#' @return A list with the following items:
+#'  \describe{
+#'    \item{hypotheses}{a named vector of strings, being \code{h0} and \code{h1}
+#'    the null and alternative hypothesis, respectively.}
+#'    \item{difference}{a named vector of numbers, being \code{mean},
+#'    \code{lwrci} and \code{uprci} the mean, lower and upper ends of the
+#'    confidence interval for the difference of the two values, respectively.
+#'    The confidence interval is calculated considered the combined extended
+#'    uncertainties of the two values.}
+#'    \item{test}{a named vector of numbers, being \code{entest} and
+#'    \code{ecritical} the value of the test statistic and the associated critical
+#'    value, respectively.}
+#'    \item{result}{a string indicating whether H0 should be rejected or not.}
+#'  }
+#'
+#' @export
+fct_entest_riprec <- function(data,
+                              response,
+                              refvalue,
+                              refuncertainty) {
+  stopifnot(
+    is.data.frame(data),
+    is.character(response),
+    is.numeric(refvalue),
+    is.numeric(refuncertainty),
+    response %in% colnames(data)
+  )
+
+  data_mean <- mean(data[[response]])
+  data_sd <- sd(data[[response]])
+  data_n <- length(data[[response]])
+  data_se <- data_sd / sqrt(data_n)
+  data_ci <- qt(0.975, data_n - 1) * data_se
+
+  means <- c(data_mean, refvalue)
+  mean_max <- means[which.max(means)]
+  mean_min <- means[which.min(means)]
+
+  max_val_lbl <- ifelse(data_mean > refvalue, "misure", "riferimento")
+  min_val_lbl <- ifelse(data_mean < refvalue, "misure", "riferimento")
+  max_val_unc <- ifelse(data_mean > refvalue, data_ci, refuncertainty)
+  min_val_unc <- ifelse(data_mean < refvalue, data_ci, refuncertainty)
+
+  # en-test results
+  diff_val <- (mean_max - mean_min)
+  diff_unc <- sqrt(max_val_unc^2 + min_val_unc^2)
+  diff_confint <- diff_val + c(-1, +1) * diff_unc
+  entest <- diff_val / diff_unc
+  ecritical <- 1
+
+  # Being clear with some text
+  h0_text <- sprintf("%s = %s", max_val_lbl, min_val_lbl)
+  h1_text <- sprintf("%s \u2260 %s", max_val_lbl, min_val_lbl)
+
+  positive <- "Il bias delle misure rispetto al valore di riferimento è statisticamente significativo"
+  negative <- "Il bias delle misure rispetto al valore di riferimento non è statisticamente significativo"
+
+  result <- ifelse(entest < ecritical, negative, positive)
+
+  list(hypotheses = c("h0" = h0_text,
+                      "h1" = h1_text),
+       difference = c("mean" = diff_val |> format_sigfig(),
+                      "lwrci" = diff_confint[1] |> format_sigfig(),
+                      "uprci" = diff_confint[2] |> format_sigfig()),
+       test = c("entest" = entest |> format_sigfig(),
+                "ecritical" = ecritical |> format_sigfig()),
+       result = result)
+}
+
+#' Plotly boxplots for a a serie of measurement values.
 #'
 #' @description The function provides a simple {plotly} boxplot for a serie
-#'  of data, and for comparing the confidence interval with a reference value
-#'  and its extended uncertainty.
+#'  of measurement values.
 #'
 #' @param data input data.frame with a column named *key* with progressive integers,
 #' a column named *response* with the numeric values for the two groups and a
@@ -264,13 +355,11 @@ fct_ttest_riprec <- function(data,
 #' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param udm a character string with the unit of measurement.
 #'
-#' @return A {plotly} boxplot and an interval plot for comparing the confidence
-#' interval of the supplied  measurement values with a reference value and
-#' its extended uncertainty.
+#' @return A {plotly} boxplot for measurement values.
 #'
 #' @export
 #'
-#' @importFrom plotly plot_ly add_boxplot add_markers layout config subplot
+#' @importFrom plotly plot_ly add_boxplot add_markers layout config
 boxplot_riprec <- function(data,
                            response,
                            refvalue,
@@ -279,8 +368,8 @@ boxplot_riprec <- function(data,
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    is.numeric(refvalue),
-    is.numeric(refuncertainty),
+    {is.numeric(refvalue) || is.na(refvalue)},
+    {is.numeric(refuncertainty) || is.na(refuncertainty)},
     is.character(udm),
     colnames(data) %in% c("key", "outlier", "response"),
     dim(data)[2] == 3
@@ -295,25 +384,8 @@ boxplot_riprec <- function(data,
 
   datanoutlier <- data[data$outlier == FALSE,]
 
-  # 95% confidence interval for measurement values and the reference value
-  reference_confint <- c(refvalue,
-                         refvalue - refuncertainty,
-                         refvalue + refuncertainty)
-
-  mean_confint <- lm(datanoutlier$response ~ 1) |> confint()
-
-  measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
-                           mean_confint[1],
-                           mean_confint[2])
-
-  myconfint <- data.frame(label = c("misure", "riferimento"),
-                          meanval = c(measurement_confint[1], reference_confint[1]),
-                          lwrval = c(measurement_confint[2], reference_confint[2]),
-                          uprval = c(measurement_confint[3], reference_confint[3])
-  )
-
   # boxplot for measurement values
-  myboxplot <- plotly::plot_ly() |>
+  plotly::plot_ly(source = "boxplot") |>
     plotly::add_boxplot(
       data = datanoutlier,
       y = ~ response,
@@ -339,46 +411,113 @@ boxplot_riprec <- function(data,
       ),
       key = ~ key,
       hoverinfo = "y",
-      hovertemplate = paste('%{y:.3s}', udm)
+      hovertemplate = paste('%{y:.3r}', udm)
     ) |>
     plotly::layout(
       showlegend = FALSE,
-      title = NULL,
+      title = list(text = "Boxplot delle misure",
+                   font = list(size = 11)
+      ),
       yaxis = list(title = ylabtitle,
-                   hoverformat = ".3s")
-    )
+                   hoverformat = ".3r")
+      ) |>
+    plotly::config(displayModeBar = FALSE,
+                   locale = "it")
+
+}
+
+
+#' Plotly confidence interval plot for a a serie of data and
+#' a reference value with extended uncertainty.
+#'
+#' @description The function provides a simple {plotly} for comparing the
+#' confidence interval with a reference value and its extended uncertainty.
+#'
+#' @param data input data.frame with a column named *key* with progressive integers,
+#' a column named *response* with the numeric values for the two groups and a
+#' column named *outlier* with a logical vector.
+#' @param response a character string with the label for the response numeric variable.
+#' @param refval a reference numeric value.
+#' @param refuncertainty the extended uncertainty for the reference numeric value.
+#' @param conflevel confidence level for the mean confidence interval: allowed values
+#' are 0.90, 0.95 and 0.99.
+#' @param udm a character string with the unit of measurement.
+#'
+#' @return A {plotly} interval plot for comparing the confidence
+#' interval of the supplied  measurement values with a reference value and
+#' its extended uncertainty.
+#'
+#' @export
+#'
+#' @importFrom plotly plot_ly add_markers layout config
+confint_riprec <- function(data,
+                           response,
+                           refvalue,
+                           refuncertainty,
+                           conflevel,
+                           udm) {
+  stopifnot(
+    is.data.frame(data),
+    is.character(response),
+    is.numeric(refvalue),
+    is.numeric(refuncertainty),
+    conflevel %in% c(0.90, 0.95, 0.99),
+    is.character(udm),
+    colnames(data) %in% c("key", "outlier", "response"),
+    dim(data)[2] == 3
+  )
+
+  cols <- ifelse(data$outlier == TRUE,
+                 "#999999",
+                 "black")
+
+  ylabtitle <- paste0(response,
+                      ifelse(udm != "", paste0(" (", udm, ")"), ""))
+
+  datanoutlier <- data[data$outlier == FALSE,]
+
+  # 95% confidence interval for measurement values and the reference value
+  reference_confint <- c(refvalue,
+                         refuncertainty)
+
+  mean_confint <- lm(datanoutlier$response ~ 1) |> confint(level = conflevel)
+
+  measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
+                           (mean_confint[2] - mean_confint[1])/2)
+
+  myconfint <- data.frame(label = c("misure", "riferimento"),
+                          meanval = c(measurement_confint[1], reference_confint[1]),
+                          uncertainty = c(measurement_confint[2], reference_confint[2])
+  )
 
   # comparing confidence intervals
-  mycomparison <- plotly::plot_ly(
-      data = myconfint,
-      y = ~meanval ,
-      x = ~label,
-      name = "confint",
-      type = "scatter",
-      mode = "markers",
-      color = I("#2780E3"),
+  plotly::plot_ly(source = "confint",
+    data = myconfint,
+    y = ~meanval ,
+    x = ~label,
+    name = "CI",
+    type = "scatter",
+    mode = "markers",
+    color = I("#2780E3"),
+    showlegend = FALSE,
+    key = NULL,
+    error_y = ~list(
+      array = uncertainty
+    ),
+    #hoverinfo = "y",
+    hovertemplate = paste('%{y:.3r}', '\u00B1', '%{error_y.array:.2r}', udm)
+  ) |>
+    plotly::layout(
       showlegend = FALSE,
-      key = NULL,
-      error_y = ~list(
-        symmetric = FALSE,
-        arrayminus = meanval - lwrval,
-        array = uprval - meanval
-      )
-    )
-
-  plotly::subplot(widths = c(0.3, 0.7),
-                  myboxplot,
-                  mycomparison,
-                  shareY = TRUE,
-                  which_layout = 1) |>
-  plotly::layout(annotations = list(
-      list(x = 0 , y = 1.01, text = "Boxplot delle misure", align = "left",
-           showarrow = F, xref='paper', yref='paper'),
-      list(x = 1 , y = 1.01, text = "Intervalli di confidenza delle medie", align = "right",
-           showarrow = F, xref='paper', yref='paper'))
+      title = list(text = "Intervalli di confidenza delle medie",
+                   font = list(size = 11)
+      ),
+      xaxis = list(title = NA),
+      yaxis = list(title = ylabtitle,
+                   hoverformat = ".3r")
     ) |>
-  plotly::config(displayModeBar = FALSE,
-                 locale = "it")
+    plotly::config(displayModeBar = FALSE,
+                   locale = "it")
 
 }
 
@@ -396,6 +535,8 @@ boxplot_riprec <- function(data,
 #' @param response a character string with the label for the response numeric variable.
 #' @param refval a reference numeric value.
 #' @param refuncertainty the extended uncertainty for the reference numeric value.
+#' @param conflevel confidence level for the mean confidence interval: allowed values
+#' are 0.90, 0.95 and 0.99.
 #' @param udm a character string with the unit of measurement.
 #'
 #' @return A {ggplot2} boxplot and an interval plot for comparing the confidence
@@ -410,12 +551,14 @@ ggboxplot_riprec <- function(data,
                              response,
                              refvalue,
                              refuncertainty,
+                             conflevel,
                              udm) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
     is.numeric(refvalue),
     is.numeric(refuncertainty),
+    conflevel %in% c(0.90, 0.95, 0.99),
     is.character(udm)
   )
 
@@ -442,7 +585,7 @@ ggboxplot_riprec <- function(data,
                          refvalue - refuncertainty,
                          refvalue + refuncertainty)
 
-  mean_confint <- lm(datanoutlier[[response]] ~ 1) |> confint()
+  mean_confint <- lm(datanoutlier[[response]] ~ 1) |> confint(level = conflevel)
 
   measurement_confint <- c(mean(datanoutlier[[response]], na.rm = TRUE),
                            mean_confint[1],
@@ -500,15 +643,17 @@ ggboxplot_riprec <- function(data,
 
 }
 
-#' Summary arranged on rows for two groups
+#' Summary arranged on rows for a set of measurements and a reference value
 #'
-#' @description The function returns a table with max, mean, median, min, sd and n
-#'  values arranged on rows whereas groups are on columns. Numbers are formatted as
-#'  text in order to provide the desired significant figures.
+#' @description The function returns a table with max, mean, median, min, n and
+#'  the number of removed points.
+#'  values are arranged on rows, columns are for measurement and reference values,
+#'  respectively . Numbers are formatted as text in order to provide the
+#'  desired significant figures.
 #'
-#' @param data the \code{data.frame} or \code{data.table} to be summarised.
-#' @param response a string with the name of the variable to summarise.
-#' @param group a string with the name of the grouping variable.
+#' @param data the \code{data.frame} or \code{data.table} to be summarised a
+#' column named *outlier* with a logical flag must be included.
+#' @param refuncertainty a number with the extended uncertainty for the reference value.
 #' @param udm a string with the unit of measurement.
 #' @param signif an integer with the number of desired significant figures.
 #'
@@ -519,49 +664,39 @@ ggboxplot_riprec <- function(data,
 #'
 #' @import data.table
 #' @importFrom stats sd median
-rowsummary_2samples <- function(data,
-                                response,
-                                group,
-                                udm = "",
-                                signif = 3L) {
+rowsummary_riprec <- function(data,
+                              response,
+                              udm = "",
+                              signif = 3L) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    is.character(group),
     is.character(udm),
     all.equal(signif, as.integer(signif)),
     response %in% colnames(data),
-    group %in% colnames(data)
+    "outlier" %in% colnames(data)
   )
 
-  statistica <- NULL
-  mydata <- data.table(data)
-  lvl <- levels(as.factor(mydata[[group]]))
-  roworder <- c("n", "massimo", "media", "mediana", "minimo", "deviazione standard")
-  fm <- as.formula(paste("statistica", '~', group))
+  mydata <- data.table::data.table(data)
+  myrows <- c("n esclusi", "n", "massimo", "media", "mediana", "minimo")
 
   # calculate the summary
-  mysummary <- mydata[, lapply(.SD, function(x) {
-    c(
+  mysummary <- mydata[outlier == FALSE, .(
       n = .N,
-      massimo = max(x, na.rm = TRUE) |> format_sigfig(signif),
-      media = mean(x, na.rm = TRUE) |> format_sigfig(signif),
-      mediana = stats::median(x, na.rm = TRUE) |> format_sigfig(signif),
-      minimo = min(x, na.rm = TRUE) |> format_sigfig(signif),
-      `deviazione standard` = stats::sd(x, na.rm = TRUE) |> format_sigfig(signif)
-    )
-  }),
-  by = group,
-  .SDcols = response][,
-    # table with three columns
-    "statistica" := rep(roworder, length(lvl))] |>
-    data.table::dcast(eval(fm), value.var = response) |>
-    # reordering rows
-    (\(x) x[roworder])()
+      massimo = max(response, na.rm = TRUE) |> format_sigfig(signif),
+      media = mean(response, na.rm = TRUE) |> format_sigfig(signif),
+      mediana = stats::median(response, na.rm = TRUE) |> format_sigfig(signif),
+      minimo = min(response, na.rm = TRUE) |> format_sigfig(signif)
+  )] |> data.table::transpose()
 
-  # adding unit of measurement
-    mysummary[, "statistica" := lapply(statistica, (\(x) {
-      ifelse(x != "n" & udm != "", paste0(x, " (", udm, ")"), x)
-      }))]
+  n_out <- mydata[outlier == TRUE, .N]
+
+  thesummary <- data.table::data.table(statistica = myrows,
+                                       misure = c(n_out, mysummary$V1))
+
+  thesummary$misure <- ifelse(thesummary$statistica %notin% c("n esclusi", "n"),
+                              paste0(thesummary$misure, " ", udm),
+                              thesummary$misure)
+
+  thesummary
 }
-
