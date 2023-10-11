@@ -467,6 +467,7 @@ confint_riprec <- function(data,
     dim(data)[2] == 3
   )
 
+
   cols <- ifelse(data$outlier == TRUE,
                  "#999999",
                  "black")

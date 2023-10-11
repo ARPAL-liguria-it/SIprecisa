@@ -145,11 +145,11 @@ mod_estimate031_riprec_output_ui <- function(id) {
             htmlOutput(ns("outliers"))
           ),
           bslib::nav_panel("Precisione",
-            htmlOutput(ns("preclist"))
+            htmlOutput(ns("precision"))
           ),
-          bslib::nav_panel("Esattezza",
-            #htmlOutput(ns("esatlist")),
-            h4("Test per valutare la presenza di bias (t-test)"),
+          bslib::nav_panel("Giustezza",
+            htmlOutput(ns("trueness")),
+            hr(),
             htmlOutput(ns("ttest"))
           )
         )
@@ -289,11 +289,13 @@ mod_estimate031_riprec_server <- function(id, r) {
     ## reference value
     observeEvent(input$refvalue, ignoreNULL = FALSE, {
       r$estimate03x$refvalue <- input$refvalue
+      r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
     })
 
     ## extended uncertainty of the reference value
     observeEvent(input$refuncertainty, ignoreNULL = FALSE, {
       r$estimate03x$refuncertainty <- input$refuncertainty
+      r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
     })
 
 
@@ -574,7 +576,9 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-    ttest_text <- "<b>H0:</b> %s </br>
+    ttest_text <-
+"<h4>Test per valutare la presenza di bias (t-test)</h4>
+<b>H0:</b> %s </br>
 <b>H1:</b> %s
 <ul>
   <li> Media delle misure (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
@@ -626,7 +630,9 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-    entest_text <- "<b>H0:</b> %s </br>
+    entest_text <-
+"<h4>Test per valutare la presenza di bias (E number)</h4>
+<b>H0:</b> %s </br>
 <b>H1:</b> %s
 <ul>
   <li> Differenza tra i due valori (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
@@ -656,7 +662,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     output$ttest <- renderText({
       validate(
         need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(r$estimate03x$refvalue != 0, message = "")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -669,30 +676,207 @@ mod_estimate031_riprec_server <- function(id, r) {
       }
 
       })
-#
-#     # saving the outputs ----
-#
-#     observeEvent(ttest_html(), {
-#
-#       # output dataset
-#       r$estimate03x$data <- mydata()[, !r$loadfile02$parvar, with = FALSE]
-#       r$estimate03x$data[, "rimosso"] <- ifelse(is_outlier() == TRUE, "s\u00EC", "no")
-#
-#       # summary table
-#       r$estimate03x$summary <- summarytable()
-#
-#       # boxplot
-#       r$estimate03x$plotlyboxplot <- plotlyboxplot()
-#
-#       # test results
-#       r$estimate03x$normality <- shapiro_html()
-#       r$estimate03x$outliers <- outliers_html()
-#       r$estimate03x$ttest <- ttest_html()
-#       # flag for when ready to be saved
-#       r$estimate03x$click <- 1
-#
-#       # the plot is saved only when the save button is clicked
-#     })
+
+
+    #### trueness performances ----
+    alpha <- reactive({
+      r$estimate03x$significance |> as.numeric()
+    })
+
+    mean_value <- reactive({
+      req(r$estimate03x$click == 1)
+
+      selected_data()$response |>
+        mean()
+    })
+
+    mean_ci <- reactive({
+      req(r$estimate03x$click == 1)
+
+      ci <- lm(selected_data()$response ~ 1) |> confint(level = alpha())
+      myci <- c(NA, NA)
+      myci[1] <- ci[[1]] |> format_sigfig(3L)
+      myci[2] <- ci[[2]] |> format_sigfig(3L)
+      myci
+    })
+
+    recovery <- reactive({
+      req(r$estimate03x$click == 1)
+
+      ifelse(r$estimate03x$refvalue == 0, NA,
+      (mean_value() / r$estimate03x$refvalue) * 100) |>
+        format_sigfig(3L)
+    })
+
+    bias <- reactive({
+      req(r$estimate03x$click == 1)
+
+      (mean_value() - r$estimate03x$refvalue)
+    })
+
+    bias_rms <- reactive({
+      req(r$estimate03x$click == 1)
+
+      (selected_data()$response - r$estimate03x$refvalue)^2 |>
+        mean() |>
+        sqrt() |>
+        format_sigfig(3L)
+    })
+
+    relative_bias <- reactive({
+      req(r$estimate03x$click == 1)
+
+      (bias() / mean_value() * 100) |>
+        format_sigfig(3L)
+    })
+
+    trueness_text <-
+"<ul>
+  <li> Media delle misure = %s %s</li>
+  <li> Intervallo di confidenza del valore medio (per \u03b1 = %s) = %s \u2013 %s %s</li>
+  <li> Valore di riferimento = %s %s</li>
+  <li> Incertezza estesa del valore di riferimento = %s %s</li>
+  <li> Recupero = %s &percnt;</li>
+  <li> Bias = %s %s</li>
+  <li> Bias = %s &percnt;</li>
+</ul>"
+
+    trueness_html <- reactive({
+
+      sprintf(
+        trueness_text,
+        mean_value() |> format_sigfig(3L),
+        r$estimate03x$udm,
+        alpha() |> format_sigfig(3L),
+        mean_ci()[1],
+        mean_ci()[2],
+        r$estimate03x$udm,
+        r$estimate03x$refvalue,
+        r$estimate03x$udm,
+        r$estimate03x$refuncertainty,
+        r$estimate03x$udm,
+        recovery(),
+        bias() |> format_sigfig(3L),
+        r$estimate03x$udm,
+        relative_bias()
+      )
+
+    })
+
+    output$trueness <- renderText({
+      validate(
+        need(minval() >= 6,
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(r$estimate03x$refvalue != 0,
+             message = "Serve un valore di riferimento per stimare la giustezza.")
+      )
+      # if results have been saved, restore the t-test results
+      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+
+        r$estimate03[[r$estimate03$myparameter]]$trueness
+
+      } else {
+
+       trueness_html()
+      }
+
+    })
+
+    #### precisione performances ----
+    alpha_2sided <- reactive({
+      (alpha() + (1 - alpha()) / 2)
+    })
+
+    devstd <- reactive({
+      req(r$estimate03x$click == 1)
+
+      sd(selected_data()$response)
+    })
+
+    n <- reactive({
+      req(r$estimate03x$click == 1)
+
+      length(selected_data()$response)
+    })
+
+    repeatability <- reactive({
+      req(r$estimate03x$click == 1)
+
+      (sqrt(2) * qt(alpha_2sided(), n() - 1) * devstd()) |>
+        format_sigfig(3L)
+    })
+
+    rsd <- reactive({
+      req(r$estimate03x$click == 1)
+
+      (100 * devstd() / mean_value()) |>
+        format_sigfig(3L)
+    })
+
+    precision_text <-
+      "<ul>
+  <li> Deviazione standard delle misure = %s %s</li>
+  <li> Limite di ripetibilità (per \u03b1 = %s) = %s %s</li>
+  <li> Coefficiente di variazione = %s &percnt;</li>
+</ul>"
+
+    precision_html <- reactive({
+
+      sprintf(
+        precision_text,
+        devstd() |> format_sigfig(3L),
+        r$estimate03x$udm,
+        alpha_2sided(),
+        repeatability(),
+        r$estimate03x$udm,
+        rsd()
+      )
+
+    })
+
+    output$precision <- renderText({
+      validate(
+        need(minval() >= 6,
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+      )
+      # if results have been saved, restore the t-test results
+      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+
+        r$estimate03[[r$estimate03$myparameter]]$precision
+
+      } else {
+
+        precision_html()
+      }
+
+    })
+
+
+
+    # saving the outputs ----
+
+    observeEvent(ttest_html(), {
+
+      # output dataset
+      r$estimate03x$data <- mydata()[, !r$loadfile02$parvar, with = FALSE]
+      r$estimate03x$data[, "rimosso"] <- ifelse(is_outlier() == TRUE, "s\u00EC", "no")
+
+      # summary table
+      r$estimate03x$summary <- summarytable()
+
+      # boxplot
+      r$estimate03x$plotlyboxplot <- plotlyboxplot()
+
+      # test results
+      r$estimate03x$normality <- shapiro_html()
+      r$estimate03x$outliers <- outliers_html()
+      r$estimate03x$outliers <- trueness_html()
+      r$estimate03x$ttest <- ttest_html()
+      # flag for when ready to be saved
+      r$estimate03x$click <- 1
+
+      # the plot is saved only when the save button is clicked
+    })
 
   })
 }
