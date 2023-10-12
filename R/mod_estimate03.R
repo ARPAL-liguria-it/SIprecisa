@@ -228,8 +228,9 @@ mod_estimate03_server <- function(id, r) {
       switch (r$aim01$aim,
               "riprec" = ggboxplot_riprec(data = r$estimate03x$data,
                                           response = r$loadfile02$responsevar,
-                                          refvalue = r$estimate03x$refval,
+                                          refvalue = r$estimate03x$refvalue,
                                           refuncertainty = r$estimate03x$refuncertainty,
+                                          conflevel = r$estimate03x$significance |> as.numeric(),
                                           udm = r$estimate03x$udm)#,
 
               # "rip" = ggboxplot_rip(data = r$estimate03x$data,
@@ -271,7 +272,10 @@ mod_estimate03_server <- function(id, r) {
       r$estimate03[[input$parameter]]$normality <- r$estimate03x$normality |> htmltormarkdown()
       r$estimate03[[input$parameter]]$outliers <- r$estimate03x$outliers |> htmltormarkdown()
       r$estimate03[[input$parameter]]$ttest <- r$estimate03x$ttest |> htmltormarkdown()
+      r$estimate03[[input$parameter]]$trueness <- r$estimate03x$trueness
+      r$estimate03[[input$parameter]]$precision <- r$estimate03x$precision
       r$estimate03[[input$parameter]]$plotlyboxplot <- r$estimate03x$plotlyboxplot
+      r$estimate03[[input$parameter]]$plotlyconfint <- r$estimate03x$plotlyconfint
       r$estimate03[[input$parameter]]$boxplot <- myggbox()
       r$estimate03[[input$parameter]]$saved <- TRUE
 

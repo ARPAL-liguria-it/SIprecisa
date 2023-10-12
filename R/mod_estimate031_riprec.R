@@ -298,6 +298,18 @@ mod_estimate031_riprec_server <- function(id, r) {
       r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
     })
 
+    #### conditions for trueness results ----
+    ok_click <- reactive({
+      ifelse(r$estimate03x$refvalue != 0 && r$estimate03x$click == 0,
+             0, 1)
+    })
+
+    ok_calc <- reactive({
+      ifelse(r$estimate03x$refvalue == 0,
+             0, 1)
+    })
+
+
 
     # preparing the reactive dataset for outputs ----
     mydata <- reactive({
@@ -413,13 +425,13 @@ mod_estimate031_riprec_server <- function(id, r) {
       }
       })
 
+
+
     # reactive confint plot ----
     plotlyconfint <- reactive({
       req(input_data())
       req(r$estimate03x$refvalue)
       req(r$estimate03x$refuncertainty)
-      req(r$estimate03x$significance)
-      req(r$estimate03x$click == 1)
 
       confint_riprec(
         data = input_data(),
@@ -433,11 +445,15 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
     output$confint <- plotly::renderPlotly({
+      validate(
+        need(ok_click() == 1, "Clicca Calcola per aggiornare il grafico."),
+        need(ok_calc() == 1, "Serve un valore di riferimento per questo grafico")
+      )
 
       # if results have been saved, restore the boxplot
       if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
 
-        r$estimate03[[r$estimate03$myparameter]]$confint
+        r$estimate03[[r$estimate03$myparameter]]$plotlyconfint
 
         # else a new boxplot is calculated and shown
       } else {
@@ -659,6 +675,10 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     })
 
+    test_results <- reactive({
+      ifelse(r$estimate03x$refuncertainty == 0, ttest_html(), entest_html())
+    })
+
     output$ttest <- renderText({
       validate(
         need(minval() >= 6,
@@ -672,62 +692,22 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       } else {
 
-        ifelse(r$estimate03x$refuncertainty == 0, ttest_html(), entest_html())
+        test_results()
       }
 
       })
 
 
     #### trueness performances ----
-    alpha <- reactive({
-      r$estimate03x$significance |> as.numeric()
-    })
-
-    mean_value <- reactive({
+    trueness_results <- reactive({
       req(r$estimate03x$click == 1)
 
-      selected_data()$response |>
-        mean()
-    })
+      fct_trueness_riprec(data = selected_data(),
+                          response = "response",
+                          refvalue = r$estimate03x$refvalue,
+                          significance = r$estimate03x$significance |>
+                            as.numeric())
 
-    mean_ci <- reactive({
-      req(r$estimate03x$click == 1)
-
-      ci <- lm(selected_data()$response ~ 1) |> confint(level = alpha())
-      myci <- c(NA, NA)
-      myci[1] <- ci[[1]] |> format_sigfig(3L)
-      myci[2] <- ci[[2]] |> format_sigfig(3L)
-      myci
-    })
-
-    recovery <- reactive({
-      req(r$estimate03x$click == 1)
-
-      ifelse(r$estimate03x$refvalue == 0, NA,
-      (mean_value() / r$estimate03x$refvalue) * 100) |>
-        format_sigfig(3L)
-    })
-
-    bias <- reactive({
-      req(r$estimate03x$click == 1)
-
-      (mean_value() - r$estimate03x$refvalue)
-    })
-
-    bias_rms <- reactive({
-      req(r$estimate03x$click == 1)
-
-      (selected_data()$response - r$estimate03x$refvalue)^2 |>
-        mean() |>
-        sqrt() |>
-        format_sigfig(3L)
-    })
-
-    relative_bias <- reactive({
-      req(r$estimate03x$click == 1)
-
-      (bias() / mean_value() * 100) |>
-        format_sigfig(3L)
     })
 
     trueness_text <-
@@ -745,20 +725,20 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       sprintf(
         trueness_text,
-        mean_value() |> format_sigfig(3L),
+        trueness_results()$mean |> format_sigfig(3L),
         r$estimate03x$udm,
-        alpha() |> format_sigfig(3L),
-        mean_ci()[1],
-        mean_ci()[2],
+        trueness_results()$alpha |> format_sigfig(3L),
+        trueness_results()$lwr |> format_sigfig(3L),
+        trueness_results()$upr |> format_sigfig(3L),
         r$estimate03x$udm,
         r$estimate03x$refvalue,
         r$estimate03x$udm,
         r$estimate03x$refuncertainty,
         r$estimate03x$udm,
-        recovery(),
-        bias() |> format_sigfig(3L),
+        trueness_results()$recovery,
+        trueness_results()$bias |> format_sigfig(3L),
         r$estimate03x$udm,
-        relative_bias()
+        trueness_results()$relative_bias |> format_sigfig(3L)
       )
 
     })
@@ -767,8 +747,8 @@ mod_estimate031_riprec_server <- function(id, r) {
       validate(
         need(minval() >= 6,
              message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
-        need(r$estimate03x$refvalue != 0,
-             message = "Serve un valore di riferimento per stimare la giustezza.")
+          need(ok_click() == 1, "Clicca Calcola per aggiornare il grafico."),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo grafico")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -783,34 +763,14 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
     #### precisione performances ----
-    alpha_2sided <- reactive({
-      (alpha() + (1 - alpha()) / 2)
-    })
-
-    devstd <- reactive({
+    precision_results <- reactive({
       req(r$estimate03x$click == 1)
 
-      sd(selected_data()$response)
-    })
+      fct_precision_riprec(data = selected_data(),
+                           response = "response",
+                           significance = r$estimate03x$significance |>
+                             as.numeric())
 
-    n <- reactive({
-      req(r$estimate03x$click == 1)
-
-      length(selected_data()$response)
-    })
-
-    repeatability <- reactive({
-      req(r$estimate03x$click == 1)
-
-      (sqrt(2) * qt(alpha_2sided(), n() - 1) * devstd()) |>
-        format_sigfig(3L)
-    })
-
-    rsd <- reactive({
-      req(r$estimate03x$click == 1)
-
-      (100 * devstd() / mean_value()) |>
-        format_sigfig(3L)
     })
 
     precision_text <-
@@ -824,12 +784,12 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       sprintf(
         precision_text,
-        devstd() |> format_sigfig(3L),
+        precision_results()$devstd |> format_sigfig(3L),
         r$estimate03x$udm,
-        alpha_2sided(),
-        repeatability(),
+        precision_results()$alpha |> format_sigfig(3L),
+        precision_results()$repeatability |> format_sigfig(3L),
         r$estimate03x$udm,
-        rsd()
+        precision_results()$rsd |> format_sigfig(3L)
       )
 
     })
@@ -837,7 +797,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     output$precision <- renderText({
       validate(
         need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(r$estimate03x$click == 1, "Clicca Calcola per aggiornare i risultati.")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -852,7 +813,6 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-
     # saving the outputs ----
 
     observeEvent(ttest_html(), {
@@ -864,14 +824,16 @@ mod_estimate031_riprec_server <- function(id, r) {
       # summary table
       r$estimate03x$summary <- summarytable()
 
-      # boxplot
+      # plots
       r$estimate03x$plotlyboxplot <- plotlyboxplot()
+      r$estimate03x$plotlyconfint <- plotlyconfint()
 
       # test results
       r$estimate03x$normality <- shapiro_html()
       r$estimate03x$outliers <- outliers_html()
-      r$estimate03x$outliers <- trueness_html()
-      r$estimate03x$ttest <- ttest_html()
+      r$estimate03x$trueness <- ifelse(r$estimate03x$refvalue == 0, NA, trueness_html())
+      r$estimate03x$precision <- precision_html()
+      r$estimate03x$ttest <- test_results()
       # flag for when ready to be saved
       r$estimate03x$click <- 1
 

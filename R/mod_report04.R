@@ -79,7 +79,7 @@ mod_report04_ui <- function(id){
 #' @param inputreport a list of saved results to be passed to the {rmd}
 #'  report template. Additionally, the module uses a report template named
 #'  {comparison_report.Rmd} and a pdf logo named {"logoarpal.pdf"} located in
-#'  the {"SIconfronta/inst"} folder.
+#'  the {"SIprecisa/inst"} folder.
 #' @return a {pdf} report compiled following the {comparison_report.Rmd} template.
 #'  The report compilation is performed as a \code{future_promise} from package
 #'  {promises}.
@@ -93,8 +93,8 @@ mod_report04_server <- function(id, r){
     ns <- session$ns
 
     # dinamically update the checkboxgroupinput ----
-    observeEvent(r$compare03$saved_flag, {
-      mylist <- reactiveValuesToList(r$compare03)
+    observeEvent(r$estimate03$saved_flag, {
+      mylist <- reactiveValuesToList(r$estimate03)
       mylist <- mylist[names(mylist) %notin% c("myparameter", "saved_flag")]
       # removing not saved results
       mylist <- sapply(mylist, function(x) isTRUE(x$saved)) |>
@@ -105,17 +105,17 @@ mod_report04_server <- function(id, r){
         (\(x) ifelse(x >= 1, "normality", NA))()
       names(normality) <- "Normalit\u00E0 e outliers"
 
-      ttest <- sapply(mylist, function(x) ! is.na(x$ttest)) |>
+      trueness <- sapply(mylist, function(x) ! is.na(x$trueness)) |>
         sum() |>
-        (\(x) ifelse(x >= 1, "ttest", NA))()
-      names(ttest) <- ifelse(r$aim01$aim == "2values_unc", "Confronto tra valori", "Confronto tra medie")
+        (\(x) ifelse(x >= 1, "trueness", NA))()
+      names(trueness) <- "Giustezza"
 
-      ftest <- sapply(mylist, function(x) ! is.na(x$ftest)) |>
+      precision <- sapply(mylist, function(x) ! is.na(x$precision)) |>
         sum() |>
-        (\(x) ifelse(x >= 1, "ftest", NA))()
-      names(ftest) <- "Confronto tra varianze"
+        (\(x) ifelse(x >= 1, "precision", NA))()
+      names(precision) <- "Precisione"
 
-      mychoices <- c(normality, ttest, ftest)
+      mychoices <- c(normality, trueness, precision)
       mychoices <- mychoices[!is.na(mychoices)]
 
       freezeReactiveValue(input, "content")
@@ -132,16 +132,16 @@ mod_report04_server <- function(id, r){
 
     output$makereport <- downloadHandler(
       filename = function() {
-        paste0("comparison_report-", sysdate, ".pdf")
+        paste0("performances_report-", sysdate, ".pdf")
       },
       content = function(file) {
         withProgress(message = "Sto scrivendo il report...", {
         # The report template is copied in a temporary directory to prevent
         # user permission issues
         reportpath <- system.file("rmd", "comparison_report.Rmd",
-                                  package = "SIconfronta")
+                                  package = "SIprecisa")
         logopath <- system.file("rmd", "logo.pdf",
-                                package = "SIconfronta")
+                                package = "SIprecisa")
 
         tempReport <- tempfile(fileext = ".Rmd")
         tempLogo <- tempfile(fileext = ".pdf")
@@ -159,7 +159,7 @@ mod_report04_server <- function(id, r){
         # input parameters for the rmd file ----
         params <- isolate(lapply(r, reactiveValuesToList))
 
-        n_par <- length(params$compare03) - 2
+        n_par <- length(params$estimate03) - 2
         for (i in n_par) {
           Sys.sleep(1)
           incProgress(1 / n_par)

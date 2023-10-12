@@ -639,8 +639,12 @@ ggboxplot_riprec <- function(data,
                   title = "Intervalli di confidenza delle medie") +
     ggplot2::theme_bw()
 
-  myboxplot + mycomparison +
-    patchwork::plot_layout(widths = c(1, 3), nrow = 1)
+  if (refvalue == 0) {
+    myboxplot
+  } else {
+    myboxplot + mycomparison +
+      patchwork::plot_layout(widths = c(1, 3), nrow = 1)
+  }
 
 }
 
@@ -700,4 +704,157 @@ rowsummary_riprec <- function(data,
                               thesummary$misure)
 
   thesummary
+}
+
+#' Displays the results for the determination of precision performances
+#'
+#' @description The function displays the results for the determination
+#' of precision performances of an analytical method, based on a set of values.
+#'  The returned text is suitable for the {SI precisa} {shiny} app.
+#'
+#' @param data a \code{data.frame} or \code{data.table} with the results
+#'   relevant for testing. At least a \code{numeric} vector with the
+#'   measurements should be included.
+#' @param response the name of a numeric vector in \code{data}.
+#' @param significance the level of significance for the repeatability limit
+#' calculation. Typical values are 0.90, 0.95 or 0.99.
+#'
+#' @details precision expressed as standard deviations, repeatability limit
+#' and relative standard deviation (rsd) are calculated according to the Eurachem
+#' guide - The Fitness for Purpose of Analytical Methods.
+#'
+#' @return A list with the following items:
+#'  \describe{
+#'    \item{alpha}{a numeric value calculated as significance + (1 - significance)/2.}
+#'    \item{n}{the number of measurements.}
+#'    \item{stddev}{a numeric value with the standard deviation of the values.}
+#'    \item{repeatability}{a numeric value with the repeatability limit.}
+#'    \item{rsd}{a numeric value with the relative standard deviation.}
+#'  }
+#'
+#' @export
+#'
+#' @importFrom stats sd qt
+fct_precision_riprec <- function(data,
+                                 response,
+                                 significance = 0.95) {
+
+  stopifnot(
+    is.data.frame(data),
+    is.character(response),
+    is.numeric(significance),
+    response %in% colnames(data)
+  )
+
+
+
+  myalpha <- (significance + (1 - significance) / 2)
+
+  devstd <- stats::sd(data[[response]])
+
+  mean_value <- mean(data[[response]])
+
+  n <- length(data[[response]])
+
+  repeatability <- (sqrt(2) * stats::qt(myalpha, n - 1) * devstd)
+
+  rsd <- (100 * devstd / mean_value)
+
+  list(
+    alpha = myalpha,
+    devstd = devstd,
+    n = n,
+    repeatability = repeatability,
+    rsd = rsd
+  )
+
+}
+
+#' Displays the results for the determination of trueness performances
+#'
+#' @description The function displays the results for the determination
+#' of trueness performances of an analytical method, based on a set of values.
+#'  The returned text is suitable for the {SI precisa} {shiny} app.
+#'
+#' @param data a \code{data.frame} or \code{data.table} with the results
+#'   relevant for testing. At least a \code{numeric} vector with the
+#'   measurements should be included.
+#' @param response the name of a numeric vector in \code{data}.
+#' @param significance the level of significance for the repeatability limit
+#' calculation. Typical values are 0.90, 0.95 or 0.99.
+#' @param refvalue a reference value for the set of measurement values.
+#'
+#' @details trueness expressed as mean value of measurements and its confidence
+#' interval, recovery, bias, relative bias and root mean square error for the bias
+#' are calculated according to the Eurachem guide - The Fitness for Purpose of
+#' Analytical Methods.
+#'
+#' @return A list with the following items:
+#'  \describe{
+#'    \item{alpha}{a numeric value calculated as significance + (1 - significance)/2.}
+#'    \item{n}{the number of measurements.}
+#'    \item{mean}{a numeric value with mean of the measurement values.}
+#'    \item{lwr}{a numeric value with the lower end of the mean confidence
+#'               interval for the measurement values.}
+#'    \item{upr}{a numeric value with the upper end of the mean confidence
+#'               interval for the measurement values.}
+#'    \item{recovery}{a numeric value with the relative recovery for the
+#'                    mean measurement values.}
+#'    \item{bias}{a numeric value with the bias for the mean measurement values.}
+#'    \item{bias_rel}{a numeric value with the relative bias for the mean measurement values.}
+#'    \item{bias_rmse}{a numeric value with the root mean square error for the bias
+#'                     of the mean measurement values.}
+#'  }
+#'
+#' @export
+#'
+#' @importFrom stats sd qt
+fct_trueness_riprec <- function(data,
+                                response,
+                                refvalue,
+                                significance = 0.95) {
+  stopifnot(
+    is.data.frame(data),
+    is.character(response),
+    is.numeric(significance),
+    is.numeric(refvalue),
+    response %in% colnames(data)
+  )
+
+  myalpha <- significance
+
+  mean_value <- data[[response]] |> mean()
+
+  n <- data[[response]] |> length()
+
+  myformula <- as.formula(paste0(response, "~ 1"))
+
+  ci <- lm(myformula, data = data) |> confint(level = myalpha)
+  lwr_mean <- ci[[1]]
+  upr_mean <- ci[[2]]
+
+  recovery <- ifelse(refvalue == 0,
+                     NA,
+                     ((mean_value / refvalue) * 100))
+
+  bias <- (mean_value - refvalue)
+
+  bias_rms <- (data[[response]] - refvalue) ^ 2 |>
+      mean() |>
+      sqrt()
+
+  relative_bias <- (bias / mean_value * 100)
+
+  list(
+    alpha = myalpha,
+    n = n,
+    mean = mean_value,
+    lwr = lwr_mean,
+    upr = upr_mean,
+    recovery = recovery,
+    bias = bias,
+    bias_rms = bias_rms,
+    relative_bias = relative_bias
+  )
+
 }
