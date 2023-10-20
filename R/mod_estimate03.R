@@ -272,8 +272,8 @@ mod_estimate03_server <- function(id, r) {
       r$estimate03[[input$parameter]]$normality <- r$estimate03x$normality |> htmltormarkdown()
       r$estimate03[[input$parameter]]$outliers <- r$estimate03x$outliers |> htmltormarkdown()
       r$estimate03[[input$parameter]]$ttest <- r$estimate03x$ttest |> htmltormarkdown()
-      r$estimate03[[input$parameter]]$trueness <- r$estimate03x$trueness
-      r$estimate03[[input$parameter]]$precision <- r$estimate03x$precision
+      r$estimate03[[input$parameter]]$trueness <- r$estimate03x$trueness |> htmltormarkdown()
+      r$estimate03[[input$parameter]]$precision <- r$estimate03x$precision |> htmltormarkdown()
       r$estimate03[[input$parameter]]$plotlyboxplot <- r$estimate03x$plotlyboxplot
       r$estimate03[[input$parameter]]$plotlyconfint <- r$estimate03x$plotlyconfint
       r$estimate03[[input$parameter]]$boxplot <- myggbox()

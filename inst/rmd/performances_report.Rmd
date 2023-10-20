@@ -3,6 +3,7 @@ documentclass: scrartcl
 output:
    pdf_document:
      latex_engine: pdflatex
+     fig_caption: true
 header-includes:
   - \usepackage{graphicx}
   - \usepackage[italian]{babel}
@@ -17,8 +18,8 @@ header-includes:
 params:
   aim01: NA
   loadfile02: NA
-  compare03: NA
-  compare03x: NA
+  estimate03: NA
+  estimate03x: NA
   report04: NA
 title: "`r params$report04$title`"
 ---
@@ -53,52 +54,78 @@ cat('\n\n<!-- -->\n\n')
 ---
 \newpage
 
-```{r dataresults, echo=FALSE, results="asis", out.width='250px', fig.align="center", fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), "Boxplot per l'analita ", ordered_analytes, ".")}
+```{r figureproperties, echo=FALSE}
+data_caption <- "Misure per l'analita %s."
+summary_caption <- "Statistiche di base per l'analita %s."
+precision_caption <- "Prestazioni di precisione per l'analita %s."
+trueness_caption <- "Prestazioni di giustezza per l'analita %s."
 
-data_caption <- "Valori per l'analita %s."
-summary_caption <- "Statistiche di base per i due gruppi dell'analita %s."
-boxplot_caption <- "Boxplot per l'analita %s."
-ttest_title <- ifelse(params$aim01 == "1sample_mu", 
-                      "Test per la differenza tra medie (t-test)",
-                      ifelse(params$aim01$aim == "2values_unc",
-                             "Test per la differenza tra valori ($E_n$)",
-                              "Test per la differenza tra medie (t-test, Welch)"))
-ftest_title <- ifelse(params$aim01 == "1sample_sigma", 
-                      "Test per il rapporto tra varianze ($\\chi^2$)",
-                      "Test per il rapporto tra varianze (Fisher)")
-
-analytes <- names(params$compare03)[names(params$compare03) %notin% c("myparameter", "saved_flag")]
+analytes <- names(params$estimate03)[names(params$estimate03) %notin% c("myparameter", "saved_flag")]
 myorder <- as.character(params$loadfile02$parlist)
 
 ordered_analytes <- analytes[order(match(analytes, myorder))]
+
+boxplot_text <- sapply(ordered_analytes, function(key) NA, simplify=F)
+for (i in ordered_analytes) {
+  boxplot_text[[i]] <- ifelse(params$estimate03[[i]]$refvalue == 0,
+                            "Boxplot dei valori misurati per l'analita %s.",
+                            ifelse(params$estimate03[[i]]$refuncertainty == 0,
+                              "(a) Boxplot dei valori e (b) intervallo di confidenza della
+                              media dei valori misurati confrontato con il valore di
+                              riferimento per l'analita %s.",
+                              "(a) Boxplot dei valori e (b) intervallo di confidenza della
+                              media dei valori misurati confrontato con il valore di
+                              riferimento e la relativa incertezza estesa per l'analita %s.")
+                            )
+  
+  boxplot_text[[i]] <- sprintf(boxplot_text[[i]], i)
+}
+
+```
+
+```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.align="center", fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
+
 for (i in ordered_analytes) {
 
-  if (params$compare03[[i]]$saved == TRUE) {
+  if (params$estimate03[[i]]$saved == TRUE) {
 
   # title with analyte name
   cat(paste("#", i, "\n"))
 
   # table with raw data
-  print(knitr::kable(params$compare03[[i]]$data,
+  print(knitr::kable(params$estimate03[[i]]$data,
                      caption = sprintf(data_caption, i)))
 
   # table with summary statistics
-  print(knitr::kable(params$compare03[[i]]$summary,
+  print(knitr::kable(params$estimate03[[i]]$summary,
                      caption = sprintf(summary_caption, i)))
 
   # boxplot
-  print(params$compare03[[i]]$boxplot)
-
+  print(params$estimate03[[i]]$boxplot)
+  
   if("normality" %in% params$report04$content) {
 
   # checking normality and outliers with Shapiro-Wilk and GESD test
-  cat(paste("#", "Test per la verifica della normalità (Shapiro-Wilk)", "\n"))
-  cat(params$compare03[[i]]$normality)
+  cat(paste("##", "Test per la verifica della normalità (Shapiro-Wilk)", "\n"))
+  cat(params$estimate03[[i]]$normality)
   cat('\n\n<!-- -->\n\n')
 
-  cat(paste("#", "Test per l'identificazione di possibili outliers (GESD)", "\n"))
-  cat(params$compare03[[i]]$outliers)
+  cat(paste("##", "Test per l'identificazione di possibili outliers (GESD)", "\n"))
+  cat(params$estimate03[[i]]$outliers)
   cat('\n\n<!-- -->\n\n')
+
+  } else {
+
+  cat('\n\n<!-- -->\n\n')
+
+  }
+  
+  
+  if("precision" %in% params$report04$content) {
+    
+    cat(paste("##", "Prestazioni di precisione", "\n"))
+    cat(params$estimate03[[i]]$precision)
+    cat('\n\n<!-- -->\n\n')
 
   } else {
 
@@ -107,11 +134,18 @@ for (i in ordered_analytes) {
   }
 
 
-  if("ttest" %in% params$report04$content) {
-
-  # comparing means by t-test
-  cat(paste("#", ttest_title, "\n"))
-  cat(params$compare03[[i]]$ttest)
+  if("trueness" %in% params$report04$content) {
+    
+    cat(paste("##", "Prestazioni di giustezza", "\n"))
+    cat(params$estimate03[[i]]$trueness)
+    cat('\n\n<!-- -->\n\n')
+  
+  # detecting bias by t-test or E number
+  ttest_title <- ifelse(params$estimate03[[i]]$refuncertainty == 0,
+                        "Test per la significatività del bias (t-test)",
+                        "Test per la significatività del bias ($E_n$)")
+  cat(paste("###", ttest_title, "\n"))
+  cat(params$estimate03[[i]]$ttest)
   cat('\n\n<!-- -->\n\n')
 
   } else {
@@ -120,19 +154,6 @@ for (i in ordered_analytes) {
 
   }
 
-
-  if("ftest" %in% params$report04$content) {
-
-  # comparing variances by F-test
-  cat(paste("#", ftest_title, "\n"))
-  cat(params$compare03[[i]]$ftest)
-  cat('\n\n<!-- -->\n\n')
-
-  } else {
-
-  cat('\n\n<!-- -->\n\n')
-
-  }
 
   } else {
 
@@ -153,9 +174,9 @@ Il rilascio avviene solo nel caso in cui tutti i test risultino superati.
 L'applicazione è distribuita in un ambiente protetto da aggiornamenti o modifiche
 accidentali.
 
-Maggiori dettagli sono consultabili all'indirizzo (https://github.com/andreabz/SIconfronta/actions)
+Maggiori dettagli sono consultabili all'indirizzo (https://github.com/andreabz/SIprecisa/actions)
 o eseguendo `devtools::check()` e `covr::report()` sulla macchina su cui risiede l'applicazione,
-all'interno della cartella `/srv/shiny-server/SIconfronta`.
+all'interno della cartella `/srv/shiny-server/SIprecisa`.
 
 ## Informazioni sulla sessione
 
@@ -205,8 +226,8 @@ Report creato il `r sysdate` alle `r systime`.
 ```{r end, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 cat(
   paste0(
-  "© 2023. Questo report è stato prodotto con il pacchetto SIconfronta ",
-  utils::packageVersion("SIconfronta"), 
+  "© 2023. Questo report è stato prodotto con il pacchetto SIprecisa ",
+  utils::packageVersion("SIprecisa"), 
   " e rilasciato con licenza [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Per informazioni o segnalazioni, rivolgersi ad Andrea Bazzano ([andrea.bazzano@arpal.liguria.it](mailto:andre.bazzano@arpal.liguria.it))."
   )
 )

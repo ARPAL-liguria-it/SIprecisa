@@ -52,7 +52,7 @@ mod_report04_ui <- function(id){
         "Una volta cliccato il tasto 'Crea il report',
         non chiudere o ricaricare la pagina finch\u00E9 non troverai
         nella tua cartella Download un file con il nome
-        'comparison-report_' seguito dalla data di oggi.
+        'performances-report_' seguito dalla data di oggi.
 
         A seconda di quanti parametri hai salvato, potrebbero volerci
         fino a un massimo di dieci minuti,
@@ -138,7 +138,7 @@ mod_report04_server <- function(id, r){
         withProgress(message = "Sto scrivendo il report...", {
         # The report template is copied in a temporary directory to prevent
         # user permission issues
-        reportpath <- system.file("rmd", "comparison_report.Rmd",
+        reportpath <- system.file("rmd", "performances_report.Rmd",
                                   package = "SIprecisa")
         logopath <- system.file("rmd", "logo.pdf",
                                 package = "SIprecisa")

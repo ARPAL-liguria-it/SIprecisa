@@ -643,7 +643,7 @@ ggboxplot_riprec <- function(data,
     myboxplot
   } else {
     myboxplot + mycomparison +
-      patchwork::plot_layout(widths = c(1, 3), nrow = 1)
+      patchwork::plot_layout(widths = c(3, 4), nrow = 1)
   }
 
 }
