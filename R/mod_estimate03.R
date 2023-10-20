@@ -269,6 +269,8 @@ mod_estimate03_server <- function(id, r) {
       r$estimate03[[input$parameter]]$normality_html <- r$estimate03x$normality
       r$estimate03[[input$parameter]]$outliers_html <- r$estimate03x$outliers
       r$estimate03[[input$parameter]]$ttest_html <- r$estimate03x$ttest
+      r$estimate03[[input$parameter]]$trueness_html <- r$estimate03x$trueness
+      r$estimate03[[input$parameter]]$precision_html <- r$estimate03x$precision
       r$estimate03[[input$parameter]]$normality <- r$estimate03x$normality |> htmltormarkdown()
       r$estimate03[[input$parameter]]$outliers <- r$estimate03x$outliers |> htmltormarkdown()
       r$estimate03[[input$parameter]]$ttest <- r$estimate03x$ttest |> htmltormarkdown()

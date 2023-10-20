@@ -593,7 +593,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
 
     ttest_text <-
-"<h4>Test per valutare la presenza di bias (t-test)</h4>
+"<h4> Test per valutare la presenza di bias (t-test) </h4>
 <b>H0:</b> %s </br>
 <b>H1:</b> %s
 <ul>
@@ -647,7 +647,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
 
     entest_text <-
-"<h4>Test per valutare la presenza di bias (E number)</h4>
+"<h4> Test per valutare la presenza di bias (E number) </h4>
 <b>H0:</b> %s </br>
 <b>H1:</b> %s
 <ul>
@@ -722,6 +722,8 @@ mod_estimate031_riprec_server <- function(id, r) {
 </ul>"
 
     trueness_html <- reactive({
+      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
+            r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
       sprintf(
         trueness_text,
@@ -747,13 +749,13 @@ mod_estimate031_riprec_server <- function(id, r) {
       validate(
         need(minval() >= 6,
              message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
-          need(ok_click() == 1, "Clicca Calcola per aggiornare il grafico."),
+          need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
           need(ok_calc() == 1, "Serve un valore di riferimento per questo grafico")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
 
-        r$estimate03[[r$estimate03$myparameter]]$trueness
+        r$estimate03[[r$estimate03$myparameter]]$trueness_html
 
       } else {
 
@@ -765,6 +767,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     #### precisione performances ----
     precision_results <- reactive({
       req(r$estimate03x$click == 1)
+      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
+            r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
       fct_precision_riprec(data = selected_data(),
                            response = "response",
@@ -803,7 +807,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
 
-        r$estimate03[[r$estimate03$myparameter]]$precision
+        r$estimate03[[r$estimate03$myparameter]]$precision_html
 
       } else {
 
@@ -815,7 +819,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     # saving the outputs ----
 
-    observeEvent(ttest_html(), {
+    observeEvent(precision_html(), {
 
       # output dataset
       r$estimate03x$data <- mydata()[, !r$loadfile02$parvar, with = FALSE]
@@ -833,7 +837,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       r$estimate03x$outliers <- outliers_html()
       r$estimate03x$trueness <- ifelse(r$estimate03x$refvalue == 0, NA, trueness_html())
       r$estimate03x$precision <- precision_html()
-      r$estimate03x$ttest <- test_results()
+      r$estimate03x$ttest <- ifelse(r$estimate03x$refvalue == 0, NA, test_results())
       # flag for when ready to be saved
       r$estimate03x$click <- 1
 

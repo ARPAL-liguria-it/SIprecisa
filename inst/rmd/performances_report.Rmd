@@ -59,6 +59,7 @@ data_caption <- "Misure per l'analita %s."
 summary_caption <- "Statistiche di base per l'analita %s."
 precision_caption <- "Prestazioni di precisione per l'analita %s."
 trueness_caption <- "Prestazioni di giustezza per l'analita %s."
+norefvalue <- "Non applicabile per mancanza di un valore di riferimento."
 
 analytes <- names(params$estimate03)[names(params$estimate03) %notin% c("myparameter", "saved_flag")]
 myorder <- as.character(params$loadfile02$parlist)
@@ -137,15 +138,19 @@ for (i in ordered_analytes) {
   if("trueness" %in% params$report04$content) {
     
     cat(paste("##", "Prestazioni di giustezza", "\n"))
-    cat(params$estimate03[[i]]$trueness)
+    
+    ifelse(params$estimate03[[i]]$refvalue == 0, 
+           norefvalue, 
+           params$estimate03[[i]]$trueness) |>
+      cat()
+    
     cat('\n\n<!-- -->\n\n')
-  
-  # detecting bias by t-test or E number
-  ttest_title <- ifelse(params$estimate03[[i]]$refuncertainty == 0,
-                        "Test per la significatività del bias (t-test)",
-                        "Test per la significatività del bias ($E_n$)")
-  cat(paste("###", ttest_title, "\n"))
-  cat(params$estimate03[[i]]$ttest)
+    
+    ifelse(params$estimate03[[i]]$refvalue == 0, 
+           "", 
+           params$estimate03[[i]]$ttest) |>
+      cat()
+    
   cat('\n\n<!-- -->\n\n')
 
   } else {
