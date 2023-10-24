@@ -44,11 +44,11 @@ mod_estimate03_ui <- function(id) {
         id = ns("ctrls"),
 
         bslib::nav_panel("riprec",
-          mod_estimate031_riprec_inputs_ui(ns("riprec")))#,
+          mod_estimate031_riprec_inputs_ui(ns("riprec"))),
 
-      #   bslib::nav_panel("rip",
-      #     mod_estimate032_rip_inputs_ui(ns("rip"))
-      #   ),
+        bslib::nav_panel("rip",
+          mod_estimate032_rip_inputs_ui(ns("rip"))
+         )#,
       #
       #   bslib::nav_panel("rec",
       #     mod_estimate033_rec_inputs_ui(ns("rec"))),
@@ -115,10 +115,10 @@ mod_estimate03_ui <- function(id) {
         id = ns("outputs"),
 
         bslib::nav_panel("riprec",
-          mod_estimate031_riprec_output_ui(ns("riprec")))#,
+          mod_estimate031_riprec_output_ui(ns("riprec"))),
 
-        # bslib::nav_panel("rip",
-        #   mod_estimate032_rip_output_ui(ns("rip"))),
+        bslib::nav_panel("rip",
+          mod_estimate032_rip_output_ui(ns("rip")))#,
         #
         # bslib::nav_panel("rec",
         #   mod_estimate033_rec_output_ui(ns("rec"))),
@@ -215,8 +215,8 @@ mod_estimate03_server <- function(id, r) {
     to_mod_estimate03x  <- reactive({
       switch (
         r$aim01$aim,
-        "riprec" = mod_estimate031_riprec_server("riprec", r)#,
-        # "rip" = mod_estimate032_rip_server("rip", r),
+        "riprec" = mod_estimate031_riprec_server("riprec", r),
+        "rip" = mod_estimate032_rip_server("rip", r)#,
         # "rec" = mod_estimate033_rec_server("rec", r),
         # "recuno" = mod_estimate035_recuno_server("recuno", r)
       )

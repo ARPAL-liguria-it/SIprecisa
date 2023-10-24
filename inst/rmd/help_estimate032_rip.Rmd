@@ -1,0 +1,11 @@
+---
+output: html_document
+---
+
+  1. Seleziona un analita;
+  2. digita le unità di misura;
+  3. seleziona il livello di confidenza da applicare ai test;
+  4. rimuovi eventuali punti cliccando sul grafico;
+  5. salva il risultato;
+  6. passa all'analita successivo;
+  7. quando hai finito clicca su avanti per passare alla creazione del report.

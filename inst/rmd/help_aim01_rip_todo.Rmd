@@ -1,0 +1,54 @@
+---
+output: html_document
+---
+Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto e virgola (;):
+
+  1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
+  2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori ottenuti per la prima serie di misure. 
+  3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori ottenuti per la seconda serie di misure. 
+  Il separatore decimale deve essere il punto (.).
+  
+Non sono ammessi né meno di 8 valori, né più di 30 valori per ogni analita.
+
+Ricorda che per poter utilizzare questa modalità di calcolo, le due serie di misura devono essere tra loro appaiate.
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Concentrazione 1  | , | Concentrazione 2  |
+|:--------------|:-:|------------------:|:-:|------------------:|
+| Cu            | , | 15.1              | , | 14.9              |
+| Cu            | , | 15.8              | , | 15.7              |
+| Cu            | , | 15.6              | , | 15.9              |
+| Cu            | , | 16.1              | , | 15.8              |
+| Cu            | , | 15.2              | , | 16.0              |
+| Cu            | , | 15.9              | , | 15.0              |
+| Cu            | , | 18.0              | , | 18.1              |
+| Cu            | , | 17.8              | , | 17.2              |
+| Zn            | , | 200.1             | , | 198.4             |
+| Zn            | , | 225.4             | , | 226.0             |
+| Zn            | , | 231.1             | , | 231.0             |
+| Zn            | , | 198.6             | , | 195.4             |
+| Zn            | , | 205.6             | , | 200.3             |
+| Zn            | , | 215.9             | , | 180.6             |
+| Zn            | , | 150.5             | , | 157.3             |
+| Zn            | , | 148.2             | , | 180.9             |
+
+</div>
+</details>

@@ -1,0 +1,14 @@
+---
+output: html_document
+---
+
+  1. Seleziona un analita;
+  2. digita le unità di misura;
+  3. seleziona il livello di confidenza da applicare ai test;
+  4. digita l'eventuale valore di riferimento per il calcolo delle prestazioni di giustezza;
+  5. digita l'eventuale incertezza estesa del valore di riferimento;
+  6. clicca sul pulsante Calcola;
+  7. rimuovi eventuali punti cliccando sul grafico;
+  8. salva il risultato;
+  9. passa all'analita successivo;
+  10. quando hai finito clicca su avanti per passare alla creazione del report.

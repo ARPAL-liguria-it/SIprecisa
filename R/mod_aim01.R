@@ -30,8 +30,7 @@ mod_aim01_ui <- function(id) {
           label = NULL,
           choices = c(
             "Stima di ripetibilit\u00E0 e recupero dalla stessa serie di misure" = "riprec",
-            "Stima della ripetibilit\u00E0 da una serie di misure" = "rip",
-            "Stima del recupero da una serie di misure" = "rec",
+            "Stima della ripetibilit\u00E0 da una serie di misure in doppio" = "rip",
             "Stima del recupero da un valore singolo" = "recuno"
           ),
           width = "100%"
@@ -66,7 +65,7 @@ mod_aim01_ui <- function(id) {
                          todotitle = "Cosa ti serve",
                          tipstitle = "Suggerimento",
                          togettitle = "Cosa otterrai",
-                         todofile = "help_aim01_riprec_todo.Rmd",
+                         todofile = "help_aim01_rip_todo.Rmd",
                          tipsfile = "help_aim01_tips.Rmd",
                          togetfile = "help_aim01_rip_toget.Rmd"
                        )

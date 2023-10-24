@@ -3,9 +3,10 @@ output: html_document
 ---
 Per ogni analita otterrai i seguenti output:
   
-  - un confronto grafico dei due gruppi di dati mediante boxplot;
-  - una tabella riassuntiva delle principali statistiche relative sia alla precisione, sia al recupero;
+  - una rappresentazione grafica dei dati mediante boxplot;
+  - le prestazioni di precisione;
+  - le prestazioni di giustezza;
   - i risultati dei seguenti test:
     - verifica della normalità mediante test di Shapiro-Wilk;
     - verifica della presenza di valori anomali mediante il test *generalised extreme studentized deviate* (GESD);
-    - verifica della presenza di bias mediante $t$-test di Welch.
+    - verifica della presenza di bias mediante $t$-test.

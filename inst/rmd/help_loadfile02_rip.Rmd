@@ -1,0 +1,64 @@
+---
+output: html_document
+---
+
+Carica un file .csv con tre colonne:
+  - una colonna con il nome o i nomi dei parametri di interesse;
+  - una colonna con i valori numerici derivanti dalla prima serie di misure effettuate per i diversi parametri;
+  - una colonna con i valori numerici derivanti dalla seconda serie di misure effettuate per i diversi parametri.
+  
+Non sono ammessi né meno di 8 valori, né più di 30 valori per ogni coppia di parametro e gruppo. 
+  
+
+
+
+<details>
+<summary> Clicca per un esempio </summary>
+
+<style>
+
+    .basic-styling table,
+    .basic-styling td,
+    .basic-styling th {
+    padding:10px;
+    }
+    
+</style>
+
+<div class="basic-styling">
+<div></div>
+<div class="table-caption">
+  <span class="table-number"></span>
+</div>
+
+| Parametro     | , | Concentrazione 1  | , | Concentrazione 2  |
+|:--------------|:-:|------------------:|:-:|------------------:|
+| Cu            | , | 15.1              | , | 14.9              |
+| Cu            | , | 15.8              | , | 15.7              |
+| Cu            | , | 15.6              | , | 15.9              |
+| Cu            | , | 16.1              | , | 15.8              |
+| Cu            | , | 15.2              | , | 16.0              |
+| Cu            | , | 15.9              | , | 15.0              |
+| Cu            | , | 18.0              | , | 18.1              |
+| Cu            | , | 17.8              | , | 17.2              |
+| Cu            | , | 17.6              | , | 16.8              |
+| Cu            | , | 18.5              | , | 18.2              |
+| Cu            | , | 18.4              | , | 18.5              |
+| Cu            | , | 18.3              | , | 18.6              |
+| Zn            | , | 200.1             | , | 198.4             |
+| Zn            | , | 225.4             | , | 226.0             |
+| Zn            | , | 231.1             | , | 231.0             |
+| Zn            | , | 198.6             | , | 195.4             |
+| Zn            | , | 205.6             | , | 200.3             |
+| Zn            | , | 215.9             | , | 180.6             |
+| Zn            | , | 150.5             | , | 157.3             |
+| Zn            | , | 148.2             | , | 180.9             |
+| Zn            | , | 152.6             | , | 160.1             |
+| Zn            | , | 160.0             | , | 170.5             |
+| Zn            | , | 158.4             | , | 162.5             |
+| Zn            | , | 157.9             | , | 164.7             |
+
+</div>
+</details>
+
+

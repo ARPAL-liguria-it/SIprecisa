@@ -76,14 +76,32 @@ mod_loadfile02_ui <- function(id) {
         )
       ),
 
+      bslib::navset_hidden(
+        id = ns("paired"),
+
+        bslib::nav_panel("not_2measures"),
+
+        bslib::nav_panel(
+          "2measures",
+          selectizeInput(
+            ns("secondresponsevar"),
+            label = "Seconda serie di risposte",
+            selected = NULL,
+            choices = NULL,
+            multiple = TRUE,
+            options = list(maxItems = 1)
+          )
+        )
+      ),
+
 
       bslib::navset_hidden(
         id = ns("ext_unc"),
 
-        bslib::nav_panel("not_2values"),
+        bslib::nav_panel("without_unc"),
 
         bslib::nav_panel(
-          "2values",
+          "with_unc",
           selectizeInput(
             ns("uncertaintyvar"),
             label = "Incertezza estesa",
@@ -189,8 +207,7 @@ mod_loadfile02_server <- function(id, r) {
       switch(
         r$aim01$aim,
         "riprec" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
-        "rip" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
-        "rec" = includeMarkdown(system.file("rmd", "help_loadfile02_riprec.Rmd", package = "SIprecisa")),
+        "rip" = includeMarkdown(system.file("rmd", "help_loadfile02_rip.Rmd", package = "SIprecisa")),
         "recuno" = includeMarkdown(system.file("rmd", "help_loadfile02_recuno.Rmd", package = "SIprecisa"))
       )
     })
@@ -228,7 +245,7 @@ mod_loadfile02_server <- function(id, r) {
     reqsumnum <- reactive({
       req(is_length_aim_one())
 
-      ifelse(r$aim01$aim == "recuno", 2, 1)
+      ifelse(r$aim01$aim %in% c("recuno", "rip"), 2, 1)
     })
 
     ## required minimum number of values
@@ -238,8 +255,7 @@ mod_loadfile02_server <- function(id, r) {
       switch(
         r$aim01$aim,
         "riprec" = 6,
-        "rip" = 6,
-        "rec" = 6,
+        "rip" = 8,
         "recuno" = 1
       )
     })
@@ -252,7 +268,6 @@ mod_loadfile02_server <- function(id, r) {
         r$aim01$aim,
         "riprec" = 30,
         "rip" = 30,
-        "rec" = 30,
         "recuno" = 1
       )
     })
@@ -361,11 +376,20 @@ mod_loadfile02_server <- function(id, r) {
     })
 
     ## trigger for the ext_unc tabsetPanel
-    is2values <- reactive({
+    isunc <- reactive({
       req(is_length_aim_one())
 
       ifelse(isTRUE(dataok()),
-             ifelse(r$aim01$aim == "recunc", "2values", "not_2values"),
+             ifelse(r$aim01$aim == "recunc", "with_unc", "without_unc"),
+             "")
+    })
+
+    ## trigger for the paired tabsetPanel
+    is2measures <- reactive({
+      req(is_length_aim_one())
+
+      ifelse(isTRUE(dataok()),
+             ifelse(r$aim01$aim == "rip", "2measures", "not_2measures"),
              "")
     })
 
@@ -375,10 +399,16 @@ mod_loadfile02_server <- function(id, r) {
       updateTabsetPanel(inputId = "columnnames", selected = isloaded() |> unname())
     })
 
-    ## updating ext_unc tabsetPanel depending on the option selected
-    observeEvent(is2values(), {
+    ## updating paired tabsetPanel depending on the option selected
+    observeEvent(is2measures(), {
 
-      updateTabsetPanel(inputId = "ext_unc", selected = is2values() |> unname())
+      updateTabsetPanel(inputId = "paired", selected = is2measures() |> unname())
+    })
+
+    ## updating ext_unc tabsetPanel depending on the option selected
+    observeEvent(isunc(), {
+
+      updateTabsetPanel(inputId = "ext_unc", selected = isunc() |> unname())
     })
 
     ## updating next tabsetPanel depending on the option selected
@@ -417,13 +447,25 @@ mod_loadfile02_server <- function(id, r) {
       freezeReactiveValue(input, "responsevar")
       updateSelectizeInput(session,
                            "responsevar",
+                           label = ifelse(r$aim01$aim == "rip", "Prima serie di risposte", "Risposte"),
                            selected = numcol()[1],
+                           choices = numcol())
+    })
+
+    ## update input for secondresponse variable
+    observeEvent(input$responsevar, {
+      req(is2measures() == "2measures")
+
+      freezeReactiveValue(input, "secondresponsevar")
+      updateSelectizeInput(session,
+                           "secondresponsevar",
+                           selected = numcol()[2],
                            choices = numcol())
     })
 
     ## update input for uncertainty variable
     observeEvent(input$responsevar, {
-      req(is2values() == "2values")
+      req(isunc() == "with_unc")
 
       freezeReactiveValue(input, "uncertaintyvar")
       updateSelectizeInput(session,
@@ -491,6 +533,7 @@ mod_loadfile02_server <- function(id, r) {
       r$loadfile02$parvar <- input$parvar
       r$loadfile02$parlist <- parlist()
       r$loadfile02$responsevar <- input$responsevar
+      r$loadfile02$secondresponsevar <- input$secondresponsevar
       r$loadfile02$uncertaintyvar <- input$uncertaintyvar
 
     })
