@@ -105,7 +105,7 @@ mod_report04_server <- function(id, r){
         (\(x) ifelse(x >= 1, "normality", NA))()
       names(normality) <- "Normalit\u00E0 e outliers"
 
-      trueness <- sapply(mylist, function(x) ! is.na(x$refvalue)) |>
+      trueness <- sapply(mylist, function(x) ! is.na(x$trueness)) |>
         sum() |>
         (\(x) ifelse(x >= 1, "trueness", NA))()
       names(trueness) <- "Giustezza"

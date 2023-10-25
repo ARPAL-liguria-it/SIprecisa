@@ -96,7 +96,7 @@ mod_estimate032_rip_output_ui <- function(id) {
 
       bslib::layout_columns(
         bslib::card(
-          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva"),
+          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva delle differenze tra coppie di valori"),
 
           bslib::layout_column_wrap(
             width = NULL,
@@ -109,7 +109,7 @@ mod_estimate032_rip_output_ui <- function(id) {
 
         bslib::navset_card_tab(
           id = ns("tabresults"),
-          title = list(icon("vials"), "Test statistici"),
+          title = list(icon("vials"), "Test statistici e parametri prestazionali"),
 
           bslib::nav_panel("Normalit\u00E0",
             h4("Test per la verifica della normalit\u00E0 (Shapiro-Wilk)"),
@@ -222,13 +222,7 @@ mod_estimate032_rip_server <- function(id, r) {
           )
 
           r$estimate03x$click <- 1
-
-          # else, just use the default initial values
-        } else {
-
-          r$estimate03x$click <- 0
         }
-
       })
 
     ## unit of measurement
@@ -286,6 +280,8 @@ mod_estimate032_rip_server <- function(id, r) {
       data.frame(
         key = key(),
         outlier = is_outlier(),
+        measure1 = mydata()[[r$loadfile02$responsevar]],
+        measure2 = mydata()[[r$loadfile02$secondresponsevar]],
         response = mydata()[[r$loadfile02$responsevar]] - mydata()[[r$loadfile02$secondresponsevar]]
       )
 
@@ -309,7 +305,7 @@ mod_estimate032_rip_server <- function(id, r) {
     plotlyboxplot <- reactive({
       req(input_data())
 
-      myboxplot <- boxplot_riprec(
+      myboxplot <- boxplot_rip(
         data = input_data(),
         response = r$loadfile02$responsevar,
         udm = r$estimate03x$udm
@@ -340,7 +336,7 @@ mod_estimate032_rip_server <- function(id, r) {
     summarytable <- reactive({
       req(input_data())
 
-      rowsummary_riprec(
+      rowsummary_rip(
         data = input_data(),
         response = "response",
         udm = r$estimate03x$udm
@@ -447,14 +443,14 @@ mod_estimate032_rip_server <- function(id, r) {
 
     #### precisione performances ----
     precision_results <- reactive({
-      req(r$estimate03x$click == 1)
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
-      fct_precision_riprec(data = selected_data(),
-                           response = "response",
-                           significance = r$estimate03x$significance |>
-                             as.numeric())
+      fct_precision_rip(data = selected_data(),
+                        response = "response",
+                        measures = c("measure1", "measure2"),
+                        significance = r$estimate03x$significance |>
+                          as.numeric())
 
     })
 
@@ -482,8 +478,7 @@ mod_estimate032_rip_server <- function(id, r) {
     output$precision <- renderText({
       validate(
         need(minval() >= 8,
-             message = "Servono almeno 8 valori per poter calcolare i parametri prestazionali"),
-        need(r$estimate03x$click == 1, "Clicca Calcola per aggiornare i risultati.")
+             message = "Servono almeno 8 valori per poter calcolare i parametri prestazionali")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -511,11 +506,14 @@ mod_estimate032_rip_server <- function(id, r) {
 
       # plots
       r$estimate03x$plotlyboxplot <- plotlyboxplot()
+      r$estimate03x$plotlyconfint <- NA
 
       # test results
       r$estimate03x$normality <- shapiro_html()
       r$estimate03x$outliers <- outliers_html()
       r$estimate03x$precision <- precision_html()
+      r$estimate03x$ttest <- NA
+      r$estimate03x$trueness <- NA
       # flag for when ready to be saved
       r$estimate03x$click <- 1
 

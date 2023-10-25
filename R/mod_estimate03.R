@@ -231,11 +231,11 @@ mod_estimate03_server <- function(id, r) {
                                           refvalue = r$estimate03x$refvalue,
                                           refuncertainty = r$estimate03x$refuncertainty,
                                           conflevel = r$estimate03x$significance |> as.numeric(),
-                                          udm = r$estimate03x$udm)#,
+                                          udm = r$estimate03x$udm),
 
-              # "rip" = ggboxplot_rip(data = r$estimate03x$data,
-              #                       response = r$loadfile02$responsevar,
-              #                       udm = r$estimate03x$udm),
+              "rip" = ggboxplot_rip(data = r$estimate03x$data,
+                                    response = r$loadfile02$responsevar,
+                                    udm = r$estimate03x$udm)#,
               #
               # "rec" = ggboxplot_riprec(data = r$estimate03x$data,
               #                          response = r$loadfile02$responsevar,
@@ -280,7 +280,6 @@ mod_estimate03_server <- function(id, r) {
       r$estimate03[[input$parameter]]$plotlyconfint <- r$estimate03x$plotlyconfint
       r$estimate03[[input$parameter]]$boxplot <- myggbox()
       r$estimate03[[input$parameter]]$saved <- TRUE
-
 
       showModal(
         modalDialog(

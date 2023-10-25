@@ -351,8 +351,6 @@ fct_entest_riprec <- function(data,
 #' a column named *response* with the numeric values for the two groups and a
 #' column named *outlier* with a logical vector.
 #' @param response a character string with the label for the response numeric variable.
-#' @param refval a reference numeric value.
-#' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param udm a character string with the unit of measurement.
 #'
 #' @return A {plotly} boxplot for measurement values.
@@ -362,14 +360,10 @@ fct_entest_riprec <- function(data,
 #' @importFrom plotly plot_ly add_boxplot add_markers layout config
 boxplot_riprec <- function(data,
                            response,
-                           refvalue,
-                           refuncertainty,
                            udm) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    {is.numeric(refvalue) || is.na(refvalue)},
-    {is.numeric(refuncertainty) || is.na(refuncertainty)},
     is.character(udm),
     colnames(data) %in% c("key", "outlier", "response"),
     dim(data)[2] == 3

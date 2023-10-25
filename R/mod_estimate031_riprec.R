@@ -121,7 +121,7 @@ mod_estimate031_riprec_output_ui <- function(id) {
 
       bslib::layout_columns(
         bslib::card(
-          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva"),
+          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva dei valori misurati"),
 
           bslib::layout_column_wrap(
             width = NULL,
@@ -135,7 +135,7 @@ mod_estimate031_riprec_output_ui <- function(id) {
 
         bslib::navset_card_tab(
           id = ns("tabresults"),
-          title = list(icon("vials"), "Test statistici"),
+          title = list(icon("vials"), "Test statistici e parametri prestazionali"),
 
           bslib::nav_panel("Normalit\u00E0",
             h4("Test per la verifica della normalit\u00E0 (Shapiro-Wilk)"),
@@ -400,9 +400,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       myboxplot <- boxplot_riprec(
         data = input_data(),
         response = r$loadfile02$responsevar,
-        udm = r$estimate03x$udm,
-        refvalue = r$estimate03x$refvalue,
-        refuncertainty = r$estimate03x$refuncertainty
+        udm = r$estimate03x$udm
       )
 
       myboxplot$x$source <- "boxplot"
