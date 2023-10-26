@@ -380,7 +380,7 @@ mod_loadfile02_server <- function(id, r) {
       req(is_length_aim_one())
 
       ifelse(isTRUE(dataok()),
-             ifelse(r$aim01$aim == "recunc", "with_unc", "without_unc"),
+             ifelse(r$aim01$aim == "recuno", "with_unc", "without_unc"),
              "")
     })
 

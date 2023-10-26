@@ -7,7 +7,7 @@ Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto
   2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori misurati. Il separatore decimale deve essere il punto (.).
   3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori di incertezza estesa associati ai risultati riportati nella terza colonna; anche qui il separatore decimale deve essere il punto (.).
   
-È ammesso un solo valore numerico per ogni coppia di parametro e gruppo.
+È ammesso un solo valore numerico per ogni parametro.
 
 <details>
 <summary> Clicca per un esempio </summary>
@@ -31,9 +31,7 @@ Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto
 | Parametro     | , | Concentrazione  | , | Uext |
 |:--------------|:-:|----------------:|:-:|-----:|
 | Cu            | , | 15.1            | , | 2.3  |
-| Cu            | , | 22.3            | , | 3.5  |
 | Zn            | , | 200.1           | , | 10.2 |
-| Zn            | , | 185.9           | , | 8.4  |
 
 </div>
 </details>

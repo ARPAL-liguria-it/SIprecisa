@@ -1,15 +1,11 @@
-#' estimate UI Function: option for repeatability and recovery estimates
-#' on the same measurement values
+#' estimate UI Function: option forrecovery estimates
+#' on a single measurement value
 #'
-#' @description A shiny Module for estimating performance parameters of
+#' @description A shiny Module for estimating recovery parameters of
 #'   chemical analytical methods.
-#'   Data are checked for normality, presence of outliers and repeatability and
-#'   recovery statistics are calculated.
-#'   The presence of a significant bias is tested by two-sided t-test.
 #'
-#' @details Normality is checked by using the Shapiro-Wilk test.
-#'   Possible outliers are inspected by generalized extreme studentized deviate test.
-#'   Mean values of measurments is compared with the reference value by two-sided t-test.
+#' @details The measurement value is compared with the reference value by
+#' normalized error - En.
 #'
 #'   Test results are formatted in HTML.
 #'
@@ -29,7 +25,7 @@
 #' @noRd
 #'
 #' @import shiny
-mod_estimate031_riprec_inputs_ui <- function(id) {
+mod_estimate033_recuno_inputs_ui <- function(id) {
   ns <- NS(id)
   tagList(
 
@@ -38,26 +34,14 @@ mod_estimate031_riprec_inputs_ui <- function(id) {
                 "Unit\u00E0 di misura",
                 ""),
 
-      # 2. select the test significant level
-      radioButtons(
-        ns("significance"),
-        "Livello di confidenza",
-        choices = c(
-          "90%" = 0.90,
-          "95%" = 0.95,
-          "99%" = 0.99
-        ),
-        selected = 0.95
-      ),
-
-      # 3. known reference mean value
+      # 2. known reference mean value
       numericInput(
         ns("refvalue"),
         "Valore di riferimento",
         0,
         min = 0),
 
-      # 4. known reference extended uncertainty value
+      # 3. known reference extended uncertainty value
       numericInput(
         ns("refuncertainty"),
         "Incertezza estesa",
@@ -74,18 +58,14 @@ mod_estimate031_riprec_inputs_ui <- function(id) {
   )
 }
 
-#' estimate UI Function: option for repeatability and recovery estimates
-#' on the same measurement values
+#' estimate UI Function: option forrecovery estimates
+#' on a single measurement value
 #'
-#' @description A shiny Module for estimating performance parameters of
+#' @description A shiny Module for estimating recovery parameters of
 #'   chemical analytical methods.
-#'   Data are checked for normality, presence of outliers and repeatability and
-#'   recovery statistics are calculated.
-#'   The presence of a significant bias is tested by two-sided t-test.
 #'
-#' @details Normality is checked by using the Shapiro-Wilk test.
-#'   Possible outliers are inspected by generalized extreme studentized deviate test.
-#'   Mean values of measurments is compared with the reference value by two-sided t-test.
+#' @details The measurement value is compared with the reference value by
+#' normalized error - En.
 #'
 #'   Test results are formatted in HTML.
 #'
@@ -102,7 +82,7 @@ mod_estimate031_riprec_inputs_ui <- function(id) {
 #' @importFrom DT DTOutput
 #' @importFrom bslib navset_hidden nav_panel card card_header card_body layout_columns navset_card_tab layout_column_wrap
 #' @importFrom htmltools css
-mod_estimate031_riprec_output_ui <- function(id) {
+mod_estimate033_recuno_output_ui <- function(id) {
   ns <- NS(id)
   tagList(
 
@@ -123,34 +103,22 @@ mod_estimate031_riprec_output_ui <- function(id) {
         bslib::card(
           bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva dei valori misurati"),
 
-          bslib::layout_column_wrap(
-            width = NULL,
-            style = htmltools::css(grid_template_columns = "1fr 2fr"),
-            bslib::card_body(plotly::plotlyOutput(ns("boxplot"))),
-            bslib::card_body(plotly::plotlyOutput(ns("confint")))
+          bslib::card_body(
+            bslib::card_body(plotly::plotlyOutput(ns("boxplot")))
           ),
 
-          bslib::card_body(DT::DTOutput(ns("summarytable")))
+          bslib::card_body(
+            DT::DTOutput(ns("summarytable")))
         ),
 
         bslib::navset_card_tab(
           id = ns("tabresults"),
           title = list(icon("vials"), "Test statistici e parametri prestazionali"),
 
-          bslib::nav_panel("Normalit\u00E0",
-            h4("Test per la verifica della normalit\u00E0 (Shapiro-Wilk)"),
-            htmlOutput(ns("shapirotest")),
-            hr(),
-            h4("Test per identificare possibili outliers (GESD)"),
-            htmlOutput(ns("outliers"))
-          ),
-          bslib::nav_panel("Precisione",
-            htmlOutput(ns("precision"))
-          ),
           bslib::nav_panel("Giustezza",
             htmlOutput(ns("trueness")),
             hr(),
-            htmlOutput(ns("ttest"))
+            htmlOutput(ns("entest"))
           )
         )
       )
@@ -159,14 +127,14 @@ mod_estimate031_riprec_output_ui <- function(id) {
   ))
 }
 
-#' estimate server Function: option for repeatability and recovery estimates
-#' on the same measurement values
+#' estimate server Function: option forrecovery estimates
+#' on a single measurement value
 #'
-#' @description A shiny Module for estimating performance parameters of
+#' @description A shiny Module for estimating recovery parameters of
 #'   chemical analytical methods.
-#'   Data are checked for normality, presence of outliers and repeatability and
-#'   recovery statistics are calculated.
-#'   The presence of a significant bias is tested by two-sided t-test.
+#'
+#' @details The measurement value is compared with the reference value by
+#' normalized error - En.
 #'
 #' @details Normality is checked by using the Shapiro-Wilk test.
 #'   Possible outliers are inspected by generalized extreme studentized deviate test.
@@ -193,9 +161,8 @@ mod_estimate031_riprec_output_ui <- function(id) {
 #'      \item{significance}{the level of significance for the tests;}
 #'      \item{data}{the subsetted dataset with a flag for removed or not removed values;}
 #'      \item{summary}{a summary table;}
-#'      \item{normality}{a Markdown formatted string with the results for the normality test.}
-#'      \item{outliers}{a Markdown formatted string with the results for the outliers test.}
-#'      \item{ttest}{a Markdown formatted string with the results for the t-test.}
+#'      \item{trueness}{recovery performace parameters;}
+#'      \item{entest}{a Markdown formatted string with the results for the t-test.}
 #'    }
 #'
 #' @noRd
@@ -204,7 +171,7 @@ mod_estimate031_riprec_output_ui <- function(id) {
 #' @import data.table
 #' @importFrom plotly renderPlotly
 #' @importFrom DT renderDT
-mod_estimate031_riprec_server <- function(id, r) {
+mod_estimate033_recuno_server <- function(id, r) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -281,11 +248,6 @@ mod_estimate031_riprec_server <- function(id, r) {
       r$estimate03x$udm <- udmclean
     })
 
-    ## test confidence level
-    observeEvent(input$significance, ignoreNULL = FALSE, {
-      r$estimate03x$significance <- input$significance
-    })
-
     ## reference value
     observeEvent(input$refvalue, ignoreNULL = FALSE, {
       r$estimate03x$refvalue <- input$refvalue
@@ -316,62 +278,21 @@ mod_estimate031_riprec_server <- function(id, r) {
       r$loadfile02$data[r$loadfile02$data[[r$loadfile02$parvar]] == r$estimate03x$parameter, ]
     })
 
-    rownumber <- reactive({
-      req(mydata())
-
-      nrow(mydata())
-    })
-
-    key <- reactive(seq(from = 1, to = rownumber()))
-
-    # using the row index to identify outliers
-    keys <- reactiveVal()
-
-    observeEvent(plotly::event_data("plotly_click", source = "boxplot"), {
-      req(plotly::event_data("plotly_click", source = "boxplot")$key)
-
-      key_new <- plotly::event_data("plotly_click", source = "boxplot")$key
-      key_old <- keys()
-
-      if (key_new %in% key_old) {
-        keys(setdiff(key_old, key_new))
-      } else {
-        keys(c(key_new, key_old))
-      }
-
-    })
-
-    # reset the keys index when changing the parameter
-    observeEvent(r$estimate03$myparameter, {
-      keys(NULL)
-    })
-
-    # flag per i punti selezionati
-    is_outlier <- reactive(key() %in% keys())
-
     # assembling the dataframe
     input_data <- reactive({
 
       data.frame(
-        key = key(),
-        outlier = is_outlier(),
-        response = mydata()[[r$loadfile02$responsevar]]
+        response = mydata()[[r$loadfile02$responsevar]],
+        uncertainty = mydata()[[r$loadfile02$uncertaintyvar]]
       )
 
     })
 
-    # subset of non outliers
-    selected_data <- reactive({
-      req(input_data())
-
-      input_data()[input_data()$outlier == FALSE,]
-    })
-
     # min number of values
     minval <- reactive({
-      req(selected_data())
+      req(input_data())
 
-      dim(selected_data())[1]
+      dim(input_data())[1]
     })
 
     ## reference value and uncertainty
@@ -382,8 +303,8 @@ mod_estimate031_riprec_server <- function(id, r) {
       # validate the input
       if (r$estimate03x$refvalue |> is.numeric() &
           r$estimate03x$refuncertainty |> is.numeric() &
-          r$estimate03x$refvalue >= 0 &
-          r$estimate03x$refuncertainty >= 0) {
+          r$estimate03x$refvalue > 0 &
+          r$estimate03x$refuncertainty > 0) {
 
         r$estimate03x$click <- 1
 
@@ -393,13 +314,18 @@ mod_estimate031_riprec_server <- function(id, r) {
       }
     })
 
+
     # reactive boxplot ----
     plotlyboxplot <- reactive({
       req(input_data())
+      req(r$estimate03x$click == 1)
 
-      myboxplot <- boxplot_riprec(
+      myboxplot <- boxplot_recuno(
         data = input_data(),
         response = r$loadfile02$responsevar,
+        uncertainty = r$loadfile02$uncertaintyvar,
+        refvalue = r$estimate03x$refvalue,
+        refuncertainty = r$estimate03x$refuncertainty,
         udm = r$estimate03x$udm
       )
 
@@ -424,49 +350,17 @@ mod_estimate031_riprec_server <- function(id, r) {
       })
 
 
-
-    # reactive confint plot ----
-    plotlyconfint <- reactive({
-      req(input_data())
-      req(r$estimate03x$refvalue)
-      req(r$estimate03x$refuncertainty)
-
-      confint_riprec(
-        data = input_data(),
-        response = r$loadfile02$responsevar,
-        udm = r$estimate03x$udm,
-        conflevel = as.numeric(r$estimate03x$significance),
-        refvalue = r$estimate03x$refvalue,
-        refuncertainty = r$estimate03x$refuncertainty
-      )
-
-    })
-
-    output$confint <- plotly::renderPlotly({
-      validate(
-        need(ok_click() == 1, "Clicca Calcola per aggiornare il grafico."),
-        need(ok_calc() == 1, "Serve un valore di riferimento per questo grafico")
-      )
-
-      # if results have been saved, restore the boxplot
-      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
-
-        r$estimate03[[r$estimate03$myparameter]]$plotlyconfint
-
-        # else a new boxplot is calculated and shown
-      } else {
-
-        plotlyconfint()
-      }
-    })
-
     # reactive summary table ----
     summarytable <- reactive({
       req(input_data())
+      req(r$estimate03x$click == 1)
 
-      rowsummary_riprec(
+      rowsummary_recuno(
         data = input_data(),
         response = "response",
+        uncertainty = "uncertainty",
+        refvalue = r$estimate03x$refvalue,
+        refuncertainty = r$estimate03x$refuncertainty,
         udm = r$estimate03x$udm
       )
 
@@ -493,150 +387,18 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-    # results of normality check ----
-    shapiro_text <-
-      "%s (W = %.3f, <i>p</i>-value = %.4f)</br>"
-
-    shapiro_html <- reactive({
-      # don't update the list if results have been already saved
-      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
-            r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
-
-    shapiro_output <- selected_data()[, "response"] |>
-      fct_shapiro()
-
-        sprintf(
-          shapiro_text,
-          shapiro_output$result,
-          shapiro_output$W,
-          shapiro_output$pvalue
-        )
-    })
-
-    output$shapirotest <- renderText({
-      validate(
-        need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
-      )
-      # if results have been saved, restore the normality test results
-      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
-
-        r$estimate03[[r$estimate03$myparameter]]$normality_html
-
-      } else {
-
-        shapiro_html()
-      }
-    })
-
-
-    # results for outliers check ----
-    out_text <-
-      "%s a un livello di confidenza del 95%% </br> %s a un livello di confidenza del 99%% </br></br>"
-
-    outliers_html <- reactive({
-      req(selected_data())
-      req(minval() >= 6)
-      # don't update the list if results have been already saved
-      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
-            r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
-
-      outtest_output95 <- selected_data()[, "response"] |>
-        fct_gesd(significance = 0.95)
-
-      outtest_output99 <- selected_data()[, "response"] |>
-        fct_gesd(significance = 0.99)
-
-        sprintf(out_text,
-                outtest_output95$text,
-                outtest_output99$text)
-
-    })
-
-    output$outliers <- renderText({
-      validate(
-        need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
-      )
-      # if results have been saved, restore the outliers test results
-      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
-
-        r$estimate03[[r$estimate03$myparameter]]$outliers_html
-
-      } else {
-
-        outliers_html()
-      }
-    })
-
-
-    #### results for the t-test ----
-    ttest_list <- reactive({
-      req(selected_data())
-      req(r$estimate03x$click == 1)
-      req(r$estimate03x$refvalue)
-      req(r$estimate03x$refuncertainty == 0)
-      # don't update if results have been saved
-      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
-          r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
-
-      fct_ttest_riprec(
-        data = selected_data(),
-        response = "response",
-        refvalue = r$estimate03x$refvalue,
-        significance = as.numeric(r$estimate03x$significance)
-      )
-
-    })
-
-
-    ttest_text <-
-"<h4> Test per valutare la presenza di bias (t-test) </h4>
-<b>H0:</b> %s </br>
-<b>H1:</b> %s
-<ul>
-  <li> Media delle misure (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
-  <li> <i>t</i> sperimentale = %s </li>
-  <li> <i>t</i> critico (\u03b1 = %s, \u03bd = %s) = %s </li>
-  <li> <i>p</i>-value = %s </li>
-</ul>
-\u21e8 %s"
-
-    ttest_html <- reactive({
-
-      sprintf(
-        ttest_text,
-        ttest_list()$hypotheses[[1]],
-        ttest_list()$hypotheses[[2]],
-        ttest_list()$mean[[1]],
-        r$estimate03x$udm,
-        ttest_list()$mean[[2]],
-        ttest_list()$mean[[3]],
-        r$estimate03x$udm,
-        ttest_list()$test[[3]],
-        ttest_list()$test[[2]],
-        ttest_list()$test[[1]],
-        ttest_list()$test[[4]],
-        ttest_list()$test[[5]],
-        ttest_list()$result
-      )
-
-    })
-
-
-    #### results for the En-test ----
+     #### results for the En-test ----
     entest_list <- reactive({
-      req(selected_data())
+      req(input_data())
       req(r$estimate03x$click == 1)
-      req(r$estimate03x$refvalue)
-      req(r$estimate03x$refuncertainty != 0)
       # don't update if results have been saved
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
           r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
-      fct_entest_riprec(
-        data = selected_data(),
+      fct_entest_recuno(
+        data = input_data(),
         response = "response",
+        uncertainty = "uncertainty",
         refvalue = r$estimate03x$refvalue,
         refuncertainty = r$estimate03x$refuncertainty
         )
@@ -673,14 +435,10 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     })
 
-    test_results <- reactive({
-      ifelse(r$estimate03x$refuncertainty == 0, ttest_html(), entest_html())
-    })
-
     output$ttest <- renderText({
       validate(
-        need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(minval() >= 1,
+             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
         need(r$estimate03x$refvalue != 0, message = "")
       )
       # if results have been saved, restore the t-test results
@@ -690,7 +448,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       } else {
 
-        test_results()
+        entest_html()
       }
 
       })
@@ -700,20 +458,14 @@ mod_estimate031_riprec_server <- function(id, r) {
     trueness_results <- reactive({
       req(r$estimate03x$click == 1)
 
-      fct_trueness_riprec(data = selected_data(),
+      fct_trueness_recuno(data = input_data(),
                           response = "response",
-                          refvalue = r$estimate03x$refvalue,
-                          significance = r$estimate03x$significance |>
-                            as.numeric())
+                          refvalue = r$estimate03x$refvalue)
 
     })
 
     trueness_text <-
 "<ul>
-  <li> Media delle misure = %s %s</li>
-  <li> Intervallo di confidenza del valore medio (per \u03b1 = %s) = %s \u2013 %s %s</li>
-  <li> Valore di riferimento = %s %s</li>
-  <li> Incertezza estesa del valore di riferimento = %s %s</li>
   <li> Recupero = %s &percnt;</li>
   <li> Bias = %s %s</li>
   <li> Bias = %s &percnt;</li>
@@ -725,16 +477,6 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       sprintf(
         trueness_text,
-        trueness_results()$mean |> format_sigfig(3L),
-        r$estimate03x$udm,
-        trueness_results()$alpha |> format_sigfig(3L),
-        trueness_results()$lwr |> format_sigfig(3L),
-        trueness_results()$upr |> format_sigfig(3L),
-        r$estimate03x$udm,
-        r$estimate03x$refvalue,
-        r$estimate03x$udm,
-        r$estimate03x$refuncertainty,
-        r$estimate03x$udm,
         trueness_results()$recovery |> format_sigfig(3L),
         trueness_results()$bias |> format_sigfig(3L),
         r$estimate03x$udm,
@@ -745,8 +487,8 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     output$trueness <- renderText({
       validate(
-        need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(minval() >= 1,
+             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
           need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
           need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
       )
@@ -762,83 +504,27 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     })
 
-    #### precisione performances ----
-    precision_results <- reactive({
-      req(r$estimate03x$click == 1)
-      req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
-            r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
-
-      fct_precision_riprec(data = selected_data(),
-                           response = "response",
-                           significance = r$estimate03x$significance |>
-                             as.numeric())
-
-    })
-
-    precision_text <-
-      "<ul>
-  <li> Deviazione standard delle misure = %s %s</li>
-  <li> Limite di ripetibilità (per \u03b1 = %s) = %s %s</li>
-  <li> Limite di ripetibilità relativo (per \u03b1 = %s) = %s &percnt;</li>
-  <li> Coefficiente di variazione = %s &percnt;</li>
-</ul>"
-
-    precision_html <- reactive({
-
-      sprintf(
-        precision_text,
-        precision_results()$devstd |> format_sigfig(3L),
-        r$estimate03x$udm,
-        precision_results()$alpha |> format_sigfig(3L),
-        precision_results()$repeatability |> format_sigfig(3L),
-        r$estimate03x$udm,
-        precision_results()$alpha |> format_sigfig(3L),
-        precision_results()$rel_repeatability |> format_sigfig(3L),
-        precision_results()$rsd |> format_sigfig(3L)
-      )
-
-    })
-
-    output$precision <- renderText({
-      validate(
-        need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
-        need(r$estimate03x$click == 1, "Clicca Calcola per aggiornare i risultati.")
-      )
-      # if results have been saved, restore the t-test results
-      if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
-
-        r$estimate03[[r$estimate03$myparameter]]$precision_html
-
-      } else {
-
-        precision_html()
-      }
-
-    })
-
 
     # saving the outputs ----
 
-    observeEvent(precision_html(), {
+    observeEvent(trueness_html(), {
 
       # output dataset
       r$estimate03x$data <- mydata()[, !r$loadfile02$parvar, with = FALSE]
-      r$estimate03x$data[, "rimosso"] <- ifelse(is_outlier() == TRUE, "s\u00EC", "no")
 
       # summary table
       r$estimate03x$summary <- summarytable()
 
       # plots
       r$estimate03x$plotlyboxplot <- plotlyboxplot()
-      r$estimate03x$plotlyconfint <- plotlyconfint()
+      r$estimate03x$plotlyconfint <- NA
 
       # test results
-      r$estimate03x$normality <- shapiro_html()
-      r$estimate03x$outliers <- outliers_html()
-      r$estimate03x$trueness <- ifelse(r$estimate03x$refvalue == 0, NA, trueness_html())
-      r$estimate03x$precision <- precision_html()
-      r$estimate03x$ttest <- ifelse(r$estimate03x$refvalue == 0, NA, test_results())
+      r$estimate03x$normality <- NA
+      r$estimate03x$outliers <- NA
+      r$estimate03x$trueness <- trueness_html()
+      r$estimate03x$precision <- NA
+      r$estimate03x$ttest <- test_results()
       # flag for when ready to be saved
       r$estimate03x$click <- 1
 

@@ -14,6 +14,8 @@ measurements should be included.}
 \item{response}{the name of a numeric vector in \code{data}.
 Quotation (" ") is not required.}
 
+\item{refvalue}{reference value for the comparison.}
+
 \item{significance}{a number, typically either 0.90, 0.95 (default) or 0.99
 indicating the confidence level for the test.}
 }
@@ -22,7 +24,7 @@ A list with the following items:
  \describe{
    \item{hypotheses}{a named vector of strings, being \code{h0} and \code{h1}
    the null and alternative hypothesis, respectively.}
-   \item{difference}{a named vector of numbers, being \code{mean},
+   \item{mean}{a named vector of numbers, being \code{mean},
    \code{lwrci} and \code{uprci} the mean of the measurement value, and
    the lower and upper end of its confidence interval, respectively.}
    \item{test}{a named vector of numbers, being \code{dof}, \code{tsper},

@@ -5,7 +5,7 @@
 \title{ggplot2 boxplots for a a serie of data, and for comparing the confidence interval
 with a reference value and its extended uncertainty}
 \usage{
-ggboxplot_riprec(data, response, refvalue, refuncertainty, udm)
+ggboxplot_riprec(data, response, refvalue, refuncertainty, conflevel, udm)
 }
 \arguments{
 \item{data}{input data.frame a numeric columns with the response and a
@@ -16,6 +16,9 @@ must be named *rimosso*.}
 \item{response}{a character string with the label for the response numeric variable.}
 
 \item{refuncertainty}{the extended uncertainty for the reference numeric value.}
+
+\item{conflevel}{confidence level for the mean confidence interval: allowed values
+are 0.90, 0.95 and 0.99.}
 
 \item{udm}{a character string with the unit of measurement.}
 
