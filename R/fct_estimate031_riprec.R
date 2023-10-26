@@ -723,7 +723,8 @@ rowsummary_riprec <- function(data,
 #'    \item{n}{the number of measurements.}
 #'    \item{stddev}{a numeric value with the standard deviation of the values.}
 #'    \item{repeatability}{a numeric value with the repeatability limit.}
-#'    \item{rsd}{a numeric value with the relative standard deviation.}
+#'    \item{rel_repeatability}{a numeric value with the percent relative repeatability limit.}
+#'    \item{rsd}{a numeric value with the percent relative standard deviation.}
 #'  }
 #'
 #' @export
@@ -752,6 +753,8 @@ fct_precision_riprec <- function(data,
 
   repeatability <- (sqrt(2) * stats::qt(myalpha, n - 1) * devstd)
 
+  relative_repeatability <- repeatability / mean_value * 100
+
   rsd <- (100 * devstd / mean_value)
 
   list(
@@ -759,6 +762,7 @@ fct_precision_riprec <- function(data,
     devstd = devstd,
     n = n,
     repeatability = repeatability,
+    rel_repeatability = relative_repeatability,
     rsd = rsd
   )
 

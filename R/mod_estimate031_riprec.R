@@ -735,7 +735,7 @@ mod_estimate031_riprec_server <- function(id, r) {
         r$estimate03x$udm,
         r$estimate03x$refuncertainty,
         r$estimate03x$udm,
-        trueness_results()$recovery,
+        trueness_results()$recovery |> format_sigfig(3L),
         trueness_results()$bias |> format_sigfig(3L),
         r$estimate03x$udm,
         trueness_results()$relative_bias |> format_sigfig(3L)
@@ -779,6 +779,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       "<ul>
   <li> Deviazione standard delle misure = %s %s</li>
   <li> Limite di ripetibilità (per \u03b1 = %s) = %s %s</li>
+  <li> Limite di ripetibilità relativo (per \u03b1 = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
@@ -791,6 +792,8 @@ mod_estimate031_riprec_server <- function(id, r) {
         precision_results()$alpha |> format_sigfig(3L),
         precision_results()$repeatability |> format_sigfig(3L),
         r$estimate03x$udm,
+        precision_results()$alpha |> format_sigfig(3L),
+        precision_results()$rel_repeatability |> format_sigfig(3L),
         precision_results()$rsd |> format_sigfig(3L)
       )
 

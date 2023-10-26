@@ -251,22 +251,20 @@ fct_precision_rip <- function(data,
 
   myalpha <- (significance + (1 - significance) / 2)
 
-  devstd <- (data[[response]] |> abs() |> mean())/1.128
+  pair_range <- data[[response]] |> abs()
+  pair_mean <- data[measures] |> rowMeans()
 
-  mean_val <- data[measures] |> unlist() |> mean()
+  rsd <- (pair_range / pair_mean) |> mean()
 
   n <- length(data[[response]])
 
-  repeatability <- (sqrt(2) * stats::qt(myalpha, n - 1) * devstd)
-
-  rsd <- (100 * devstd / mean_val)
+  relative_repeatability <- (sqrt(2) * stats::qt(myalpha, n - 1) * rsd)
 
   list(
     alpha = myalpha,
-    devstd = devstd,
     n = n,
-    repeatability = repeatability,
-    rsd = rsd
+    rel_repeatability = relative_repeatability * 100,
+    rsd = rsd * 100
   )
 
 }

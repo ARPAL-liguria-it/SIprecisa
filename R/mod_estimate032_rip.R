@@ -456,8 +456,7 @@ mod_estimate032_rip_server <- function(id, r) {
 
     precision_text <-
       "<ul>
-  <li> Deviazione standard delle misure = %s %s</li>
-  <li> Limite di ripetibilità (per \u03b1 = %s) = %s %s</li>
+  <li> Limite di ripetibilità relativo (per \u03b1 = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
@@ -465,11 +464,8 @@ mod_estimate032_rip_server <- function(id, r) {
 
       sprintf(
         precision_text,
-        precision_results()$devstd |> format_sigfig(3L),
-        r$estimate03x$udm,
         precision_results()$alpha |> format_sigfig(3L),
-        precision_results()$repeatability |> format_sigfig(3L),
-        r$estimate03x$udm,
+        precision_results()$rel_repeatability |> format_sigfig(3L),
         precision_results()$rsd |> format_sigfig(3L)
       )
 

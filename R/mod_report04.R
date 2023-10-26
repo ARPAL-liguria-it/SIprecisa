@@ -39,7 +39,7 @@ mod_report04_ui <- function(id){
       bslib::card_body(
 
         checkboxGroupInput(ns("content"),
-                       label = h4("Test da includere nel report"),
+                       label = h4("Test e prestazioni da includere nel report"),
                        width = "80%",
                        choices = "",
                        selected = "")
