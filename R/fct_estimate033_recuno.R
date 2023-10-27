@@ -57,8 +57,8 @@ fct_entest_recuno <- function(data,
 
   max_val_num <- ifelse(refvalue > data[[response]], refvalue, data[[response]])
   min_val_num <- ifelse(refvalue < data[[response]], refvalue, data[[response]])
-  max_val_unc <- ifelse(refuncertainty > data[[uncertainty]], refvalue, data[[uncertainty]])
-  min_val_unc <- ifelse(refuncertainty < data[[uncertainty]], refvalue, data[[uncertainty]])
+  max_val_unc <- ifelse(refuncertainty > data[[uncertainty]], refuncertainty, data[[uncertainty]])
+  min_val_unc <- ifelse(refuncertainty < data[[uncertainty]], refuncertainty, data[[uncertainty]])
 
   # en-test results
   diff_val <- (max_val_num - min_val_num)
@@ -215,13 +215,18 @@ ggboxplot_recuno <- function(data,
 
   max_val_num <- ifelse(refvalue > data[[response]], refvalue, data[[response]])
   min_val_num <- ifelse(refvalue < data[[response]], refvalue, data[[response]])
-  max_val_unc <- ifelse(refuncertainty > data[[uncertainty]], refvalue, data[[uncertainty]])
-  min_val_unc <- ifelse(refuncertainty < data[[uncertainty]], refvalue, data[[uncertainty]])
+  max_val_unc <- ifelse(refuncertainty > data[[uncertainty]], refuncertainty, data[[uncertainty]])
+  min_val_unc <- ifelse(refuncertainty < data[[uncertainty]], refuncertainty, data[[uncertainty]])
 
   mydf <- data.frame(label = c(max_val_lbl, min_val_lbl),
                      value = c(max_val_num, min_val_num),
                      min_error = c(max_val_unc, 0),
                      max_error = c(0, min_val_unc))
+
+  mydf$label <- factor(mydf$label,
+                       levels = c("valore misurato",
+                                  "valore di riferimento")
+  )
 
 
   ggplot2::ggplot(data = mydf) +
@@ -235,14 +240,16 @@ ggboxplot_recuno <- function(data,
       ggplot2::aes(
         x = label,
         y = value,
-        ymin = min_error,
-        ymax = max_error
+        ymin = value - min_error,
+        ymax = value + max_error
       ),
-      width = 0.1
+      width = 0
     ) +
     ggplot2::labs(x = ggplot2::element_blank(),
                   y = ylabtitle) +
-    ggplot2::scale_x_discrete(expand = expansion(add = c(0.5, 0.9))) +
+    ggplot2::scale_x_discrete(expand = expansion(add = c(0.5, 0.9)),
+                              breaks = c("valore misurato",
+                                         "valore di riferimento")) +
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "top")
 

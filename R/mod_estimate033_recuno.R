@@ -118,7 +118,7 @@ mod_estimate033_recuno_output_ui <- function(id) {
           bslib::nav_panel("Giustezza",
             htmlOutput(ns("trueness")),
             hr(),
-            htmlOutput(ns("entest"))
+            htmlOutput(ns("ttest"))
           )
         )
       )
@@ -336,6 +336,12 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
     output$boxplot <- plotly::renderPlotly({
+      validate(
+        need(minval() >= 1,
+             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+        need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
+        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+      )
 
       # if results have been saved, restore the boxplot
       if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
@@ -367,6 +373,12 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
     output$summarytable <- DT::renderDT({
+      validate(
+        need(minval() >= 1,
+             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+        need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
+        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+      )
       # if results have been saved, restore the summarytable
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
 
@@ -387,7 +399,7 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
 
-     #### results for the En-test ----
+    # results for the En-test ----
     entest_list <- reactive({
       req(input_data())
       req(r$estimate03x$click == 1)
@@ -454,7 +466,7 @@ mod_estimate033_recuno_server <- function(id, r) {
       })
 
 
-    #### trueness performances ----
+    # trueness performances ----
     trueness_results <- reactive({
       req(r$estimate03x$click == 1)
 
@@ -524,7 +536,7 @@ mod_estimate033_recuno_server <- function(id, r) {
       r$estimate03x$outliers <- NA
       r$estimate03x$trueness <- trueness_html()
       r$estimate03x$precision <- NA
-      r$estimate03x$ttest <- test_results()
+      r$estimate03x$ttest <- entest_html()
       # flag for when ready to be saved
       r$estimate03x$click <- 1
 

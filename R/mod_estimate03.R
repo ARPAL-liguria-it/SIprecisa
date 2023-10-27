@@ -234,7 +234,7 @@ mod_estimate03_server <- function(id, r) {
               "recuno" = ggboxplot_recuno(data = r$estimate03x$data,
                                           response = r$loadfile02$responsevar,
                                           uncertainty = r$loadfile02$uncertaintyvar,
-                                          refvalue = r$estimate03x$refval,
+                                          refvalue = r$estimate03x$refvalue,
                                           refuncertainty = r$estimate03x$refuncertainty,
                                           udm = r$estimate03x$udm)
       )
