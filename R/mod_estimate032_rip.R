@@ -96,7 +96,7 @@ mod_estimate032_rip_output_ui <- function(id) {
 
       bslib::layout_columns(
         bslib::card(
-          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva delle differenze tra coppie di valori"),
+          bslib::card_header(icon("vials"), "Boxplot e tabella riassuntiva delle differenze tra valori"),
 
           bslib::layout_column_wrap(
             width = NULL,
@@ -277,12 +277,17 @@ mod_estimate032_rip_server <- function(id, r) {
     # assembling the dataframe
     input_data <- reactive({
 
+      mydifference <- mydata()[[r$loadfile02$responsevar]] - mydata()[[r$loadfile02$secondresponsevar]]
+      mymean <- mydata()[, rowMeans(.SD),
+                         .SDcols = c(r$loadfile02$responsevar, r$loadfile02$secondresponsevar)]
+
       data.frame(
         key = key(),
         outlier = is_outlier(),
         measure1 = mydata()[[r$loadfile02$responsevar]],
         measure2 = mydata()[[r$loadfile02$secondresponsevar]],
-        response = mydata()[[r$loadfile02$responsevar]] - mydata()[[r$loadfile02$secondresponsevar]]
+        response = mydifference,
+        rel_response = mydifference / mymean
       )
 
     })
@@ -374,7 +379,7 @@ mod_estimate032_rip_server <- function(id, r) {
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
-    shapiro_output <- selected_data()[, "response"] |>
+    shapiro_output <- selected_data()[, "rel_response"] |>
       fct_shapiro()
 
         sprintf(
@@ -413,10 +418,10 @@ mod_estimate032_rip_server <- function(id, r) {
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
-      outtest_output95 <- selected_data()[, "response"] |>
+      outtest_output95 <- selected_data()[, "rel_response"] |>
         fct_gesd(significance = 0.95)
 
-      outtest_output99 <- selected_data()[, "response"] |>
+      outtest_output99 <- selected_data()[, "rel_response"] |>
         fct_gesd(significance = 0.99)
 
         sprintf(out_text,
