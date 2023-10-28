@@ -4,8 +4,8 @@
 #' of paired measurement values.
 #'
 #' @param data input data.frame with a column named *key* with progressive integers,
-#' a column named *response* with the numeric values for the two groups and a
-#' column named *outlier* with a logical vector.
+#' a column named *rel_response* with the numeric values of the relative difference
+#' between the paired values, and a column named *outlier* with a logical vector.
 #' @param response a character string with the label for the response numeric variable.
 #' @param udm a character string with the unit of measurement.
 #'
@@ -21,7 +21,7 @@ boxplot_rip <- function(data,
     is.data.frame(data),
     is.character(response),
     is.character(udm),
-    c("key", "outlier", "response") %in% colnames(data),
+    c("key", "outlier", "rel_response") %in% colnames(data),
     dim(data)[2] >= 3
   )
 
@@ -29,8 +29,7 @@ boxplot_rip <- function(data,
                  "#999999",
                  "black")
 
-  ylabtitle <- paste0("differenze",
-                      ifelse(udm != "", paste0(" (", udm, ")"), ""))
+  ylabtitle <- paste0("differenze relative (", udm, ")")
 
   datanoutlier <- data[data$outlier == FALSE,]
 
@@ -38,7 +37,7 @@ boxplot_rip <- function(data,
   plotly::plot_ly(source = "boxplot") |>
     plotly::add_boxplot(
       data = datanoutlier,
-      y = ~ response,
+      y = ~ rel_response * 100,
       x = "differenze",
       name = "boxplot",
       type = "box",
@@ -51,7 +50,7 @@ boxplot_rip <- function(data,
     ) |>
     plotly::add_markers(
       data = data,
-      y = ~ response,
+      y = ~ rel_response * 100,
       x = "differenze",
       name = "differenze",
       marker = list(
@@ -65,12 +64,9 @@ boxplot_rip <- function(data,
     ) |>
     plotly::layout(
       showlegend = FALSE,
-      title = list(text = "Boxplot delle differenze",
-                   font = list(size = 11)
-      ),
       yaxis = list(title = ylabtitle,
                    hoverformat = ".3r")
-      ) |>
+    ) |>
     plotly::config(displayModeBar = FALSE,
                    locale = "it")
 
@@ -82,11 +78,12 @@ boxplot_rip <- function(data,
 #'  of data, and for comparing the confidence interval with a reference value
 #'  and its extended uncertainty.
 #'
-#' @param data input data.frame a numeric columns with the response and a
+#' @param data input data.frame a numeric columns with the two numeric responses and a
 #' character columns with outliers flag.
-#' The first column must be named as the response variable, while the second column
-#' must be named *rimosso*.
-#' @param response a character string with the label for the response numeric variable.
+#' The first two columns must be named as the response and second_response variable,
+#' respectively, while the second column must be named *rimosso*.
+#' @param response a character string with the label for the first response numeric variable.
+#' @param second_response a character string with the label for the second response numeric variable.
 #' @param udm a character string with the unit of measurement.
 #'
 #' @return A {ggplot2} boxplot for the differences in paired measurement values.
@@ -97,38 +94,40 @@ boxplot_rip <- function(data,
 #' @rawNamespace import(ggplot2, except = last_plot)
 ggboxplot_rip <- function(data,
                           response,
-                          udm) {
+                          second_response) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    is.character(udm)
+    is.character(second_response)
   )
 
   rimosso <- NULL
   cols <- c("s\u00EC" = "#999999", "no" = "black")
   data$rimosso <- factor(data$rimosso, levels = c("s\u00EC", "no"))
+  data$difference <- data[[response]] - data[[second_response]]
+  data$mean <- data[, rowMeans(.SD),
+                    .SDcols = c(response, second_response)]
+  data$rel_diff <- data$difference / data$mean
 
   datanoutlier <- data[which(data$rimosso == "no"),]
 
-  ylabtitle <- paste0(response, ifelse(udm != "", paste0(" (", udm, ")"), ""))
-
-  quo_response <- ggplot2::ensym(response)
+  ylabtitle <- "differenze relative (%)"
 
   myboxplot <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = datanoutlier,
                           ggplot2::aes(x = "differenze",
-                                       y = !!quo_response),
+                                       y = rel_diff * 100),
                           fill = "white",
                           col = "black",
                           outlier.shape = NA) +
     ggplot2::geom_jitter(data = data,
                          ggplot2::aes(x = "differenze",
-                                      y = !!quo_response,
+                                      y = rel_diff * 100,
                                       col = rimosso),
                          width = 0.2) +
     ggplot2::labs(x = ggplot2::element_blank(),
                   y = ylabtitle,
-                  title = "Boxplot delle differenze tra coppie di valori") +
+                  title = "Boxplot delle differenze relative tra coppie di valori") +
     ggplot2::scale_color_manual(values = cols,
                                 breaks = c("s\u00EC", "no"),
                                 labels = c("rimosso", "non rimosso"),
@@ -137,7 +136,7 @@ ggboxplot_rip <- function(data,
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "top")
 
-myboxplot
+  myboxplot
 
 }
 
@@ -163,9 +162,9 @@ myboxplot
 #' @import data.table
 #' @importFrom stats sd median
 rowsummary_rip <- function(data,
-                              response,
-                              udm = "",
-                              signif = 3L) {
+                           response,
+                           udm = "",
+                           signif = 3L) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
@@ -180,12 +179,14 @@ rowsummary_rip <- function(data,
 
   # calculate the summary
   mysummary <- mydata[outlier == FALSE, .(
-      n = .N,
-      massimo = max(response, na.rm = TRUE) |> format_sigfig(signif),
-      media = mean(response, na.rm = TRUE) |> format_sigfig(signif),
-      mediana = stats::median(response, na.rm = TRUE) |> format_sigfig(signif),
-      minimo = min(response, na.rm = TRUE) |> format_sigfig(signif)
-  )] |> data.table::transpose()
+    n = .N,
+    massimo = lapply(.SD, max, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+    media = lapply(.SD, mean, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+    mediana = lapply(.SD, stats::median, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+    minimo = lapply(.SD, min, na.rm = TRUE) |> unlist() |> format_sigfig(signif)
+    ),
+    .SDcols = response
+  ] |> data.table::transpose()
 
   n_out <- mydata[outlier == TRUE, .N]
 
@@ -193,8 +194,8 @@ rowsummary_rip <- function(data,
                                        differenze = c(n_out, mysummary$V1))
 
   thesummary$differenze <- ifelse(thesummary$statistica %notin% c("n esclusi", "n"),
-                              paste0(thesummary$differenze, " ", udm),
-                              thesummary$differenze)
+                                  paste0(thesummary$differenze, " ", udm),
+                                  thesummary$differenze)
 
   thesummary
 }
@@ -254,7 +255,7 @@ fct_precision_rip <- function(data,
   pair_range <- data[[response]] |> abs()
   pair_mean <- data[measures] |> rowMeans()
 
-  rsd <- (pair_range / pair_mean) |> mean()
+  rsd <- (pair_range / pair_mean) |> mean() / 1.128
 
   n <- length(data[[response]])
 

@@ -287,7 +287,8 @@ mod_estimate032_rip_server <- function(id, r) {
         measure1 = mydata()[[r$loadfile02$responsevar]],
         measure2 = mydata()[[r$loadfile02$secondresponsevar]],
         response = mydifference,
-        rel_response = mydifference / mymean
+        rel_response = mydifference / mymean,
+        abs_perc_response = abs(mydifference) / mymean * 100
       )
 
     })
@@ -312,8 +313,8 @@ mod_estimate032_rip_server <- function(id, r) {
 
       myboxplot <- boxplot_rip(
         data = input_data(),
-        response = r$loadfile02$responsevar,
-        udm = r$estimate03x$udm
+        response = "rel_response",
+        udm = "%"
       )
 
       myboxplot$x$source <- "boxplot"
@@ -343,8 +344,8 @@ mod_estimate032_rip_server <- function(id, r) {
 
       rowsummary_rip(
         data = input_data(),
-        response = "response",
-        udm = r$estimate03x$udm
+        response = "abs_perc_response",
+        udm = "%"
       )
 
     })
