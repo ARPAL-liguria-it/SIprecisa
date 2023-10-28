@@ -55,7 +55,8 @@ cat('\n\n<!-- -->\n\n')
 \newpage
 
 ```{r figureproperties, echo=FALSE}
-data_caption <- "Misure per l'analita %s."
+data_caption_with_udm <- "Misure espresse in %s per l'analita %s."
+data_caption_no_udm <- "Misure per l'analita %s."
 summary_caption <- ifelse(params$aim01$aim == "recuno",
                           "Valori per l'analita %s.",
                           "Statistiche di base per l'analita %s.")
@@ -67,25 +68,35 @@ analytes <- names(params$estimate03)[names(params$estimate03) %notin% c("myparam
 myorder <- as.character(params$loadfile02$parlist)
 
 ordered_analytes <- analytes[order(match(analytes, myorder))]
+n_analytes <- length(ordered_analytes)
 
-boxplot_text <- sapply(ordered_analytes, function(key) NA, simplify=F)
-for (i in ordered_analytes) {
-  boxplot_text[[i]] <- ifelse(params$aim01$aim == "recuno",
-                              "Confronto tra valore misurato e di riferimento
-                              per l'analita %s.",
-                              ifelse(params$aim01$aim == "rip" || params$estimate03[[i]]$refvalue == 0,
-                                     "Boxplot dei valori misurati per l'analita %s.",
-                                     ifelse(params$estimate03[[i]]$refuncertainty == 0,
-                                     "(a) Boxplot dei valori e (b) intervallo di confidenza della
-                                     media dei valori misurati confrontato con il valore di
-                                     riferimento per l'analita %s.",
-                                     "(a) Boxplot dei valori e (b) intervallo di confidenza della
-                                     media dei valori misurati confrontato con il valore di
-                                     riferimento e la relativa incertezza estesa per l'analita %s.")
-                                     )
-                              )
-                        
-  boxplot_text[[i]] <- sprintf(boxplot_text[[i]], i)
+if (params$aim01$aim %in% c("rip", "recuno")) {
+
+  boxplot_text <- switch (params$aim01$aim,
+    "recuno" = "Confronto tra valore misurato e di riferimento per l'analita %s." |>
+      sprintf(ordered_analytes),
+    "rip" = "Boxplot delle differenze relative dei valori misurati per l'analita %s." |>
+      sprintf(ordered_analytes)
+  )
+
+} else {
+  
+  boxplot_text <- sapply(ordered_analytes, function(key) NA, simplify=F)
+  for (i in ordered_analytes) {
+    boxplot_text[[i]] <- ifelse(params$estimate03[[i]]$refvalue == 0,
+                                       "Boxplot dei valori misurati per l'analita %s.",
+                                       ifelse(params$estimate03[[i]]$refuncertainty == 0,
+                                       "(a) Boxplot dei valori e (b) intervallo di confidenza della
+                                       media dei valori misurati confrontato con il valore di
+                                       riferimento per l'analita %s.",
+                                       "(a) Boxplot dei valori e (b) intervallo di confidenza della
+                                       media dei valori misurati confrontato con il valore di
+                                       riferimento e la relativa incertezza estesa per l'analita %s.")
+                                       )
+                          
+    boxplot_text[[i]] <- sprintf(boxplot_text[[i]], i)
+  }
+  
 }
 
 ```
@@ -103,7 +114,13 @@ for (i in ordered_analytes) {
 
       # table with raw data
       print(knitr::kable(params$estimate03[[i]]$data,
-                         caption = sprintf(data_caption, i)))
+                         caption = ifelse(
+                           params$estimate03[[i]]$udm == "",
+                           sprintf(data_caption_no_udm, i),
+                           sprintf(data_caption_with_udm, params$estimate03[[i]]$udm,i)
+                                          )
+                         )
+            )
     }
 
   # table with summary statistics
