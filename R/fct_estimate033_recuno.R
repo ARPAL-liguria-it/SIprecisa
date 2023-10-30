@@ -215,8 +215,8 @@ ggboxplot_recuno <- function(data,
 
   max_val_num <- ifelse(refvalue > data[[response]], refvalue, data[[response]])
   min_val_num <- ifelse(refvalue < data[[response]], refvalue, data[[response]])
-  max_val_unc <- ifelse(refuncertainty > data[[uncertainty]], refuncertainty, data[[uncertainty]])
-  min_val_unc <- ifelse(refuncertainty < data[[uncertainty]], refuncertainty, data[[uncertainty]])
+  max_val_unc <- ifelse(refvalue > data[[response]], refuncertainty, data[[uncertainty]])
+  min_val_unc <- ifelse(refvalue < data[[response]], refuncertainty, data[[uncertainty]])
 
   mydf <- data.frame(label = c(max_val_lbl, min_val_lbl),
                      value = c(max_val_num, min_val_num),
