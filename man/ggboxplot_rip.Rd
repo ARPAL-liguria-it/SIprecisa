@@ -4,15 +4,17 @@
 \alias{ggboxplot_rip}
 \title{ggplot2 boxplots for paired measurement values.}
 \usage{
-ggboxplot_rip(data, response, udm)
+ggboxplot_rip(data, response, second_response)
 }
 \arguments{
-\item{data}{input data.frame a numeric columns with the response and a
+\item{data}{input data.frame a numeric columns with the two numeric responses and a
 character columns with outliers flag.
-The first column must be named as the response variable, while the second column
-must be named *rimosso*.}
+The first two columns must be named as the response and second_response variable,
+respectively, while the second column must be named *rimosso*.}
 
-\item{response}{a character string with the label for the response numeric variable.}
+\item{response}{a character string with the label for the first response numeric variable.}
+
+\item{second_response}{a character string with the label for the second response numeric variable.}
 
 \item{udm}{a character string with the unit of measurement.}
 }

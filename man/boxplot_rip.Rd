@@ -8,8 +8,8 @@ boxplot_rip(data, response, udm)
 }
 \arguments{
 \item{data}{input data.frame with a column named *key* with progressive integers,
-a column named *response* with the numeric values for the two groups and a
-column named *outlier* with a logical vector.}
+a column named *rel_response* with the numeric values of the relative difference
+between the paired values, and a column named *outlier* with a logical vector.}
 
 \item{response}{a character string with the label for the response numeric variable.}
 
