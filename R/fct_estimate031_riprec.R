@@ -565,14 +565,6 @@ ggboxplot_riprec <- function(data,
 
   quo_response <- ggplot2::ensym(response)
 
-  # scale for the y axis
-  enlarge <- 0.05 # proportion of increased axis lenght
-  minvalue <- min(data[[response]], na.rm = TRUE)
-  maxvalue <- max(data[[response]], na.rm = TRUE)
-  yrange <- maxvalue - minvalue
-  ymax <- maxvalue + enlarge * yrange
-  ymin <- minvalue - enlarge * yrange
-
   datanoutlier <- data[which(data$rimosso == "no"),]
 
   # 95% confidence interval for measurement values and the reference value
@@ -591,6 +583,14 @@ ggboxplot_riprec <- function(data,
                           lwrval = c(measurement_confint[2], reference_confint[2]),
                           uprval = c(measurement_confint[3], reference_confint[3])
   )
+
+  # scale for the y axis
+  enlarge <- 0.05 # proportion of increased axis lenght
+  minvalue <- min(c(data[[response]], myconfint$lwrval), na.rm = TRUE)
+  maxvalue <- max(c(data[[response]], myconfint$uprval), na.rm = TRUE)
+  yrange <- maxvalue - minvalue
+  ymax <- maxvalue + enlarge * yrange
+  ymin <- minvalue - enlarge * yrange
 
   myboxplot <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = datanoutlier,
@@ -682,11 +682,11 @@ rowsummary_riprec <- function(data,
   # calculate the summary
   mysummary <- mydata[outlier == FALSE, .(
       n = .N,
-      massimo = max(response, na.rm = TRUE) |> format_sigfig(signif),
-      media = mean(response, na.rm = TRUE) |> format_sigfig(signif),
-      mediana = stats::median(response, na.rm = TRUE) |> format_sigfig(signif),
-      minimo = min(response, na.rm = TRUE) |> format_sigfig(signif)
-  )] |> data.table::transpose()
+      massimo = lapply(.SD, max, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+      media = lapply(.SD, mean, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+      mediana = lapply(.SD, stats::median, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
+      minimo = lapply(.SD, min, na.rm = TRUE) |> unlist() |> format_sigfig(signif)
+  ), .SDcols = response] |> data.table::transpose()
 
   n_out <- mydata[outlier == TRUE, .N]
 
