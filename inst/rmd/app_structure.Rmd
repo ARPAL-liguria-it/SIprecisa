@@ -1,100 +1,183 @@
 ---
-title: "Struttura di SIconfronta"
+title: "Struttura di SIprecisa"
 author: "Andrea Bazzano"
 date: "2023-08-18"
 output: 
   html_document: 
     toc: yes
     toc_float: true
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
-## Struttura dell'applicazione SIconfronta
+## Struttura dell'applicazione SIprecisa
 
-SIconfronta è un'applicazione web scritta con il linguaggio R, utilizzando la libreria `shiny` e il *framework* offerto dalla libreria `golem`.
+SIprecisa è un'applicazione web scritta con il linguaggio R, utilizzando
+la libreria `shiny` e il *framework* offerto dalla libreria `golem`.
 
-L'applicazione è suddivisa in moduli che svolgono operazioni concettualmente diverse e sequenziali all'interno dell'applicazione. Ad ogni esecuzione dell'applicazione, ogni modulo legge e scrive le informazioni necessarie all'applicazione in una lista `r`. Infine, la lista è passata a un file RMarkdown che viene compilato per la produzione di un report pdf.
+L'applicazione è suddivisa in moduli che svolgono operazioni
+concettualmente diverse e sequenziali all'interno dell'applicazione. Ad
+ogni esecuzione dell'applicazione, ogni modulo legge e scrive le
+informazioni necessarie all'applicazione in una lista `r`. Infine, la
+lista è passata a un file RMarkdown che viene compilato per la
+produzione di un report pdf.
 
-In termini generali, ogni modulo richiama al suo interno delle funzioni che si occupano di trasformare i valori in ingresso, nei desiderati valori di uscita.
+In termini generali, ogni modulo richiama al suo interno delle funzioni
+che si occupano di trasformare i valori in ingresso, nei desiderati
+valori di uscita.
 
 ### I moduli
 
 Di seguito vengono elencati i moduli usati dall'applicazione:
 
--   `mod_aim01`: inizializza l'applicazione e permette all'utente la scelta dello scopo dell'analisi.
--   `mod_loadfile02`: permette il caricamento del file csv contenente i dati, controlla che la struttura dei dati sia corretta e coerente con lo scopo dell'analisi e permette di identificare le colonne del dataset che contengono le diverse informazioni necessarie allo svolgimento dell'analisi.
--   `mod_compare03`: permette la selezione di un parametro di interesse e il salvataggio dei risultati dell'analisi, in funzione dello scopo selezionato dall'utente. La produzione dei risultati dell'analisi viene eseguita da sottomoduli specializzati e differenziati per scopo.
--   `mod_report04`: permette l'aggiunta di informazioni di contesto all'analisi, la selezione dei risultati di interesse e la produzione di un report pdf.
+-   `mod_aim01`: inizializza l'applicazione e permette all'utente la
+    scelta dello scopo dell'analisi.
+-   `mod_loadfile02`: permette il caricamento del file csv contenente i
+    dati, controlla che la struttura dei dati sia corretta e coerente
+    con lo scopo dell'analisi e permette di identificare le colonne del
+    dataset che contengono le diverse informazioni necessarie allo
+    svolgimento dell'analisi.
+-   `mod_estimate03`: permette la selezione di un parametro di interesse
+    e il salvataggio dei risultati dell'analisi, in funzione dello scopo
+    selezionato dall'utente. La produzione dei risultati dell'analisi
+    viene eseguita da sottomoduli specializzati e differenziati per
+    scopo.
+-   `mod_report04`: permette l'aggiunta di informazioni di contesto
+    all'analisi, la selezione dei risultati di interesse e la produzione
+    di un report pdf.
 
-La stabilità e la correttezza delle funzionalità offerte dai moduli è oggetto di validazione automatizzata a ogni nuovo rilascio di aggiornamenti dell'applicazione SIconfronta.
+La stabilità e la correttezza delle funzionalità offerte dai moduli è
+oggetto di validazione automatizzata a ogni nuovo rilascio di
+aggiornamenti dell'applicazione SIprecisa.
 
 ### Le funzioni
 
-La produzione dei risultati dell'analisi è ottenuta utilizzando una serie di funzioni: esse sono elementi più semplici e robusti rispetto ai moduli all'interno dei quali agiscono, diminuiscono la ripetizione di tratti di codice aumentando l'efficienza di scrittura e diminuendo la probabilità di errori. Si prestano inoltre molto bene a essere validate e testate in modo pervasivo e completo.
+La produzione dei risultati dell'analisi è ottenuta utilizzando una
+serie di funzioni: esse sono elementi più semplici e robusti rispetto ai
+moduli all'interno dei quali agiscono, diminuiscono la ripetizione di
+tratti di codice aumentando l'efficienza di scrittura e diminuendo la
+probabilità di errori. Si prestano inoltre molto bene a essere validate
+e testate in modo pervasivo e completo.
 
-Di seguito si riportano le principali funzioni utilizzate nella produzione dei risultati dell'analisi:
+Di seguito si riportano le principali funzioni utilizzate nella
+produzione dei risultati dell'analisi:
 
--   `fct_shapiro`: esegue il test di normalità dei dati di Shapiro-Wilk. Il livello di significatività è fissato allo 0.95.\
-    In ingresso richiede un vettore di valori numerici, mentre in uscita produce una lista composta dal valore della statistica del test ( $W$ ), il $p$-value associato al test e un testo con l'esito del test.
+-   `fct_shapiro`: esegue il test di normalità dei dati di Shapiro-Wilk.
+    Il livello di significatività è fissato allo 0.95.\
+    In ingresso richiede un vettore di valori numerici, mentre in uscita
+    produce una lista composta dal valore della statistica del test (
+    $W$ ), il $p$-value associato al test e un testo con l'esito del
+    test.
 
--   `fct_gesd`: esegue il test per l'identificazione dei valori anomali *generalized extreme studentized deviates test* (GESD).\
-    In ingresso richiede un vettore di valori numerici, il livello di significatività a cui eseguire il test e un valore opzionale con il numero massimo di valori anomali da ricercare. Per quest'ultimo parametro, il valore prestabilito è di un terzo del numero totale di valori.\
+-   `fct_gesd`: esegue il test per l'identificazione dei valori anomali
+    *generalized extreme studentized deviates test* (GESD).\
+    In ingresso richiede un vettore di valori numerici, il livello di
+    significatività a cui eseguire il test e un valore opzionale con il
+    numero massimo di valori anomali da ricercare. Per quest'ultimo
+    parametro, il valore prestabilito è di un terzo del numero totale di
+    valori.\
     In uscita produce una lista composta dai seguenti elementi:
 
-    -   una tabella composta dai valori numerici in ingresso ( $I$ ), il valore della statistica del test per ogni singolo valore ( $R$ ), il valore critico del test per ogni valore testato ( $\lambda$ ) e valore binario che identifica la presenza di valori anomali (*outliers*).
-    -   un testo sintetico con l'elenco dei valori anomali e il livello di significatività a cui è stato condotto il test.
+    -   una tabella composta dai valori numerici in ingresso ( $I$ ), il
+        valore della statistica del test per ogni singolo valore ( $R$
+        ), il valore critico del test per ogni valore testato (
+        $\lambda$ ) e valore binario che identifica la presenza di
+        valori anomali (*outliers*).
+    -   un testo sintetico con l'elenco dei valori anomali e il livello
+        di significatività a cui è stato condotto il test.
+        
+        <br />
+        
 
--   `fct_ttest`: esegue il test per il confronto tra le medie. A seconda dello scopo dell'analisi richiede diversi valori in ingresso ed esegue calcoli differenti:
+-   `fct_ttest`: esegue il test per il confronto tra la media delle
+    misure e un valore di riferimento noto esattamente.\
+    In ingresso richiede una serie di dati, un valore di riferimento e
+    il livello di significatività del test. Questo test è utilizzato per
+    identificare la presenza di bias in assenza di incertezza per il
+    valore di riferimento. L'unica ipotesi alternativa presa in
+    considerazione è quella per cui vi sia una differenza tra la media
+    dei valori misurati e il valore di riferimento (test a due code). Il
+    calcolo prevede l'esecuzione del classico $t$-test di Student.
 
-    -   nel caso di due serie di dati completi, richiede una tabella con identificati il nome del parametro di interesse, i due gruppi di dati e le singole misure. Inoltre, è richiesto il livello di significatività a cui condurre il test e l'ipotesi alternativa. Il calcolo prevede l'esecuzione di un $t$-test con il metodo di [Welch](https://en.wikipedia.org/wiki/Welch%27s_t-test).
+-   `fct_entest`: esegue il test per il confronto tra due valori dotati
+    di incertezza estesa. Richiede input diversi a seconda dello scopo:
 
-    -   nel caso di due serie di dati non complete, oltre al livello di significatività a cui condurre il test e l'ipotesi alternativa, è richiesto di specificare il numero di valori in ciascuna delle due serie, la loro media, deviazione standard e identificativo. Anche in questo caso, il calcolo prevede l'esecuzione di un $t$-test con il metodo di [Welch](https://en.wikipedia.org/wiki/Welch%27s_t-test).
-
-    -   nel caso di una serie di dati completa da confrontare con un valore noto, oltre al livello di significatività a cui condurre il test e l'ipotesi alternativa, è richiesto di fornire i valori per la prima serie di dati, il valore noto e un suo identificativo. In questo caso, viene eseguito un $t$-test classico.
-
-    In ogni caso, viene fornita una lista contenente:
-
+    -   nel caso in cui lo scopo sia confrontare la media di una serie
+        di misure con un valore di riferimento dotato di incertezza
+        estesa, sono necessari la serie numerica delle misure, il valore
+        numerico di riferimento e la sua incertezza estesa. Tutti i
+        valori forniti devono condivedere le medesime unità di misura.
+        L'incertezza estesa del valore medio delle $n$ misure è
+        calcolata al livello di confidenza del 95% come $t(0.975,                     n-1) \, s(x_i) / \sqrt{n}$ , dove $t$ è il valore della distribuzione di
+        Student, $s$ la funzione deviazione standard e $x_i$ le singole
+        misure. Successivamente, è eseguito il calcolo dell'errore
+        normalizzato ( $E_n$ ) allo scopo di valutare se la media dei
+        valori misurati sia differente dal valore di riferimento,
+        considerata l'incertezza di entrambi i valori, e quindi valutare
+        se si sia in presenza di un bias statisticamente significativo.
+    -   nel caso in cui lo scopo sia il confronto tra due valori dotati
+        di incertezza estesa, sono necessari i due valori numerici da
+        confrontare e le rispettive incertezze estese. Tutti i valori
+        forniti devono condividere le medesime unità di misura. In
+        questo caso, è direttamente calcolato l'errore normalizzato (
+        $E_n$ ) allo scopo di valutare se i due valori misurati siano
+        tra loro differenti, considerate le rispettive incertezze.\
+        In uscita viene fornita una lista contenente:
     -   le ipotesi nulla e alternativa associate al test;
+    -   la differenza tra i due valori, corredata dalla sua incertezza
+        combinata estesa;
+    -   il valore della statistica del test ( $E_n$ ) e il suo valore
+        critico;
+    -   una stringa testuale che indica se rigettare o no l'ipotesi
+        nulla.
+        
+        <br />
+        
+-   `fct_precision`: calcola i parametri di prestazione di precisione.
+    Richiede input e fornisce output diversi a seconda dello scopo:
 
-    -   il valore medio della serie di dati o la differenza media tra le due serie di dati, corredata dall'intervallo di confidenza calcolato al livello di significatività del test;
+    -   nel caso in cui si vogliano calcolare i parametri di prestazione
+        a partire da una serie di misure indipendenti, è necessario
+        fornire la serie di valori numerici misurati e il livello di
+        significatività per il quale si richiede il calcolo del limite
+        di ripetibilità.\
+        In uscita sono forniti i valori di precisione espressa sia come
+        deviazione standard, sia come deviazione standard relativa delle
+        misure e il limite di ripetibilità assoluto e relativo.
+    -   nel caso in cui si vogliano calcolare i parametri di prestazione
+        a partire da coppie di misure tra loro indipendenti, è
+        necessario fornire le due serie di valori numerici misurati e il
+        livello di significatività per il quale si richiede il calcolo
+        del limite di ripetibilità.\
+        In uscita è fornito il valore di precisione espresso come
+        deviazione standard relativa delle misure e il limite di
+        ripetibilità relativo.
+        
+        <br />
+        
+-   `fct_trueness`: calcola i parametri di prestazione di giustezza.\
+    Richiede input e fornisce output diversi a seconda dello scopo:
 
-    -   il numero di gradi di libertà, il valore della statistica del test, il valore critico e il $p$-value a esso associato;
+    -   nel caso in cui si vogliano calcolare i parametri di prestazione
+        a partire da una serie di misure indipendenti, è necessario
+        fornire la serie di valori numerici misurati, il livello di
+        significatività per il quale si richiede il calcolo
+        dell'intervallo di confidenza della media e il valore numerico
+        di riferimento.\
+        In uscita sono forniti i valori di giustezza espressi sia come
+        recupero, bias e bias relativo, sia il valore medio delle misure
+        corredato dal suo intervallo di confidenza.
+    -   nel caso in cui si voglia una stima dei parametri di prestazione
+        a partire da un singolo valore, è sufficiente fornire il valore
+        misurato e un valore di riferimento.\
+        In uscita sono forniti i valori di giustezza espressi sia come
+        recupero, bias e bias relativo.
+        
+        <br />
 
-    -   una stringa testuale che indica se rigettare o no l'ipotesi nulla.
 
--   `fct_ftest`: esegue il test per il confronto tra due varianze. A seconda dello scopo dell'analisi richiede diversi valori in ingresso:
-
-    -   nel caso di due serie di dati completi, richiede una tabella con identificati il nome del parametro di interesse, i due gruppi di dati e le singole misure. Inoltre, è richiesto il livello di significatività a cui condurre il test e l'ipotesi alternativa. Il calcolo prevede l'esecuzione di un $F$-test classico.
-
-    -   nel caso di due serie di dati non complete, oltre al livello di significatività a cui condurre il test e l'ipotesi alternativa, è richiesto di specificare il numero di valori in ciascuna delle due serie, la loro deviazione standard e identificativo. Anche in questo caso, il calcolo prevede l'esecuzione di un $F$-test classico.
-
-    In ogni caso, viene fornita una lista contenente:
-
-    -   le ipotesi nulla e alternativa associate al test;
-
-    -   il rapporto tra le varianze delle due serie di dati, corredata dall'intervallo di confidenza calcolato al livello di significatività del test;
-
-    -   il numero di gradi di libertà, il valore della statistica del test, il valore critico e il $p$-value a esso associato;
-
-    -   una stringa testuale che indica se rigettare o no l'ipotesi nulla.
-
--   `fct_entest`: esegue il test per il confronto tra due valori dotati di incertezza estesa.\
-    In ingresso richiede una tabella con i dati utili al test, in cui vengano identificate le colonne contenenti il nome del gruppo a cui appartengono i valori, i valori stessi e le relative incertezze estese. La funzione esegue il calcolo dell'errore normalizzato ( $E_n$ ). L'ipotesi alternativa è fissata per identificare valori differenti, mentre il livello di significatività è determinato dell'utente dal fattore di copertura con cui ha fornita l'incertezza estesa.
-
-    In uscita viene fornita una lista contenente:
-
-    -   le ipotesi nulla e alternativa associate al test;
-    -   la differenza tra i due valori, corredata dalla sua incertezza combinata estesa;
-    -   il valore della statistica del test ( $E_n$ ) e il suo valore critico;
-    -   una stringa testuale che indica se rigettare o no l'ipotesi nulla.
-
--   `fct_chitest`: esegue il test per il confronto tra la varianza di una serie di misure e un valore noto ( $\chi^2$-test ).\
-    In ingresso richiede una tabella con i dati utili al test, in cui vengano identificate le colonne contenenti il nome del gruppo a cui appartengono i valori e i valori stessi. Viene inoltre richiesto il valore noto e un suo identificativo, oltre al livello di significatività a cui eseguire il test e l'ipotesi alternativa di interesse.
-
-    In uscita viene fornita una lista contenente:
-
-    -   le ipotesi nulla e alternativa associate al test;
-    -   la deviazione standard della serie di valori, corredata dal suo intervallo di confidenza;
-    -   il valore della statistica del test, il suo valore critico e il $p$-value associato al test;
-    -   una stringa testuale che indica se rigettare o no l'ipotesi nulla.
-
-La stabilità e la correttezza delle funzionalità offerte dalle funzioni è oggetto di validazione automatizzata e confronto con dati di letteratura a ogni nuovo rilascio di aggiornamenti dell'applicazione SIconfronta.
+La stabilità e la correttezza delle funzionalità offerte dalle funzioni
+è oggetto di validazione automatizzata e confronto con dati di
+letteratura a ogni nuovo rilascio di aggiornamenti dell'applicazione
+SIprecisa.

@@ -39,19 +39,19 @@ app_ui <- function(request) {
                       align = "right",
         bslib::nav_panel("Per iniziare", value = "readme",
                         includeMarkdown(
-                          system.file("rmd", "readme.Rmd", package = "SIconfronta")
+                          system.file("rmd", "readme.Rmd", package = "SIprecisa")
                        )),
         bslib::nav_panel("Esempi", value = "examples",
                          includeMarkdown(
-                           system.file("rmd", "examples_usage.Rmd", package = "SIconfronta")
+                           system.file("rmd", "examples_usage.Rmd", package = "SIprecisa")
                          )),
         bslib::nav_panel("Validazione", value = "tests",
                          includeMarkdown(
-                           system.file("rmd", "test_details.Rmd", package = "SIconfronta")
+                           system.file("rmd", "test_details.Rmd", package = "SIprecisa")
                          )),
         bslib::nav_panel("Struttura", value = "structure",
                          includeMarkdown(
-                           system.file("rmd", "app_structure.Rmd", package = "SIconfronta")
+                           system.file("rmd", "app_structure.Rmd", package = "SIprecisa")
                          ))
       )
 

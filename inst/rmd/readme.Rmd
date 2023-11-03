@@ -4,101 +4,77 @@ author: "Andrea Bazzano"
 date: "2023-03-29"
 output: html_document
 ---
-## SIconfronta
+## SIprecisa
 
-Il software SIconfronta è stato sviluppato per ARPAL allo scopo di effettuare confronti
-di medie e varianze tra:
-* due serie di misure;
-* una serie di misure e un valore noto esattamente;
-* due valori dotati di incertezze estese.
+Il software SIprecisa è stato sviluppato per ARPAL allo scopo di determinare
+parametri prestazionali di precisione e giustezza per serie di misure indipendenti
+e coppie di misure indipendenti.
 
 Il software permette di sottoporre a test sequenziali più di un analita, riassumendo
 i risultati in un unico report in formato pdf.
 
-#### Cosa può fare SIconfronta?
+#### Cosa può fare SIprecisa?
 * ottenere statistiche di base sulle serie di valori;
 * effettuare un test di normalità (Shapiro-Wilk) sulle serie di valori;
 * identificare mediante il test _genaralised extreme studentized deviate_ (GESD) la presenza di potenziali valori anomali;
 * escludere manualmente i valori potenzialmente anomali;
 
-* effettuare un test ( $t$-test, Welch test o calcolo dell' $E_n$ ) per il confronto delle medie;
-* effettuare un test ( $F$-test o $\chi^2$-test) per il confronto delle varianze;
+* calcolare i parametri prestazionali di precisione;
+* calcoare i parametri prestazionali di giustezza;
+* identificare la presenza di bias ( $t$-test o calcolo dell'$E_n$ );
 * esportare i risultati in un report .pdf.
 
-#### Di cosa ha bisogno SIconfronta?
+#### Di cosa ha bisogno SIprecisa?
 Un file .csv con il punto (.) come separatore decimale e la virgola (,) come 
 separatore di campo. 
 Ogni colonna presente nel file deve avere un'intestazione testuale ma il numero
 e la tipologia di colonne dipende dallo scopo:
 
 <details>
-<summary> se vuoi confrontare due serie di misure di cui possiedi i singoli valori 
-per entrambe le serie, clicca qui </summary>
+<summary> se vuoi determinare i parametri di prestazione di precisione e giustezza a partire da una serie di misure, clicca qui </summary>
 Ti servirà organizzare il file con:
 
   * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna testuale con due soli valori, di modo da permettere l'identificazione 
-  del gruppo di appartenenza dei singoli valori;
   * una colonna numerica con i valori delle misure.
   
-Ognuna delle due serie potrà avere da un minimo di 5 a un massimo di 30 valori 
-per ogni coppia formata dall'identificativo dell'analita e del gruppo
+Servono almeno 6 valori, fino a un massimo di 30 valori per ogni analita.
+
+Inoltre, per il calcolo dei parametri di prestazione di giustezza, si dovranno inserire:
+  * il valore di riferimento;
+  * l'incertezza estesa del valore di riferimento, se nota e diversa da zero.
 </details>
 
 <details>
-<summary> se vuoi confrontare due serie di misure di cui possiedi i singoli valori
-per una sola delle serie, clicca qui </summary>
+<summary> se vuoi determinare i parametri di prestazione di precisione a partire
+da una serie di misure in doppio, clicca qui </summary>
 
 Ti servirà organizzare il file con:
   * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna testuale con il nome del gruppo di appartenenza dei valori;
-  * una colonna numerica con i valori delle misure.
+  * una colonna numerica con i valori delle prime misure;
+  * una colonna numerica con i valori delle seconde misure.
   
-Inoltre, nel corso dell'esecuzione dei test, per la serie di misure per cui non si
-dispongono i singoli valori, si dovranno inserire:
-  * il nome del gruppo;
-  * il valore della media;
-  * il valore di deviazione standard;
-  * la numerosità.
-
-La serie per cui sono disponibili le singole misure, potrà avere da un minimo di 5 a
-un massimo di 30 valori per ogni coppia formata dall'identificativo dell'analita e del gruppo.
+Servono almeno 8 coppie di valori, fino a un massimo di 30 valori per ogni analita.
 </details>
 
 <details>
-<summary> se vuoi confrontare una serie di misure con un valore noto,
+<summary> se vuoi stimare i parametri di prestazione di giustezza a partire da una singola misura,
 clicca qui </summary>
 
 Ti servirà organizzare il file con:
   * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna testuale con il nome del gruppo di appartenenza dei valori disponibili;
-  * una colonna numerica con i valori delle misure.
+  * una colonna numerica con il valore della misura;
+  * una colonna numerica con l'incertezza estesa della misura.
+  
+Può essere presente una sola misura per analita.
     
-Inoltre, nel corso dell'esecuzione dei test si dovranno inserire:
-  * il nome da assegnare al valore noto;
-  * il valore noto con cui operare il confronto.
-  
-La serie di misure potrà avere da un minimo di 5 a un massimo di 30 valori 
-per ogni coppia formata dall'identificativo dell'analita e del gruppo.
-</details>
-
-<details>
-<summary> se vuoi confrontare due misure dotate di incertezza estesa,
-clicca qui </summary>
-
-Ti servirà organizzare il file con:
-  * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna testuale con il nome del gruppo di appartenenza dei valori disponibili;
-  * una colonna numerica con i valori delle misure;
-  * una colonna numerica con i valori delle incertezze estese delle misure.
-  
-Può essere presente solo un valore per ogni coppia formata dall'identificativo 
-dell'analita e del gruppo
+Inoltre, nel corso del calcolo dei parametri di prestazione, si dovranno fornire:
+  * il valore di riferimento;
+  * l'incertezza estesa del valore di riferimento, se nota e diversa da zero.
 </details>
 <br>
 
 
-#### Come sono stati scelti i test di SIconfronta?
+#### Come sono stati scelti i test di SIprecisa?
 
 Il test per verificare la normalità di una serie di dati è stato implementato utilizzando
 la funzione `shapiro.test` della libreria `stats` del software R.
@@ -145,7 +121,7 @@ stato implementato sulla base di quanto riportato nella norma ISO 13528:2022, al
 Il calcolo implementato è stato in grado di replicare i risultati riportati nella sezione
 E.4. della medesima norma.
 
-#### Come funziona SIconfronta?
+#### Come funziona SIprecisa?
 L'applicazione è suddivisa in quattro schede con cui l'utente deve interagire in sequenza.
 Ogni scheda possiede un pulsante _Avanti_ posizionato in basso a sinistra, una volta cliccato
 su di esso e confermata la propria scelta, l'utente non potrà tornare indietro.
@@ -170,16 +146,16 @@ su di esso e confermata la propria scelta, l'utente non potrà tornare indietro.
 </details>
 
 <details>
-<summary> Dalla scheda <b>Confronti</b>, clicca qui </summary>
+<summary> Dalla scheda <b>Stime</b>, clicca qui </summary>
 
   1. leggere le istruzioni nella parte a destra dello schermo;
   2. selezionare il parametro di interesse;
   3. digitare le unità di misura;
   4. digitare le eventuali altre informazioni richieste e, se presente, cliccare _Calcola_;
-  5. specificare l'ipotesi alternativa per i test e il loro livello di confidenza;
+  5. specificare il livello di confidenza desiderato per il calcolo delle prestazioni e l'esecuzione        dei test;
   6. visualizzare il grafici e le statistiche di base;
   7. eventualmente rimuovere dei punti cliccando su di essi;
-  8. visualizzare gli esiti dei test spostandosi tra le schede nella parte destra dello schermo;
+  8. visualizzare i risultati spostandosi tra le schede nella parte destra dello schermo;
   9. cliccare su _Salva_ per salvare il risultato;
   10. ripetere i punti dal 2. al 9. per tutti gli analiti di interesse;
   11. cliccare su _Avanti_ e confermare la propria scelta.
@@ -207,26 +183,26 @@ Nel caso si voglia modificare un risultato già salvato:
 <br>
 
 
-#### SIconfronta è validato?
-SIconfronta è basato sull'ambiente software R e molte delle sue funzioni sono utilizzate
+#### SIprecisa è validato?
+SIprecisa è basato sull'ambiente software R e molte delle sue funzioni sono utilizzate
 in ambito professionale da milioni di persone, da circa 30 anni.
 
-La correttezza dei risultati forniti dalle funzioni impiegate da SIconfronta, l'interazione
+La correttezza dei risultati forniti dalle funzioni impiegate da SIprecisa, l'interazione
 tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 650 test.
 Tali test sono eseguiti in automatico a ogni nuovo rilascio di versione.
 
 L'esito dei controlli del 2023-08-14 per la versione 1.0.0,
 è riassunto nelle seguenti etichette aggiornate automaticamente:
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/andreabz/SIconfronta/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/andreabz/SIconfronta/actions/workflows/check-standard.yaml) [![test-coverage](https://github.com/andreabz/SIconfronta/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIconfronta/actions/workflows/test-coverage.yaml)
+[![R-CMD-check](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml) [![test-coverage](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-Infine, il software SIconfronta è ospitato all'interno di un server ad accesso controllato
+Infine, il software SIprecisa è ospitato all'interno di un server ad accesso controllato
 e non soggetto ad aggiornamento o modifiche non intenzionali.
 
 A ogni modo, è sempre meglio rimanere allerta: [segnala eventuali bachi](mailto:andrea.bazzano@arpal.liguria.it).
 
-#### Con quale licenza è rilasciato SIconfronta?
+#### Con quale licenza è rilasciato SIprecisa?
 Con la Affero GPL versione 3.
 
 ![gplv3](../extdata/agplv3.png)
