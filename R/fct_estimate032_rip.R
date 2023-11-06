@@ -212,9 +212,7 @@ rowsummary_rip <- function(data,
 #'   relevant for testing. At least a \code{numeric} vector with the
 #'   measurements should be included.
 #' @param response the name of a numeric vector in \code{data} with the
-#' differences between paired measurement values.
-#' @param measures the name of the two numeric vector in \code{data} with
-#' the measured values.
+#' relative absolute differences between paired measurement values.
 #' @param significance the level of significance for the repeatability limit
 #' calculation. Typical values are 0.90, 0.95 or 0.99.
 #'
@@ -226,9 +224,9 @@ rowsummary_rip <- function(data,
 #'  \describe{
 #'    \item{alpha}{a numeric value calculated as significance + (1 - significance)/2.}
 #'    \item{n}{the number of measurements.}
-#'    \item{stddev}{a numeric value with the standard deviation of the values.}
-#'    \item{repeatability}{a numeric value with the repeatability limit.}
+#'    \item{mean}{a numeric value with the mean of the values.}
 #'    \item{rsd}{a numeric value with the relative standard deviation.}
+#'    \item{repeatability}{a numeric value with the repeatability limit.}
 #'  }
 #'
 #' @export
@@ -236,15 +234,12 @@ rowsummary_rip <- function(data,
 #' @importFrom stats sd qt
 fct_precision_rip <- function(data,
                               response,
-                              measures,
                               significance = 0.95) {
 
   stopifnot(
     is.data.frame(data),
     is.character(response),
     is.numeric(significance),
-    is.character(measures),
-    length(measures) == 2,
     response %in% colnames(data)
   )
 
@@ -252,10 +247,9 @@ fct_precision_rip <- function(data,
 
   myalpha <- (significance + (1 - significance) / 2)
 
-  pair_range <- data[[response]] |> abs()
-  pair_mean <- data[measures] |> rowMeans()
+  mymean <- data[[response]] |> mean()
 
-  rsd <- (pair_range / pair_mean) |> mean() / 1.128
+  rsd <- 100 * mymean / 1.128
 
   n <- length(data[[response]])
 
@@ -264,8 +258,9 @@ fct_precision_rip <- function(data,
   list(
     alpha = myalpha,
     n = n,
-    rel_repeatability = relative_repeatability * 100,
-    rsd = rsd * 100
+    mean = mymean,
+    rsd = rsd,
+    rel_repeatability = relative_repeatability
   )
 
 }

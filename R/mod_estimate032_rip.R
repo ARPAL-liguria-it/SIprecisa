@@ -280,6 +280,7 @@ mod_estimate032_rip_server <- function(id, r) {
       mydifference <- mydata()[[r$loadfile02$responsevar]] - mydata()[[r$loadfile02$secondresponsevar]]
       mymean <- mydata()[, rowMeans(.SD),
                          .SDcols = c(r$loadfile02$responsevar, r$loadfile02$secondresponsevar)]
+      relresponse <- mydifference / mymean
 
       data.frame(
         key = key(),
@@ -287,8 +288,9 @@ mod_estimate032_rip_server <- function(id, r) {
         measure1 = mydata()[[r$loadfile02$responsevar]],
         measure2 = mydata()[[r$loadfile02$secondresponsevar]],
         response = mydifference,
-        rel_response = mydifference / mymean,
-        abs_perc_response = abs(mydifference) / mymean * 100
+        rel_response = relresponse,
+        abs_rel_response = abs(relresponse),
+        abs_perc_response = 100 * abs(relresponse)
       )
 
     })
@@ -447,14 +449,13 @@ mod_estimate032_rip_server <- function(id, r) {
       }
     })
 
-    #### precisione performances ----
+    # precision performances ----
     precision_results <- reactive({
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
       fct_precision_rip(data = selected_data(),
-                        response = "response",
-                        measures = c("measure1", "measure2"),
+                        response = "abs_rel_response",
                         significance = r$estimate03x$significance |>
                           as.numeric())
 

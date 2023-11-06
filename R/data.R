@@ -107,3 +107,17 @@
 #' @source \url{https://store.uni.com/uni-iso-2854-1988}
 #' @keywords data
 "uniiso_2854_x"
+
+#' UNI ISO 11352:2012 Table B.4
+#'
+#' A dataset with 10 values of relative differences from paired values.
+#' The dataset is provided for testing the \code{fct_precision_rip} results.
+#'
+#' @format a dataframe with 10 rows and 1 column of numeric values named
+#' {rel_diff}.
+#'
+#' @name uniiso_11352_b4
+#' @docType data
+#' @source \url{https://store.uni.com/iso-11352-2012}
+#' @keywords data
+"uniiso_11352_b4"
