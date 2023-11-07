@@ -1,21 +1,25 @@
-values2unc <- data.table::fread(
-  system.file("extdata", "raw_2values_unc.csv", package = "SIconfronta"),
+sample_riprec <- data.table::fread(
+  system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa"),
   header = "auto",
   stringsAsFactors = TRUE)
 
-sample1 <- data.table::fread(
-  system.file("extdata", "raw_1sample.csv", package = "SIconfronta"),
+sample_rip <- data.table::fread(
+  system.file("extdata", "raw_sample_rip.csv", package = "SIprecisa"),
   header = "auto",
   stringsAsFactors = TRUE)
 
+sample_recuno <- data.table::fread(
+  system.file("extdata", "raw_sample_recuno.csv", package = "SIprecisa"),
+  header = "auto",
+  stringsAsFactors = TRUE)
 
 r <- reactiveValues(aim01 = reactiveValues())
 
-# testing for 2 samples
+# testing for repeatability and recovery
 testServer(mod_loadfile02_server,
            # Module params
            args = list(r = r), {
-             r$aim01$aim <- "2samples"
+             r$aim01$aim <- "riprec"
              session$flushReact()
 
              ns <- session$ns
@@ -25,151 +29,46 @@ testServer(mod_loadfile02_server,
 
              # checking the upload process
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_tomato_yields.csv", package = "SIconfronta"),
-               name = "raw_tomato_yields.csv"
+               datapath = system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa"),
+               name = "raw_sample_riprec.csv"
              ))
 
              # filename
-             expect_equal(input$file$name, "raw_tomato_yields.csv")
+             expect_equal(input$file$name, "raw_sample_riprec.csv")
              # datapath
              expect_equal(
                input$file$datapath,
-               system.file("extdata", "raw_tomato_yields.csv", package = "SIconfronta")
+               system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa")
              )
 
              # column names
-             expect_named(datafile(), c("parameter", "fertilizer", "pounds"))
+             expect_named(datafile(), c("analita", "misura1"))
              # dimensions of the dataset
-             expect_equal(dim(datafile()), c(11, 3))
-             # the first column is factor
-             expect_equal(class(datafile()[["parameter"]]), "factor")
-             # the second column is numeric
-             expect_equal(class(datafile()[["fertilizer"]]), "factor")
-             # the third column is numeric
-             expect_equal(class(datafile()[["pounds"]]), "numeric")
-             # number of values for the two groups
-             expect_equal(datafile()[, .N, by = "fertilizer"][, N], c(5, 6))
-
-
-             # required number of numeric columns
-             expect_equal(reqsumnum(), 1)
-             # required number of grouping levels
-             expect_equal(reqsumgroup(), 2)
-             # required max number of row for each parameter and group pair
-             expect_equal(reqmaxvalues(), 30)
-             # required min number of row for each parameter and group pair
-             expect_equal(reqminvalues(), 5)
-             # numeric columns
-             expect_equal(numcol(), "pounds")
-             # number of numeric columns
-             expect_equal(sumnum(), 1)
-             # sumnum is TRUE
-             expect_equal(numok(), TRUE)
-             # character columns
-             expect_equal(charcol(), c("parameter", "fertilizer"))
-             # number of factor columns
-             expect_equal(sumchar(), 2)
-             # charok is TRUE
-             expect_equal(charok(), TRUE)
-             # dataloaded flag
-             expect_equal(dataloaded(), "dataloaded")
-
-             session$setInputs(
-               parvar = "parameter",
-               groupvar = "fertilizer",
-               responsevar = "pounds"
-               )
-
-             # maxgroup is equal to 2
-             expect_equal(maxgroup(), 2)
-             # mingroup is equal to 2
-             expect_equal(mingroup(), 2)
-             # groupok is TRUE
-             expect_equal(groupok(), TRUE)
-             # maxvalues is less or equal 30
-             expect_true(maxvalues() <= 30)
-             # minvalues is greater or equal 5
-             expect_true(minvalues() >= 5)
-             # valuesok is TRUE
-             expect_equal(valuesok(), TRUE)
-             # dataok is TRUE
-             expect_equal(dataok(), TRUE)
-             # isloaded is dataloaded
-             expect_equal(isloaded(), "dataloaded")
-             # is2values is not_2values
-             expect_equal(is2values(), "not_2values")
-             # parlist is yields
-             expect_equal(parlist(), factor("yield"))
-
-             session$setInputs(nextbtn = 1,
-                               yesbtn = 1)
-
-             # saved output
-             expect_equal(class(r$loadfile02), "reactivevalues")
-             expect_equal(r$loadfile02$data, datafile())
-             expect_equal(r$loadfile02$parvar, "parameter")
-             expect_equal(r$loadfile02$parlist, factor("yield"))
-             expect_equal(r$loadfile02$groupvar, "fertilizer")
-             expect_equal(r$loadfile02$responsevar, "pounds")
-             expect_equal(r$loadfile02$uncertaintyvar, NULL)
-
-           })
-
-# testing for 1 sample
-testServer(mod_loadfile02_server,
-           # Module params
-           args = list(r = r), {
-             r$aim01$aim <- "1sample_mu"
-             session$flushReact()
-
-             ns <- session$ns
-             expect_true(inherits(ns, "function"))
-             expect_true(grepl(id, ns("")))
-             expect_true(grepl("test", ns("test")))
-
-             # checking the upload process
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample.csv", package = "SIconfronta"),
-               name = "raw_1sample.csv"
-             ))
-
-             # filename
-             expect_equal(input$file$name, "raw_1sample.csv")
-             # datapath
-             expect_equal(
-               input$file$datapath,
-               system.file("extdata", "raw_1sample.csv", package = "SIconfronta")
-             )
-
-             # column names
-             expect_equal(colnames(datafile()),
-                          c("analita", "gruppo", "valore"))
-             # dimensions of the dataset
-             expect_equal(dim(datafile()), c(15, 3))
+             expect_equal(dim(datafile()), c(38, 2))
              # the first column is factor
              expect_equal(class(datafile()[["analita"]]), "factor")
              # the second column is numeric
-             expect_equal(class(datafile()[["gruppo"]]), "factor")
-             # the third column is numeric
-             expect_equal(class(datafile()[["valore"]]), "numeric")
+             expect_equal(class(datafile()[["misura1"]]), "numeric")
              # number of values for the two groups
-             expect_equal(datafile()[, .N, by = "gruppo"][, N], 15)
+             expect_equal(datafile()[, .N, by = "analita"][, N], c(19, 19))
 
 
              # required number of numeric columns
              expect_equal(reqsumnum(), 1)
-             # required number of grouping levels
-             expect_equal(reqsumgroup(), 1)
+             # required max number of row for each parameter and group pair
+             expect_equal(reqmaxvalues(), 30)
+             # required min number of row for each parameter and group pair
+             expect_equal(reqminvalues(), 6)
              # numeric columns
-             expect_equal(numcol(), "valore")
+             expect_equal(numcol(), "misura1")
              # number of numeric columns
              expect_equal(sumnum(), 1)
              # sumnum is TRUE
              expect_equal(numok(), TRUE)
              # character columns
-             expect_equal(charcol(), c("analita", "gruppo"))
+             expect_equal(charcol(), "analita")
              # number of factor columns
-             expect_equal(sumchar(), 2)
+             expect_equal(sumchar(), 1)
              # charok is TRUE
              expect_equal(charok(), TRUE)
              # dataloaded flag
@@ -177,30 +76,25 @@ testServer(mod_loadfile02_server,
 
              session$setInputs(
                parvar = "analita",
-               groupvar = "gruppo",
-               responsevar = "valore"
-             )
+               responsevar = "misura1"
+               )
 
-             # maxgroup is equal to 1
-             expect_equal(maxgroup(), 1)
-             # mingroup is equal to 1
-             expect_equal(mingroup(), 1)
-             # groupok is TRUE
-             expect_equal(groupok(), TRUE)
              # maxvalues is less or equal 30
              expect_true(maxvalues() <= 30)
              # minvalues is greater or equal 5
-             expect_true(minvalues() >= 5)
+             expect_true(minvalues() >= 6)
              # valuesok is TRUE
              expect_equal(valuesok(), TRUE)
              # dataok is TRUE
              expect_equal(dataok(), TRUE)
              # isloaded is dataloaded
              expect_equal(isloaded(), "dataloaded")
-             # is2values is not_2values
-             expect_equal(is2values(), "not_2values")
-             # parlist is yields
-             expect_equal(parlist(), factor(c("yield", "load")))
+             # isunc is without_unc
+             expect_equal(isunc(), "without_unc")
+             # is2measures is not_2measures
+             expect_equal(is2measures(), "not_2measures")
+             # parlist is right
+             expect_equal(parlist(), factor(c("boro", "ferro")))
 
              session$setInputs(nextbtn = 1,
                                yesbtn = 1)
@@ -209,18 +103,18 @@ testServer(mod_loadfile02_server,
              expect_equal(class(r$loadfile02), "reactivevalues")
              expect_equal(r$loadfile02$data, datafile())
              expect_equal(r$loadfile02$parvar, "analita")
-             expect_equal(r$loadfile02$parlist, factor(c("yield", "load")))
-             expect_equal(r$loadfile02$groupvar, "gruppo")
-             expect_equal(r$loadfile02$responsevar, "valore")
+             expect_equal(r$loadfile02$parlist, factor(c("boro", "ferro")))
+             expect_equal(r$loadfile02$responsevar, "misura1")
+             expect_equal(r$loadfile02$secondresponsevar, NULL)
              expect_equal(r$loadfile02$uncertaintyvar, NULL)
 
            })
 
-# testing for 2 values
+# testing for repeatability
 testServer(mod_loadfile02_server,
            # Module params
            args = list(r = r), {
-             r$aim01$aim <- "2values_unc"
+             r$aim01$aim <- "rip"
              session$flushReact()
 
              ns <- session$ns
@@ -230,51 +124,46 @@ testServer(mod_loadfile02_server,
 
              # checking the upload process
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIconfronta"),
-               name = "raw_2values_unc.csv"
+               datapath = system.file("extdata", "raw_sample_rip.csv", package = "SIprecisa"),
+               name = "raw_sample_rip.csv"
              ))
 
              # filename
-             expect_equal(input$file$name, "raw_2values_unc.csv")
+             expect_equal(input$file$name, "raw_sample_rip.csv")
              # datapath
              expect_equal(
                input$file$datapath,
-               system.file("extdata", "raw_2values_unc.csv", package = "SIconfronta")
+               system.file("extdata", "raw_sample_rip.csv", package = "SIprecisa")
              )
 
              # column names
              expect_equal(colnames(datafile()),
-                          c("analita", "gruppo", "valore", "unc"))
+                          c("analita", "misura1", "misura2"))
              # dimensions of the dataset
-             expect_equal(dim(datafile()), c(4, 4))
+             expect_equal(dim(datafile()), c(38, 3))
              # the first column is factor
              expect_equal(class(datafile()[["analita"]]), "factor")
              # the second column is numeric
-             expect_equal(class(datafile()[["gruppo"]]), "factor")
+             expect_equal(class(datafile()[["misura1"]]), "numeric")
              # the third column is numeric
-             expect_equal(class(datafile()[["valore"]]), "numeric")
-             # number of values for the two groups
-             expect_equal(datafile()[, .N, by = "gruppo"][, N], c(2, 2))
+             expect_equal(class(datafile()[["misura2"]]), "numeric")
+             # number of values for the two analytes
+             expect_equal(datafile()[, .N, by = "analita"][, N], c(19, 19))
 
 
              # required number of numeric columns
              expect_equal(reqsumnum(), 2)
              # required number of grouping levels
-             expect_equal(reqsumgroup(), 2)
-             # required max number of row for each parameter and group pair
-             expect_equal(reqmaxvalues(), 1)
-             # required min number of row for each parameter and group pair
-             expect_equal(reqminvalues(), 1)
              # numeric columns
-             expect_equal(numcol(), c("valore", "unc"))
+             expect_equal(numcol(), c("misura1", "misura2"))
              # number of numeric columns
              expect_equal(sumnum(), 2)
              # sumnum is TRUE
              expect_equal(numok(), TRUE)
              # character columns
-             expect_equal(charcol(), c("analita", "gruppo"))
+             expect_equal(charcol(), "analita")
              # number of factor columns
-             expect_equal(sumchar(), 2)
+             expect_equal(sumchar(), 1)
              # charok is TRUE
              expect_equal(charok(), TRUE)
              # dataloaded flag
@@ -282,17 +171,104 @@ testServer(mod_loadfile02_server,
 
              session$setInputs(
                parvar = "analita",
-               groupvar = "gruppo",
-               responsevar = "valore",
-               uncertaintyvar = "unc"
+               responsevar = "misura1",
+               secondresponsevar = "misura2"
              )
 
-             # maxgroup is equal to 2
-             expect_equal(maxgroup(), 2)
-             # mingroup is equal to 2
-             expect_equal(mingroup(), 2)
-             # groupok is TRUE
-             expect_equal(groupok(), TRUE)
+             # maxvalues is less or equal 30
+             expect_true(maxvalues() <= 30)
+             # minvalues is greater or equal 5
+             expect_true(minvalues() >= 5)
+             # valuesok is TRUE
+             expect_equal(valuesok(), TRUE)
+             # dataok is TRUE
+             expect_equal(dataok(), TRUE)
+             # isunc is without_unc
+             expect_equal(isunc(), "without_unc")
+             # is2measures is 2measures
+             expect_equal(is2measures(), "2measures")
+             # parlist is right
+             expect_equal(parlist(), factor(c("boro", "ferro")))
+
+             session$setInputs(nextbtn = 1,
+                               yesbtn = 1)
+
+             # saved output
+             expect_equal(class(r$loadfile02), "reactivevalues")
+             expect_equal(r$loadfile02$data, datafile())
+             expect_equal(r$loadfile02$parvar, "analita")
+             expect_equal(r$loadfile02$parlist, factor(c("boro", "ferro")))
+             expect_equal(r$loadfile02$responsevar, "misura1")
+             expect_equal(r$loadfile02$secondresponsevar, "misura2")
+             expect_equal(r$loadfile02$uncertaintyvar, NULL)
+
+           })
+
+# testing for recovery on single value
+testServer(mod_loadfile02_server,
+           # Module params
+           args = list(r = r), {
+             r$aim01$aim <- "recuno"
+             session$flushReact()
+
+             ns <- session$ns
+             expect_true(inherits(ns, "function"))
+             expect_true(grepl(id, ns("")))
+             expect_true(grepl("test", ns("test")))
+
+             # checking the upload process
+             session$setInputs(file = list(
+               datapath = system.file("extdata", "raw_sample_recuno.csv", package = "SIprecisa"),
+               name = "raw_sample_recuno.csv"
+             ))
+
+             # filename
+             expect_equal(input$file$name, "raw_sample_recuno.csv")
+             # datapath
+             expect_equal(
+               input$file$datapath,
+               system.file("extdata", "raw_sample_recuno.csv", package = "SIprecisa")
+             )
+
+             # column names
+             expect_equal(colnames(datafile()),
+                          c("analita", "misura", "extunc"))
+             # dimensions of the dataset
+             expect_equal(dim(datafile()), c(2, 3))
+             # the first column is factor
+             expect_equal(class(datafile()[["analita"]]), "factor")
+             # the second column is numeric
+             expect_equal(class(datafile()[["misura"]]), "numeric")
+             # the third column is numeric
+             expect_equal(class(datafile()[["extunc"]]), "numeric")
+
+             # required number of numeric columns
+             expect_equal(reqsumnum(), 2)
+             # required max number of row for each parameter
+             expect_equal(reqmaxvalues(), 1)
+             # required min number of row for each parameter
+             expect_equal(reqminvalues(), 1)
+             # numeric columns
+             expect_equal(numcol(), c("misura", "extunc"))
+             # number of numeric columns
+             expect_equal(sumnum(), 2)
+             # sumnum is TRUE
+             expect_equal(numok(), TRUE)
+             # character columns
+             expect_equal(charcol(), "analita")
+             # number of factor columns
+             expect_equal(sumchar(), 1)
+             # charok is TRUE
+             expect_equal(charok(), TRUE)
+             # dataloaded flag
+             expect_equal(dataloaded(), "dataloaded")
+
+             session$setInputs(
+               parvar = "analita",
+               responsevar = "misura",
+               uncertaintyvar = "extunc"
+             )
+
              # maxvalues is less or equal 1
              expect_true(maxvalues() <= 1)
              # minvalues is greater or equal 1
@@ -301,12 +277,12 @@ testServer(mod_loadfile02_server,
              expect_equal(valuesok(), TRUE)
              # dataok is TRUE
              expect_equal(dataok(), TRUE)
-             # isloaded is dataloaded
-             expect_equal(isloaded(), "dataloaded")
-             # is2values is 2values
-             expect_equal(is2values(), "2values")
+             # isunc is with_unc
+             expect_equal(isunc(), "with_unc")
+             # is2measures is 2measures
+             expect_equal(is2measures(), "not_2measures")
              # parlist is yields
-             expect_equal(parlist(), factor(c("L03", "L12")))
+             expect_equal(parlist(), factor(c("boro", "ferro")))
 
              session$setInputs(nextbtn = 1,
                                yesbtn = 1)
@@ -315,13 +291,13 @@ testServer(mod_loadfile02_server,
              expect_equal(class(r$loadfile02), "reactivevalues")
              expect_equal(r$loadfile02$data, datafile())
              expect_equal(r$loadfile02$parvar, "analita")
-             expect_equal(r$loadfile02$parlist, factor(c("L03", "L12")))
-             expect_equal(r$loadfile02$groupvar, "gruppo")
-             expect_equal(r$loadfile02$responsevar, "valore")
-             expect_equal(r$loadfile02$uncertaintyvar, "unc")
+             expect_equal(r$loadfile02$parlist, factor(c("boro", "ferro")))
+             expect_equal(r$loadfile02$responsevar, "misura")
+             expect_equal(r$loadfile02$secondresponsevar, NULL)
+             expect_equal(r$loadfile02$uncertaintyvar, "extunc")
 
            })
-
+################### TO BE UPDATED ###################
 # testing errors for 2samples and wrong number of groups, columns and rows
 testServer(mod_loadfile02_server,
            # Module params
@@ -333,7 +309,7 @@ testServer(mod_loadfile02_server,
 
              # 1 group instead of 2
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_1sample.csv", package = "SIprecisa"),
                name = "raw_1sample.csv"
              ))
 
@@ -341,7 +317,7 @@ testServer(mod_loadfile02_server,
 
              # 3 groups on some parameters instead of 2 on all parameters
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples_wronggroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2samples_wronggroups.csv", package = "SIprecisa"),
                name = "raw_2samples_wronggroups.csv"
              ))
 
@@ -349,7 +325,7 @@ testServer(mod_loadfile02_server,
 
              # no grouping variable
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
                name = "raw_nogroups.csv"
              ))
 
@@ -358,7 +334,7 @@ testServer(mod_loadfile02_server,
 
              # 2 numerical variable instead of 1
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIprecisa"),
                name = "raw_2values_unc.csv"
              ))
 
@@ -366,7 +342,7 @@ testServer(mod_loadfile02_server,
 
              # 5 values for a parameter and group pair insted of a minimum of 6 values
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples_4rows.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2samples_4rows.csv", package = "SIprecisa"),
                name = "raw_2samples_4rows.csv"
              ))
 
@@ -385,7 +361,7 @@ testServer(mod_loadfile02_server,
 
              # 2 groups instead of 1
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2samples.csv", package = "SIprecisa"),
                name = "raw_2samples.csv"
              ))
 
@@ -393,7 +369,7 @@ testServer(mod_loadfile02_server,
 
              # 3 groups on some parameters instead of 1 on all parameters
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_wronggroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_1sample_wronggroups.csv", package = "SIprecisa"),
                name = "raw_1sample_wronggroups.csv"
              ))
 
@@ -401,7 +377,7 @@ testServer(mod_loadfile02_server,
 
              # no grouping variable
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
                name = "raw_nogroups.csv"
              ))
 
@@ -410,7 +386,7 @@ testServer(mod_loadfile02_server,
 
              # 2 numerical variable instead of 1
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIprecisa"),
                name = "raw_2values_unc.csv"
              ))
 
@@ -419,7 +395,7 @@ testServer(mod_loadfile02_server,
 
              # 5 values for a parameter and group pair insted of a minimum of 6 values
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIprecisa"),
                name = "raw_1sample_4rows.csv"
              ))
 
@@ -438,7 +414,7 @@ testServer(mod_loadfile02_server,
 
              # 1 numerical variable instead of 2
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2samples.csv", package = "SIprecisa"),
                name = "raw_2samples.csv"
              ))
 
@@ -446,7 +422,7 @@ testServer(mod_loadfile02_server,
 
              # 3 groups on some parameters instead of 1 on all parameters
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc_wronggroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_2values_unc_wronggroups.csv", package = "SIprecisa"),
                name = "raw_2values_unc_wronggroups.csv"
              ))
 
@@ -454,7 +430,7 @@ testServer(mod_loadfile02_server,
 
              # no grouping variable
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
                name = "raw_nogroups.csv"
              ))
 
@@ -464,7 +440,7 @@ testServer(mod_loadfile02_server,
 
              # 2 values for a parameter and group pair insted of a minimum of 1 value
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIconfronta"),
+               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIprecisa"),
                name = "raw_1sample_4rows.csv"
              ))
 

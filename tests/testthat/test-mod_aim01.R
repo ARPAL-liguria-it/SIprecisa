@@ -10,26 +10,18 @@ testServer(
     expect_true(grepl("test", ns("test")))
 
     # checking the output
-    session$setInputs(aim = "2samples",
+    session$setInputs(aim = "riprec",
                       nextbtn = TRUE,
                       yesbtn = TRUE)
-    expect_true(r$aim01$aim == "2samples")
-    session$setInputs(aim = "2samples_par",
+    expect_true(r$aim01$aim == "riprec")
+    session$setInputs(aim = "rip",
                       nextbtn = TRUE,
                       yesbtn = TRUE)
-    expect_true(r$aim01$aim == "2samples_par")
-    session$setInputs(aim = "1sample_mu",
+    expect_true(r$aim01$aim == "rip")
+    session$setInputs(aim = "recuno",
                       nextbtn = TRUE,
                       yesbtn = TRUE)
-    expect_true(r$aim01$aim == "1sample_mu")
-    session$setInputs(aim = "1sample_sigma",
-                      nextbtn = TRUE,
-                      yesbtn = TRUE)
-    expect_true(r$aim01$aim == "1sample_sigma")
-    session$setInputs(aim = "2values_unc",
-                      nextbtn = TRUE,
-                      yesbtn = TRUE)
-    expect_true(r$aim01$aim == "2values_unc")
+    expect_true(r$aim01$aim == "recuno")
 })
 
 test_that("module aim01 ui works", {
