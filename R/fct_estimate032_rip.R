@@ -81,7 +81,7 @@ boxplot_rip <- function(data,
 #' @param data input data.frame a numeric columns with the two numeric responses and a
 #' character columns with outliers flag.
 #' The first two columns must be named as the response and second_response variable,
-#' respectively, while the second column must be named *rimosso*.
+#' respectively, while the third column must be named *rimosso*.
 #' @param response a character string with the label for the first response numeric variable.
 #' @param second_response a character string with the label for the second response numeric variable.
 #' @param udm a character string with the unit of measurement.
@@ -98,7 +98,8 @@ ggboxplot_rip <- function(data,
   stopifnot(
     is.data.frame(data),
     is.character(response),
-    is.character(second_response)
+    is.character(second_response),
+    "rimosso" %in% colnames(data)
   )
 
   rimosso <- NULL
