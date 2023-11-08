@@ -1,18 +1,3 @@
-sample_riprec <- data.table::fread(
-  system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa"),
-  header = "auto",
-  stringsAsFactors = TRUE)
-
-sample_rip <- data.table::fread(
-  system.file("extdata", "raw_sample_rip.csv", package = "SIprecisa"),
-  header = "auto",
-  stringsAsFactors = TRUE)
-
-sample_recuno <- data.table::fread(
-  system.file("extdata", "raw_sample_recuno.csv", package = "SIprecisa"),
-  header = "auto",
-  stringsAsFactors = TRUE)
-
 r <- reactiveValues(aim01 = reactiveValues())
 
 # testing for repeatability and recovery
@@ -297,53 +282,36 @@ testServer(mod_loadfile02_server,
              expect_equal(r$loadfile02$uncertaintyvar, "extunc")
 
            })
-################### TO BE UPDATED ###################
-# testing errors for 2samples and wrong number of groups, columns and rows
+
+# testing errors for riprec and wrong number columns and rows
 testServer(mod_loadfile02_server,
            # Module params
            args = list(r = r), {
-             r$aim01$aim <- "2samples"
+             r$aim01$aim <- "riprec"
              session$flushReact()
 
              ns <- session$ns
 
-             # 1 group instead of 2
+             # two numeric columns instead one
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample.csv", package = "SIprecisa"),
-               name = "raw_1sample.csv"
-             ))
-
-             expect_error(groupok())
-
-             # 3 groups on some parameters instead of 2 on all parameters
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples_wronggroups.csv", package = "SIprecisa"),
-               name = "raw_2samples_wronggroups.csv"
-             ))
-
-             expect_error(groupok())
-
-             # no grouping variable
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
-               name = "raw_nogroups.csv"
-             ))
-
-             expect_error(charok())
-             expect_error(groupok())
-
-             # 2 numerical variable instead of 1
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIprecisa"),
-               name = "raw_2values_unc.csv"
+               datapath = system.file("extdata", "raw_sample_rip.csv", package = "SIprecisa"),
+               name = "raw_sample_rip.csv"
              ))
 
              expect_error(numok())
 
-             # 5 values for a parameter and group pair insted of a minimum of 6 values
+             # two character columns instead one
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples_4rows.csv", package = "SIprecisa"),
-               name = "raw_2samples_4rows.csv"
+               datapath = system.file("extdata", "raw_sample_rip_2cols.csv", package = "SIprecisa"),
+               name = "raw_sample_rip_2cols.csv"
+             ))
+
+             expect_error(charok())
+
+             # 5 values for a parameter insted of a minimum of 6 values
+             session$setInputs(file = list(
+               datapath = system.file("extdata", "raw_sample_riprec_5rows.csv", package = "SIprecisa"),
+               name = "raw_sample_riprec_5rows.csv"
              ))
 
              expect_error(valuesok())
@@ -354,49 +322,31 @@ testServer(mod_loadfile02_server,
 testServer(mod_loadfile02_server,
            # Module params
            args = list(r = r), {
-             r$aim01$aim <- "1sample_sigma"
+             r$aim01$aim <- "rip"
              session$flushReact()
 
              ns <- session$ns
 
-             # 2 groups instead of 1
+             # 1 numeric columns instead 2
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples.csv", package = "SIprecisa"),
-               name = "raw_2samples.csv"
-             ))
-
-             expect_error(groupok())
-
-             # 3 groups on some parameters instead of 1 on all parameters
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_wronggroups.csv", package = "SIprecisa"),
-               name = "raw_1sample_wronggroups.csv"
-             ))
-
-             expect_error(groupok())
-
-             # no grouping variable
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
-               name = "raw_nogroups.csv"
-             ))
-
-             expect_error(charok())
-             expect_error(groupok())
-
-             # 2 numerical variable instead of 1
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc.csv", package = "SIprecisa"),
-               name = "raw_2values_unc.csv"
+               datapath = system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa"),
+               name = "raw_sample_riprec.csv"
              ))
 
              expect_error(numok())
-             expect_error(groupok())
+
+             # 2 character columns instead 1
+             session$setInputs(file = list(
+               datapath = system.file("extdata", "raw_sample_riprec_2cols.csv", package = "SIprecisa"),
+               name = "raw_sample_riprec_2cols.csv"
+             ))
+
+             expect_error(charok())
 
              # 5 values for a parameter and group pair insted of a minimum of 6 values
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIprecisa"),
-               name = "raw_1sample_4rows.csv"
+               datapath = system.file("extdata", "raw_sample_rip_7rows.csv", package = "SIprecisa"),
+               name = "raw_sample_rip_7rows.csv"
              ))
 
              expect_error(valuesok())
@@ -407,41 +357,31 @@ testServer(mod_loadfile02_server,
 testServer(mod_loadfile02_server,
            # Module params
            args = list(r = r), {
-             r$aim01$aim <- "2values_unc"
+             r$aim01$aim <- "recuno"
              session$flushReact()
 
              ns <- session$ns
 
              # 1 numerical variable instead of 2
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2samples.csv", package = "SIprecisa"),
-               name = "raw_2samples.csv"
+               datapath = system.file("extdata", "raw_sample_riprec.csv", package = "SIprecisa"),
+               name = "raw_sample_riprec.csv"
              ))
 
              expect_error(numok())
 
-             # 3 groups on some parameters instead of 1 on all parameters
+             # 2 character columns instead of 1
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_2values_unc_wronggroups.csv", package = "SIprecisa"),
-               name = "raw_2values_unc_wronggroups.csv"
+               datapath = system.file("extdata", "raw_sample_recuno_2cols.csv", package = "SIprecisa"),
+               name = "raw_sample_recuno_2cols.csv"
              ))
 
-             expect_error(groupok())
-
-             # no grouping variable
-             session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_nogroups.csv", package = "SIprecisa"),
-               name = "raw_nogroups.csv"
-             ))
-
-             expect_error(numok())
              expect_error(charok())
-             expect_error(groupok())
 
-             # 2 values for a parameter and group pair insted of a minimum of 1 value
+             # 2 rows instead of 1
              session$setInputs(file = list(
-               datapath = system.file("extdata", "raw_1sample_4rows.csv", package = "SIprecisa"),
-               name = "raw_1sample_4rows.csv"
+               datapath = system.file("extdata", "raw_sample_recuno_2rows.csv", package = "SIprecisa"),
+               name = "raw_sample_recuno_2rows.csv"
              ))
 
              expect_error(valuesok())
