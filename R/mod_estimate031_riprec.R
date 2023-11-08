@@ -570,7 +570,7 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-    #### results for the t-test ----
+    # results for the t-test ----
     ttest_list <- reactive({
       req(selected_data())
       req(r$estimate03x$click == 1)
@@ -624,7 +624,7 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
 
-    #### results for the En-test ----
+    # results for the En-test ----
     entest_list <- reactive({
       req(selected_data())
       req(r$estimate03x$click == 1)
@@ -696,7 +696,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       })
 
 
-    #### trueness performances ----
+    # trueness performances ----
     trueness_results <- reactive({
       req(r$estimate03x$click == 1)
 
