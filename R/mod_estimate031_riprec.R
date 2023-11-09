@@ -298,7 +298,7 @@ mod_estimate031_riprec_server <- function(id, r) {
       r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
     })
 
-    #### conditions for trueness results ----
+    # conditions for trueness results ----
     ok_click <- reactive({
       ifelse(r$estimate03x$refvalue != 0 && r$estimate03x$click == 0,
              0, 1)
@@ -762,7 +762,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     })
 
-    #### precisione performances ----
+    # precisione performances ----
     precision_results <- reactive({
       req(r$estimate03x$click == 1)
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||

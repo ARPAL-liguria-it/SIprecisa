@@ -72,6 +72,97 @@ boxplot_rip <- function(data,
 
 }
 
+#' Plotly widget for differences between pair of values vs their median values.
+#'
+#' @description The function provides a simple {plotly} for
+#' differences between pair of values vs their mean values.
+#'
+#' @details
+#' relative percentage difference between values are plotted vs the median of the
+#' paired values. The central line is calculated as the mean of the values and
+#' the
+#'
+#'
+#' @param data input data.frame with a column named *key* with progressive integers,
+#' a column named *rel_response* with the numeric values of the relative difference
+#' between the paired values, and a column named *outlier* with a logical vector.
+#' @param response a character string with the label for the response numeric variable.
+#'
+#' @return A {plotly} interval plot for comparing the confidence
+#' interval of the supplied  measurement values with a reference value and
+#' its extended uncertainty.
+#'
+#' @export
+#'
+#' @importFrom plotly plot_ly add_markers layout config
+shewart_rip <- function(data,
+                        response) {
+  stopifnot(
+    is.data.frame(data),
+    is.character(response),
+    is.numeric(refvalue),
+    is.numeric(refuncertainty),
+    conflevel %in% c(0.90, 0.95, 0.99),
+    is.character(udm),
+    colnames(data) %in% c("key", "outlier", "response"),
+    dim(data)[2] == 3
+  )
+
+
+  cols <- ifelse(data$outlier == TRUE,
+                 "#999999",
+                 "black")
+
+  ylabtitle <- paste0(response,
+                      ifelse(udm != "", paste0(" (", udm, ")"), ""))
+
+  datanoutlier <- data[data$outlier == FALSE,]
+
+  # 95% confidence interval for measurement values and the reference value
+  reference_confint <- c(refvalue,
+                         refuncertainty)
+
+  mean_confint <- lm(datanoutlier$response ~ 1) |> confint(level = conflevel)
+
+  measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
+                           (mean_confint[2] - mean_confint[1])/2)
+
+  myconfint <- data.frame(label = c("misure", "riferimento"),
+                          meanval = c(measurement_confint[1], reference_confint[1]),
+                          uncertainty = c(measurement_confint[2], reference_confint[2])
+  )
+
+  # comparing confidence intervals
+  plotly::plot_ly(source = "confint",
+                  data = myconfint,
+                  y = ~meanval ,
+                  x = ~label,
+                  name = "CI",
+                  type = "scatter",
+                  mode = "markers",
+                  color = I("#2780E3"),
+                  showlegend = FALSE,
+                  key = NULL,
+                  error_y = ~list(
+                    array = uncertainty
+                  ),
+                  #hoverinfo = "y",
+                  hovertemplate = paste('%{y:.3r}', '\u00B1', '%{error_y.array:.2r}', udm)
+  ) |>
+    plotly::layout(
+      showlegend = FALSE,
+      title = list(text = "Intervalli di confidenza delle medie",
+                   font = list(size = 11)
+      ),
+      xaxis = list(title = NA),
+      yaxis = list(title = ylabtitle,
+                   hoverformat = ".3r")
+    ) |>
+    plotly::config(displayModeBar = FALSE,
+                   locale = "it")
+
+}
+
 #' ggplot2 boxplots for paired measurement values.
 #'
 #' @description The function provides a simple {ggplot2} boxplot for a serie
