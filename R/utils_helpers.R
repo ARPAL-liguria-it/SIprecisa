@@ -254,3 +254,49 @@ help_accordion <- function(todotitle,
   )
 
 }
+
+#' Horizontal line for {plotly} plots
+#'
+#' @description The function makes a list suitable for drawing an horizontal line
+#' in a {plotly} plot
+#'
+#' @param y a numeric value with the coordinate of the line to be plotted.
+#' @param color a character value with the color of the line.
+#' @param dash a character value for the line appearance. Possible values are
+#' "solid", "dot", "dash", "longdash", "dashdot", or "longdashdot". Default is "solid".
+#'
+#' @details Files must be placed in the \code{/inst/rmd} folder of the package.
+#' Saved from \url{https://stackoverflow.com/questions/34093169/horizontal-vertical-line-in-plotly}
+#' Carson's answer.
+#'
+#' @return a {list} to be used inside the {plotly} {layout} function.
+#'
+#' @examples
+#' plotly::plot_ly() |>
+#'   plotly::layout(shapes = list(hline(5)))
+#'
+#' @noRd
+#' @importFrom plotly plot_ly layout
+
+hline <- function(y = 0,
+                  color = "blue",
+                  dash = "solid") {
+
+  stopifnot(
+    is.numeric(y),
+    is.character(color),
+    is.character(dash),
+    dash %in% c("solid", "dot", "dash", "longdash", "dashdot", "longdashdot")
+  )
+
+  list(
+    type = "line",
+    x0 = 0,
+    x1 = 1,
+    xref = "paper",
+    y0 = y,
+    y1 = y,
+    line = list(color = color,
+                dash = dash)
+  )
+}

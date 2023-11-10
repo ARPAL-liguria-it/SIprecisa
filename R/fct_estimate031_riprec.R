@@ -106,11 +106,14 @@ fct_gesd <- function(values,
     if (sum(outlier_res$outlier) == 0) {
       "nessun valore anomalo"
     } else if (sum(outlier_res$outlier) == 1) {
-      paste0(outlier_res[which(outlier_res$outlier == TRUE), "I"],
+      paste0(
+        sprintf("%#.3g", outlier_res[which(outlier_res$outlier == TRUE), "I"]),
              " \u00E8 un possibile valore anomalo")
     } else {
       paste0(
-        paste(outlier_res[which(outlier_res$outlier == TRUE), "I"], collapse = ", "),
+        paste(
+          sprintf("%#.3g", outlier_res[which(outlier_res$outlier == TRUE), "I"]),
+                  collapse = ", "),
         " sono possibili valori anomali")
     }
 
@@ -121,7 +124,7 @@ fct_gesd <- function(values,
   df <- data.frame(I = values)
   df_result <- data.frame()
 
-  while (l <= m) {
+  while (l <= m-1) {
     # mean and std.deviation
     x_mean <- mean(df$I)
     x_sd <- stats::sd(df$I)
@@ -141,7 +144,7 @@ fct_gesd <- function(values,
     l <- l + 1
   }
 
- df_result$l <- 0:m
+ df_result$l <- 1:m
  df_result$lambda <- lamba_l(n, df_result$l, signif = significance)
  df_result$outlier <- ifelse(df_result$R > df_result$lambda, TRUE, FALSE)
  df_result <- df_result[, c("I", "R", "lambda", "outlier")]

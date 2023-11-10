@@ -21,7 +21,7 @@ boxplot_rip <- function(data,
     is.data.frame(data),
     is.character(response),
     is.character(udm),
-    c("key", "outlier", "rel_response") %in% colnames(data),
+    c("key", "outlier", response) %in% colnames(data),
     dim(data)[2] >= 3
   )
 
@@ -32,12 +32,16 @@ boxplot_rip <- function(data,
   ylabtitle <- paste0("differenze relative (", udm, ")")
 
   datanoutlier <- data[data$outlier == FALSE,]
+  datanoutlier$myresponse <- datanoutlier[[response]]
+
+  mydata <- data
+  mydata$myresponse <- data[[response]]
 
   # boxplot for measurement values
   plotly::plot_ly(source = "boxplot") |>
     plotly::add_boxplot(
       data = datanoutlier,
-      y = ~ rel_response * 100,
+      y = ~ myresponse * 100,
       x = "differenze",
       name = "boxplot",
       type = "box",
@@ -49,8 +53,8 @@ boxplot_rip <- function(data,
       key = NULL
     ) |>
     plotly::add_markers(
-      data = data,
-      y = ~ rel_response * 100,
+      data = mydata,
+      y = ~ myresponse * 100,
       x = "differenze",
       name = "differenze",
       marker = list(
@@ -78,15 +82,20 @@ boxplot_rip <- function(data,
 #' differences between pair of values vs their mean values.
 #'
 #' @details
-#' relative percentage difference between values are plotted vs the median of the
-#' paired values. The central line is calculated as the mean of the values and
-#' the
-#'
+#' relative percentage difference between values are plotted vs the mean of the
+#' paired values. The central line is calculated as the mean of the relative
+#' differences and the upper limit is the calculated by multiplying the value of
+#' the central line by 3.267, as described in section 6.4 of UNI ISO 7870-2:2023.
 #'
 #' @param data input data.frame with a column named *key* with progressive integers,
-#' a column named *rel_response* with the numeric values of the relative difference
-#' between the paired values, and a column named *outlier* with a logical vector.
-#' @param response a character string with the label for the response numeric variable.
+#' two columns named *measure1* and *measure2* with the numeric values
+#' of the paired measurement values, and a column named *outlier* with a logical vector.
+#' @param measure1 a character string with the label for the first response
+#' numeric variable.
+#' @param measure2 a character string with the label for the second response
+#' numeric variable.
+#' @param udm a character string with unit of measurement of the paired values.
+#' Default is an empty string.
 #'
 #' @return A {plotly} interval plot for comparing the confidence
 #' interval of the supplied  measurement values with a reference value and
@@ -94,18 +103,18 @@ boxplot_rip <- function(data,
 #'
 #' @export
 #'
-#' @importFrom plotly plot_ly add_markers layout config
+#' @importFrom plotly plot_ly add_markers layout config add_annotations
 shewart_rip <- function(data,
-                        response) {
+                        measure1,
+                        measure2,
+                        udm = "") {
   stopifnot(
     is.data.frame(data),
-    is.character(response),
-    is.numeric(refvalue),
-    is.numeric(refuncertainty),
-    conflevel %in% c(0.90, 0.95, 0.99),
+    is.character(measure1),
+    is.character(measure2),
     is.character(udm),
-    colnames(data) %in% c("key", "outlier", "response"),
-    dim(data)[2] == 3
+    c("key", "outlier", measure1, measure2) %in% colnames(data),
+    dim(data)[2] >= 4
   )
 
 
@@ -113,51 +122,66 @@ shewart_rip <- function(data,
                  "#999999",
                  "black")
 
-  ylabtitle <- paste0(response,
-                      ifelse(udm != "", paste0(" (", udm, ")"), ""))
+  myudm <- ifelse(udm == "", "", paste0(" (", udm, ")"))
+  xlabtitle <- paste0("Valore medio", myudm)
 
   datanoutlier <- data[data$outlier == FALSE,]
 
-  # 95% confidence interval for measurement values and the reference value
-  reference_confint <- c(refvalue,
-                         refuncertainty)
+  # limits for the mean(x) vs relative range chart
+  datanoutlier$myranges <- abs(datanoutlier[[measure1]] - datanoutlier[[measure2]])
+  datanoutlier$mymean <- rowMeans(datanoutlier[c(measure1, measure2)])
+  datanoutlier$perc_ranges <- 100 * datanoutlier$myranges / datanoutlier$mymean
 
-  mean_confint <- lm(datanoutlier$response ~ 1) |> confint(level = conflevel)
+  perc_ranges_mean <- datanoutlier$perc_ranges |> mean()
+  perc_ranges_limit <- perc_ranges_mean * 3.267
 
-  measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
-                           (mean_confint[2] - mean_confint[1])/2)
-
-  myconfint <- data.frame(label = c("misure", "riferimento"),
-                          meanval = c(measurement_confint[1], reference_confint[1]),
-                          uncertainty = c(measurement_confint[2], reference_confint[2])
-  )
+  # getting relative ranges for all data points
+  mydata <- data
+  mydata$myranges <- abs(mydata[[measure1]] - mydata[[measure2]])
+  mydata$mymean <- rowMeans(mydata[c(measure1, measure2)])
+  mydata$perc_ranges <- 100 * mydata$myranges / mydata$mymean
 
   # comparing confidence intervals
-  plotly::plot_ly(source = "confint",
-                  data = myconfint,
-                  y = ~meanval ,
-                  x = ~label,
-                  name = "CI",
+  plotly::plot_ly(source = "boxplot",
+                  data = mydata,
+                  y = ~perc_ranges ,
+                  x = ~mymean,
+                  name = "differenza",
                   type = "scatter",
                   mode = "markers",
-                  color = I("#2780E3"),
                   showlegend = FALSE,
-                  key = NULL,
-                  error_y = ~list(
-                    array = uncertainty
-                  ),
-                  #hoverinfo = "y",
-                  hovertemplate = paste('%{y:.3r}', '\u00B1', '%{error_y.array:.2r}', udm)
+                  key = ~ key,
+                  hovertemplate = paste('%{y:.3r}', "%"),
+                  marker = list(
+                    color = I(cols),
+                    colors = I(cols),
+                    size = 10
+                  )
   ) |>
     plotly::layout(
       showlegend = FALSE,
-      title = list(text = "Intervalli di confidenza delle medie",
-                   font = list(size = 11)
-      ),
-      xaxis = list(title = NA),
-      yaxis = list(title = ylabtitle,
-                   hoverformat = ".3r")
+      xaxis = list(title = xlabtitle),
+      yaxis = list(title = "differenze relative assolute (%)",
+                   hoverformat = ".3r"),
+      shapes = list(hline(perc_ranges_mean, "#2780E3", dash = "dash"),
+                    hline(perc_ranges_limit, "#d62728", dash = "dash"))
     ) |>
+    plotly::add_annotations(x = 0,
+                            y = perc_ranges_mean,
+                            xref = "paper",
+                            yref = "y",
+                            text = "Media",
+                            xanchor = 'left',
+                            yanchor = "bottom",
+                            showarrow = FALSE) |>
+    plotly::add_annotations(x = 0,
+                            y = perc_ranges_limit,
+                            xref = "paper",
+                            yref = "y",
+                            text = "Limite",
+                            xanchor = 'left',
+                            yanchor = "bottom",
+                            showarrow = FALSE) |>
     plotly::config(displayModeBar = FALSE,
                    locale = "it")
 
@@ -166,8 +190,16 @@ shewart_rip <- function(data,
 #' ggplot2 boxplots for paired measurement values.
 #'
 #' @description The function provides a simple {ggplot2} boxplot for a serie
-#'  of data, and for comparing the confidence interval with a reference value
-#'  and its extended uncertainty.
+#'  of paired measurement values, and a scatter plot of the absolute difference
+#'  between paired data vs their mean values.
+#'
+#' @details
+#' In the second panel of the plot, relative percentage difference between values
+#' are plotted vs the mean of the paired values.
+#' The central line is calculated as the mean of the relative
+#' differences and the upper limit is the calculated by multiplying the value of
+#' the central line by 3.267, as described in section 6.4 of UNI ISO 7870-2:2023.
+#'
 #'
 #' @param data input data.frame a numeric columns with the two numeric responses and a
 #' character columns with outliers flag.
@@ -185,12 +217,14 @@ shewart_rip <- function(data,
 #' @rawNamespace import(ggplot2, except = last_plot)
 ggboxplot_rip <- function(data,
                           response,
-                          second_response) {
+                          second_response,
+                          udm) {
   stopifnot(
     is.data.frame(data),
     is.character(response),
     is.character(second_response),
-    "rimosso" %in% colnames(data)
+    "rimosso" %in% colnames(data),
+    is.character(udm)
   )
 
   rimosso <- NULL
@@ -203,7 +237,14 @@ ggboxplot_rip <- function(data,
 
   datanoutlier <- data[which(data$rimosso == "no"),]
 
-  ylabtitle <- "differenze relative (%)"
+  ylabtitle1 <- "differenze relative (%)"
+  ylabtitle2 <- "differenze relative assolute (%)"
+  myudm <- ifelse(udm == "", "", paste0(" (", udm, ")"))
+  xlabtitle2 <- paste0("Valore medio", myudm)
+
+  minmean <- data$mean |> min()
+  mean_range <- 100 * datanoutlier$rel_diff |> abs() |> mean()
+  limit_range <- mean_range * 3.267
 
   myboxplot <- ggplot2::ggplot() +
     ggplot2::geom_boxplot(data = datanoutlier,
@@ -218,8 +259,8 @@ ggboxplot_rip <- function(data,
                                       col = rimosso),
                          width = 0.2) +
     ggplot2::labs(x = ggplot2::element_blank(),
-                  y = ylabtitle,
-                  title = "Boxplot delle differenze relative tra coppie di valori") +
+                  y = ylabtitle1,
+                  title = "Boxplot") +
     ggplot2::scale_color_manual(values = cols,
                                 breaks = c("s\u00EC", "no"),
                                 labels = c("rimosso", "non rimosso"),
@@ -228,7 +269,43 @@ ggboxplot_rip <- function(data,
     ggplot2::theme_bw() +
     ggplot2::theme(legend.position = "top")
 
-  myboxplot
+  myrchart <- ggplot2::ggplot() +
+    ggplot2::geom_point(data = data,
+                        ggplot2::aes(x = mean,
+                                     y = 100 * abs(rel_diff),
+                                     col = rimosso)) +
+    ggplot2::geom_hline(yintercept = mean_range,
+                        color = "#999999",
+                        linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = limit_range,
+                        color = "black",
+                        linetype = "dashed") +
+    ggplot2::annotate("text",
+                      x = minmean,
+                      y = mean_range,
+                      label = "Media",
+                      vjust = 1.4,
+                      hjust = -0.1) +
+    ggplot2::annotate("text",
+                      x = minmean,
+                      y = limit_range,
+                      label = "Limite",
+                      vjust = 1.4,
+                      hjust = -0.1) +
+    ggplot2::labs(x = xlabtitle2,
+                  y = ylabtitle2,
+                  title = "R chart") +
+    ggplot2::scale_color_manual(values = cols,
+                                breaks = c("s\u00EC", "no"),
+                                labels = c("rimosso", "non rimosso"),
+                                name = ggplot2::element_blank(),
+                                drop = FALSE) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none")
+
+
+  myboxplot + myrchart +
+    patchwork::plot_layout(widths = c(3, 4), nrow = 1)
 
 }
 
@@ -288,6 +365,8 @@ rowsummary_rip <- function(data,
   thesummary$differenze <- ifelse(thesummary$statistica %notin% c("n esclusi", "n"),
                                   paste0(thesummary$differenze, " ", udm),
                                   thesummary$differenze)
+
+  colnames(thesummary) <- c("statistica", "differenze relative assolute")
 
   thesummary
 }

@@ -101,7 +101,8 @@ mod_estimate032_rip_output_ui <- function(id) {
           bslib::layout_column_wrap(
             width = NULL,
             style = htmltools::css(grid_template_columns = "1fr 2fr"),
-            bslib::card_body(plotly::plotlyOutput(ns("boxplot")))
+            bslib::card_body(plotly::plotlyOutput(ns("boxplot"))),
+            bslib::card_body(plotly::plotlyOutput(ns("confint")))
           ),
 
           bslib::card_body(DT::DTOutput(ns("summarytable")))
@@ -339,6 +340,37 @@ mod_estimate032_rip_server <- function(id, r) {
       }
       })
 
+    # reactive R and mean X chart ----
+    plotlyrchart <- reactive({
+      req(input_data())
+
+      myrchart <- shewart_rip(
+        data = input_data(),
+        measure1 = "measure1",
+        measure2 = "measure2",
+        udm = r$estimate03x$udm
+      )
+
+      myrchart$x$source <- "boxplot"
+
+      myrchart
+
+    })
+
+    output$confint <- plotly::renderPlotly({
+
+      # if results have been saved, restore the boxplot
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
+
+        r$estimate03[[r$estimate03$myparameter]]$plotlyconfint
+
+        # else a new boxplot is calculated and shown
+      } else {
+
+        plotlyrchart()
+      }
+    })
+
 
     # reactive summary table ----
     summarytable <- reactive({
@@ -396,7 +428,7 @@ mod_estimate032_rip_server <- function(id, r) {
     output$shapirotest <- renderText({
       validate(
         need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+             message = "Servono almeno 6 valori per eseguire il test")
       )
       # if results have been saved, restore the normality test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -409,7 +441,6 @@ mod_estimate032_rip_server <- function(id, r) {
       }
     })
 
-
     # results for outliers check ----
     out_text <-
       "%s a un livello di confidenza del 95%% </br> %s a un livello di confidenza del 99%% </br></br>"
@@ -421,11 +452,11 @@ mod_estimate032_rip_server <- function(id, r) {
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
-      outtest_output95 <- selected_data()[, "rel_response"] |>
-        fct_gesd(significance = 0.95)
+      outtest_output95 <- (selected_data()[, "rel_response"] * 100) |>
+        fct_gesd(significance = 0.95, m = 2)
 
-      outtest_output99 <- selected_data()[, "rel_response"] |>
-        fct_gesd(significance = 0.99)
+      outtest_output99 <- (selected_data()[, "rel_response"] * 100) |>
+        fct_gesd(significance = 0.99, m = 2)
 
         sprintf(out_text,
                 outtest_output95$text,
@@ -436,7 +467,7 @@ mod_estimate032_rip_server <- function(id, r) {
     output$outliers <- renderText({
       validate(
         need(minval() >= 6,
-             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+             message = "Servono almeno 6 valori per eseguire il test")
       )
       # if results have been saved, restore the outliers test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -509,7 +540,7 @@ mod_estimate032_rip_server <- function(id, r) {
 
       # plots
       r$estimate03x$plotlyboxplot <- plotlyboxplot()
-      r$estimate03x$plotlyconfint <- NA
+      r$estimate03x$plotlyconfint <- plotlyrchart()
 
       # test results
       r$estimate03x$normality <- shapiro_html()

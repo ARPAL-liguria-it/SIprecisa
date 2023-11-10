@@ -229,7 +229,8 @@ mod_estimate03_server <- function(id, r) {
 
               "rip" = ggboxplot_rip(data = r$estimate03x$data,
                                     response = r$loadfile02$responsevar,
-                                    second_response = r$loadfile02$secondresponsevar),
+                                    second_response = r$loadfile02$secondresponsevar,
+                                    udm = r$estimate03x$udm),
 
               "recuno" = ggboxplot_recuno(data = r$estimate03x$data,
                                           response = r$loadfile02$responsevar,
