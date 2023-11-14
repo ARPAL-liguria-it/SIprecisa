@@ -218,7 +218,7 @@ shewart_rip <- function(data,
 ggboxplot_rip <- function(data,
                           response,
                           second_response,
-                          udm) {
+                          udm = "") {
   stopifnot(
     is.data.frame(data),
     is.character(response),
