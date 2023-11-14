@@ -453,10 +453,14 @@ mod_estimate032_rip_server <- function(id, r) {
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
 
       outtest_output95 <- (selected_data()[, "rel_response"] * 100) |>
+        round(2) |>
         fct_gesd(significance = 0.95, m = 2)
 
       outtest_output99 <- (selected_data()[, "rel_response"] * 100) |>
+        round(2) |>
         fct_gesd(significance = 0.99, m = 2)
+
+
 
         sprintf(out_text,
                 outtest_output95$text,
