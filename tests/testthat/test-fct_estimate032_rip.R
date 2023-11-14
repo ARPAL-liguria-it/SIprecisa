@@ -11,7 +11,7 @@ test_that("ggboxplot_rip works well", {
                                 "pounds_b")
 
   expect_true(mytestplot |> ggplot2::is.ggplot())
-  expect_equal(mytestplot$labels$y, "differenze relative (%)")
+  expect_equal(mytestplot$labels$y, "differenze relative assolute (%)")
 })
 
 test_that("rowsummary_rip works well", {
@@ -24,21 +24,21 @@ test_that("rowsummary_rip works well", {
   expect_equal(mytesttable$statistica |> unlist(),
                c("n esclusi", "n", "massimo", "media", "mediana", "minimo"))
   expect_equal(colnames(mytesttable),
-               c("statistica", "differenze"))
-  expect_equal(mytesttable[statistica == "media", differenze],
+               c("statistica", "differenze relative assolute"))
+  expect_equal(mytesttable[statistica == "media"]$`differenze relative assolute`,
                sprintf("%.3g %%", testdata[outlier == FALSE, 100 * mean(rel_diff)]))
-  expect_equal(mytesttable[statistica == "massimo", differenze], "16.9 %")
-  expect_equal(mytesttable[statistica == "minimo", differenze], "2.50 %")
-  expect_equal(mytesttable[statistica == "mediana", differenze],
+  expect_equal(mytesttable[statistica == "massimo"]$`differenze relative assolute`, "16.9 %")
+  expect_equal(mytesttable[statistica == "minimo"]$`differenze relative assolute`, "2.50 %")
+  expect_equal(mytesttable[statistica == "mediana"]$`differenze relative assolute`,
                sprintf("%.3g %%", testdata[outlier == FALSE, 100 * stats::median(rel_diff)]))
-  expect_equal(mytesttable[statistica == "n", differenze],
+  expect_equal(mytesttable[statistica == "n"]$`differenze relative assolute`,
                testdata[outlier == FALSE, .N] |> as.character())
-  expect_equal(mytesttable[statistica == "n esclusi", differenze],
+  expect_equal(mytesttable[statistica == "n esclusi"]$`differenze relative assolute`,
                testdata[outlier == TRUE, .N] |> as.character())
 
   testdata$outlier <- rep(FALSE, times = 10)
   mytesttable <- rowsummary_rip(testdata, "perc_diff", "%")
-  expect_equal(mytesttable[statistica == "media", differenze], "8.33 %")
+  expect_equal(mytesttable[statistica == "media"]$`differenze relative assolute`, "8.33 %")
 })
 
 
@@ -52,6 +52,6 @@ test_that("fct_precision_rip works well", {
   expect_equal(mytestprecision$mean, 0.0833)
   expect_equal(sprintf("%.3g", mytestprecision$rsd), "7.38")
   expect_equal(sprintf("%.3g", mytestprecision$rel_repeatability),
-               qt(0.975, 10 - 1, ) * sqrt(2) * 7.385)
+               sprintf("%.3g", qt(0.975, 10 - 1, ) * sqrt(2) * 7.385))
 
 })

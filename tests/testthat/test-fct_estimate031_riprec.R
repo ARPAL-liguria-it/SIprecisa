@@ -161,3 +161,44 @@ test_that("rowsummary_riprec works well", {
   expect_equal(mytesttable[statistica == "n esclusi", misure],
                testdata[outlier == TRUE, .N] |> as.character())
 })
+
+test_that("fct_trueness_riprec works well", {
+
+  testres <- fct_trueness_riprec(uniiso_5725_4_b3, "value", 0.403)
+
+  expect_named(testres,
+               c("alpha", "n", "mean", "lwr", "upr", "recovery", "bias",
+                 "bias_rms", "relative_bias"))
+  expect_equal(testres$alpha |> format_sigfig(3L),
+               "0.950")
+  expect_equal(testres$n |> format_sigfig(0L),
+               "12")
+  expect_equal(testres$mean |> format_sigfig(4L),
+               "0.4021")
+  expect_equal(testres$bias |> format_sigfig(2L),
+               "-0.00092")
+  expect_equal(testres$relative_bias |> format_sigfig(2L),
+               "-0.23") # not in reference
+  expect_equal(testres$recovery |> format_sigfig(3L),
+               "99.8") # not in reference
+})
+
+test_that("fct_precision_riprec works well", {
+
+  testres <- fct_precision_riprec(uniiso_11352_b1, "value")
+
+  expect_named(testres,
+               c("alpha", "devstd", "n", "repeatability", "rel_repeatability", "rsd"))
+  expect_equal(testres$alpha |> format_sigfig(3L),
+               "0.975")
+  expect_equal(testres$n |> format_sigfig(0L),
+               "30")
+  expect_equal(testres$devstd |> format_sigfig(3L),
+               "0.122")
+  expect_equal(testres$rsd |> format_sigfig(3L),
+               "5.21")
+  expect_equal(testres$repeatability |> format_sigfig(3L),
+               "0.352") # not in reference
+  expect_equal(testres$rel_repeatability |> format_sigfig(3L),
+               "15.1") # not in reference
+})

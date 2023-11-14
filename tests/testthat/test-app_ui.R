@@ -1,4 +1,4 @@
-test_that("SIconfronta ui works", {
+test_that("SIprecisa ui works", {
   ui <- app_ui(request = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed

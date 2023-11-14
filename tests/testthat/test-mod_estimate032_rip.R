@@ -7,12 +7,24 @@ testServer(
   # Add here your module params
   args = list(r), {
 
+    testdata <- tomato_yields[fertilizer == "a", pounds, parameter]
+    testdata$pounds_b <- tomato_yields[fertilizer == "b", pounds][1:5]
+    colnames(testdata)[2] <- "pounds_a"
+    testdata <- rbindlist(
+      list(testdata,
+           data.table("parameter" = rep("yield", 5),
+                      "pounds_a" = c(22.3, 21.2, 19.8, 17.5, 16.1),
+                      "pounds_b" = c(20.9, 22.5, 18.5, 20.3, 19.5))
+           )
+      )
+
     r$loadfile02$parvar <- "parameter"
     r$loadfile02$responsevar <- "pounds_a"
-    r$loadfile02$data <- tomato_yields[fertilizer == "b", .(parameter, pounds)]
+    r$loadfile02$secondresponsevar <- "pounds_b"
+    r$loadfile02$data <- testdata
     r$estimate03$myparameter <- "yield"
 
-    session$flushReact()
+    #session$flushReact()
 
     ns <- session$ns
     expect_true(inherits(ns, "function"))
@@ -21,54 +33,51 @@ testServer(
 
     # testing the inputs
     session$setInputs(significance = 0.95,
-                      refvalue = tomato_yields[fertilizer == "a", mean(pounds)],
-                      refuncertainty = 0,
-                      udm = "ug/L",
-                      submit = 1)
+                      udm = "ug/L")
     session$flushReact()
     expect_true(input$significance == 0.95)
-    expect_true(input$refvalue == 20.84)
-    expect_true(input$refuncertainty == 0)
     expect_true(input$udm == "ug/L")
-    expect_true(input$submit == 1)
 
     # testing the intermediate dataset
-    expect_equal(rownumber(), 6)
-    expect_equal(key(), 1:6)
-    expect_equal(is_outlier(), rep(FALSE, 6))
-    expect_equal(dim(input_data()), c(6, 3))
-    expect_equal(dim(selected_data()), c(6, 3))
-    expect_equal(colnames(input_data()), c("key", "outlier", "response"))
-    expect_equal(input_data()$response, tomato_yields[fertilizer == "b", pounds])
+    expect_equal(rownumber(), 10)
+    expect_equal(key(), 1:10)
+    expect_equal(is_outlier(), rep(FALSE, 10))
+    expect_equal(dim(input_data()), c(10, 8))
+    expect_equal(dim(selected_data()), c(10, 8))
+    expect_equal(colnames(input_data()), c("key", "outlier", "measure1",
+                                           "measure2", "response",
+                                           "rel_response", "abs_rel_response",
+                                           "abs_perc_response"))
+    expect_equal(input_data()$response, testdata[, pounds_a - pounds_b])
 
     # testing data points removal
     ## removal of the 5th data point
-    outlierflag <- rep(FALSE, 6)
-    keys(6)
-    outlierflag6 <- outlierflag
-    outlierflag6[6] <- TRUE
+    outlierflag <- rep(FALSE, 10)
+    keys(5)
+    outlierflag5 <- outlierflag
+    outlierflag5[5] <- TRUE
     session$flushReact()
 
-    expect_equal(is_outlier(), outlierflag6)
-    expect_equal(selected_data()$key, c(1:5))
+    expect_equal(is_outlier(), outlierflag5)
+    expect_equal(selected_data()$key, c(1:4, 6:10))
 
-    ## removal of 4th and 6th points
-    keys(c(4, 6))
-    outlierflag46 <- outlierflag6
-    outlierflag46[4] <- TRUE
+    ## removal of 3th and 5th points
+    keys(c(3, 5))
+    outlierflag35 <- outlierflag5
+    outlierflag35[3] <- TRUE
     session$flushReact()
 
-    expect_equal(is_outlier(), outlierflag46)
-    expect_equal(selected_data()$key, c(1:3, 5))
+    expect_equal(is_outlier(), outlierflag35)
+    expect_equal(selected_data()$key, c(1:2, 4, 6:10))
 
-    ## re-adding the 6th point
-    keys(4)
-    outlierflag4 <- outlierflag
-    outlierflag4[4] <- TRUE
+    ## re-adding the 5th point
+    keys(3)
+    outlierflag3 <- outlierflag
+    outlierflag3[3] <- TRUE
     session$flushReact()
 
-    expect_equal(is_outlier(), outlierflag4)
-    expect_equal(selected_data()$key, c(1:3, 5:6))
+    expect_equal(is_outlier(), outlierflag3)
+    expect_equal(selected_data()$key, c(1:2, 4:10))
 
     ## re-adding all the points
     keys(NA)
@@ -78,11 +87,11 @@ testServer(
 
     # testing shapiro-wilk test intermediate results
     expect_equal(shapiro_html(),
-      "I valori sono compatibili con una distribuzione normale (W = 0.926, <i>p</i>-value = 0.5512)</br>")
+      "I valori non sono compatibili con una distribuzione normale (W = 0.806, <i>p</i>-value = 0.0170)</br>")
 
     # testing grubbs test intermediate results
     expect_equal(outliers_html(),
-                 "nessun valore anomalo a un livello di confidenza del 95% </br> nessun valore anomalo a un livello di confidenza del 99% </br></br>")
+      "-70.09 è un possibile valore anomalo a un livello di confidenza del 95% </br> nessun valore anomalo a un livello di confidenza del 99% </br></br>")
 
     # Testing the outputs
     ## Testing the boxplot output
@@ -95,10 +104,6 @@ testServer(
     expect_true(inherits(output$shapirotest, "character"))
     ## Testing the GESD test output
     expect_true(inherits(output$outliers, "character"))
-    ## Testing the t-test output
-    expect_true(inherits(output$ttest, "character"))
-    ## Testing the trueness output
-    expect_true(inherits(output$trueness, "character"))
     ## Testing the precision output
     expect_true(inherits(output$precision, "character"))
     ## Testing the reactive list as output
@@ -108,28 +113,27 @@ testServer(
                   'normality', 'outliers',
                   'parameter', 'plotlyboxplot',
                   'plotlyconfint', "precision",
-                  'refuncertainty', 'refvalue',
-                  'significance', 'summary',
-                  'trueness', 'ttest', 'udm'),
+                  'significance','summary', 'udm',
+                  'trueness', 'ttest'),
                 ignore.order = TRUE)
-    expect_length(names(r$estimate03x), 15)
+    expect_length(names(r$estimate03x), 13)
 })
 
-test_that("module estimate031 for precision and trueness performance parameters input ui works", {
-  ui <- mod_estimate031_riprec_inputs_ui(id = "test")
+test_that("module estimate032 for precision parameters on paired values input ui works", {
+  ui <- mod_estimate032_rip_inputs_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_estimate031_riprec_inputs_ui)
+  fmls <- formals(mod_estimate032_rip_inputs_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }
 })
 
-test_that("module estimate031 for precision and trueness performance parameters output ui works", {
-  ui <- mod_estimate031_riprec_output_ui(id = "test")
+test_that("module estimate032 for precision parameters on paired values output ui works", {
+  ui <- mod_estimate032_rip_output_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_estimate031_riprec_output_ui)
+  fmls <- formals(mod_estimate032_rip_output_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }
