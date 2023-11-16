@@ -193,14 +193,11 @@ mod_estimate033_recuno_server <- function(id, r) {
         # if the results have been saved, restore the input values
         if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
 
-          freezeReactiveValue(input, "significance")
           freezeReactiveValue(input, "udm")
           freezeReactiveValue(input, "refvalue")
           freezeReactiveValue(input, "refuncertainty")
 
-          updateRadioButtons(session,
-                             "significance",
-                             selected = r$estimate03[[r$estimate03$myparameter]]$significance)
+
           updateTextInput(session,
                           "udm",
                           value = r$estimate03[[r$estimate03$myparameter]]$udm)
