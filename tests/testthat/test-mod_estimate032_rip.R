@@ -10,11 +10,11 @@ testServer(
     testdata <- tomato_yields[fertilizer == "a", pounds, parameter]
     testdata$pounds_b <- tomato_yields[fertilizer == "b", pounds][1:5]
     colnames(testdata)[2] <- "pounds_a"
-    testdata <- rbindlist(
+    testdata <- data.table::rbindlist(
       list(testdata,
-           data.table("parameter" = rep("yield", 5),
-                      "pounds_a" = c(22.3, 21.2, 19.8, 17.5, 16.1),
-                      "pounds_b" = c(20.9, 22.5, 18.5, 20.3, 19.5))
+           data.table::data.table("parameter" = rep("yield", 5),
+                                  "pounds_a" = c(22.3, 21.2, 19.8, 17.5, 16.1),
+                                  "pounds_b" = c(20.9, 22.5, 18.5, 20.3, 19.5))
            )
       )
 

@@ -5,28 +5,24 @@ r <- reactiveValues(aim01 = reactiveValues(),
                     estimate03 = reactiveValues())
 
 testServer(
-  mod_estimate032_rip_server,
+  mod_estimate033_recuno_server,
   # Add here your module params
   args = list(r), {
 
-    testdata <- tomato_yields[fertilizer == "a", pounds, parameter]
-    testdata$pounds_b <- tomato_yields[fertilizer == "b", pounds][1:5]
-    colnames(testdata)[2] <- "pounds_a"
-    testdata <- rbindlist(
-      list(testdata,
-           data.table("parameter" = rep("yield", 5),
-                      "pounds_a" = c(22.3, 21.2, 19.8, 17.5, 16.1),
-                      "pounds_b" = c(20.9, 22.5, 18.5, 20.3, 19.5))
-           )
-      )
+    yeseffectdata <- data.table::data.table(myparameter = "analyte",
+                                myvalue = 0.0239,
+                                myuncertainty = 0.0036)
 
-    r$loadfile02$parvar <- "parameter"
-    r$loadfile02$responsevar <- "pounds_a"
-    r$loadfile02$secondresponsevar <- "pounds_b"
-    r$loadfile02$data <- testdata
-    r$estimate03$myparameter <- "yield"
+    refv <- 0.044
+    refu <- 0.0082
 
-    #session$flushReact()
+    r$loadfile02$parvar <- "myparameter"
+    r$loadfile02$responsevar <- "myvalue"
+    r$loadfile02$uncertaintyvar <- "myuncertainty"
+    r$loadfile02$data <- yeseffectdata
+    r$estimate03$myparameter <- "analyte"
+
+    session$flushReact()
 
     ns <- session$ns
     expect_true(inherits(ns, "function"))
@@ -34,80 +30,56 @@ testServer(
     expect_true(grepl("test", ns("test")))
 
     # testing the inputs
-    session$setInputs(significance = 0.95,
-                      udm = "ug/L")
+    session$setInputs(refvalue = refv,
+                      refuncertainty = refu,
+                      udm = "ug/L",
+                      submit = 1)
     session$flushReact()
-    expect_true(input$significance == 0.95)
+    expect_true(input$refvalue == refv)
+    expect_true(input$refuncertainty == refu)
     expect_true(input$udm == "ug/L")
+    expect_true(input$submit == 1)
+    expect_equal(r$estimate03$myparameter, "analyte")
+    expect_equal(r$estimate03x$udm, "ug/L")
+    expect_equal(r$estimate03x$click, 1)
+    expect_equal(r$estimate03x$refuncertainty, refu)
 
     # testing the intermediate dataset
-    expect_equal(rownumber(), 10)
-    expect_equal(key(), 1:10)
-    expect_equal(is_outlier(), rep(FALSE, 10))
-    expect_equal(dim(input_data()), c(10, 8))
-    expect_equal(dim(selected_data()), c(10, 8))
-    expect_equal(colnames(input_data()), c("key", "outlier", "measure1",
-                                           "measure2", "response",
-                                           "rel_response", "abs_rel_response",
-                                           "abs_perc_response"))
-    expect_equal(input_data()$response, testdata[, pounds_a - pounds_b])
+    expect_equal(ok_click(), 1)
+    expect_equal(ok_calc(), 1)
+    expect_equal(dim(mydata()), c(1, 3))
+    expect_equal(dim(input_data()), c(1, 2))
+    expect_equal(minval(), 1)
+    expect_named(input_data(), c("response", "uncertainty"))
+    expect_equal(input_data()$response, yeseffectdata$myvalue)
 
-    # testing data points removal
-    ## removal of the 5th data point
-    outlierflag <- rep(FALSE, 10)
-    keys(5)
-    outlierflag5 <- outlierflag
-    outlierflag5[5] <- TRUE
-    session$flushReact()
+    # testing intermediate results
+    expect_equal(entest_html(),
+"<h4> Test per valutare la presenza di bias (E number) </h4>
+<b>H0:</b> valore di riferimento = valore misurato </br>
+<b>H1:</b> valore di riferimento \u2260 valore misurato
+<ul>
+  <li> Differenza tra i due valori (valore e intervallo di confidenza) = 0.02010 ug/L, 0.01114 \u2013 0.02906 ug/L</li>
+  <li> E<sub>n</sub> sperimentale = 2.244 </li>
+  <li> E<sub>n</sub> critico = 1.000 </li>
+</ul>
+\u21e8 valore di riferimento e valore misurato sono differenti")
 
-    expect_equal(is_outlier(), outlierflag5)
-    expect_equal(selected_data()$key, c(1:4, 6:10))
+    expect_equal(trueness_html(),
+"<ul>
+  <li> Recupero = 54.3 &percnt;</li>
+  <li> Bias = -0.0201 ug/L</li>
+  <li> Bias = -84.1 &percnt;</li>
+</ul>")
 
-    ## removal of 3th and 5th points
-    keys(c(3, 5))
-    outlierflag35 <- outlierflag5
-    outlierflag35[3] <- TRUE
-    session$flushReact()
-
-    expect_equal(is_outlier(), outlierflag35)
-    expect_equal(selected_data()$key, c(1:2, 4, 6:10))
-
-    ## re-adding the 5th point
-    keys(3)
-    outlierflag3 <- outlierflag
-    outlierflag3[3] <- TRUE
-    session$flushReact()
-
-    expect_equal(is_outlier(), outlierflag3)
-    expect_equal(selected_data()$key, c(1:2, 4:10))
-
-    ## re-adding all the points
-    keys(NA)
-    session$flushReact()
-
-    expect_equal(is_outlier(), outlierflag)
-
-    # testing shapiro-wilk test intermediate results
-    expect_equal(shapiro_html(),
-      "I valori non sono compatibili con una distribuzione normale (W = 0.806, <i>p</i>-value = 0.0170)</br>")
-
-    # testing grubbs test intermediate results
-    expect_equal(outliers_html(),
-      "-70.09 è un possibile valore anomalo a un livello di confidenza del 95% </br> nessun valore anomalo a un livello di confidenza del 99% </br></br>")
 
     # Testing the outputs
     ## Testing the boxplot output
     expect_true(inherits(output$boxplot, "json"))
-    ## Testing the confint output
-    expect_true(inherits(output$confint, "json"))
     ## Testing the summary output
     expect_true(inherits(output$summarytable, "json"))
-    ## Testing the Shapiro-Wilk test output
-    expect_true(inherits(output$shapirotest, "character"))
-    ## Testing the GESD test output
-    expect_true(inherits(output$outliers, "character"))
-    ## Testing the precision output
-    expect_true(inherits(output$precision, "character"))
+    ## Testing the En-test output
+    expect_true(inherits(output$ttest, "character"))
     ## Testing the reactive list as output
     expect_true(inherits(r$estimate03x, "reactivevalues"))
     expect_named(r$estimate03x,
@@ -115,27 +87,28 @@ testServer(
                   'normality', 'outliers',
                   'parameter', 'plotlyboxplot',
                   'plotlyconfint', "precision",
-                  'significance','summary', 'udm',
+                  'refuncertainty', 'refvalue',
+                  'summary', 'udm',
                   'trueness', 'ttest'),
                 ignore.order = TRUE)
-    expect_length(names(r$estimate03x), 13)
+    expect_length(names(r$estimate03x), 14)
 })
 
-test_that("module estimate032 for precision parameters on paired values input ui works", {
-  ui <- mod_estimate032_rip_inputs_ui(id = "test")
+test_that("module estimate033 for precision parameters on paired values input ui works", {
+  ui <- mod_estimate033_recuno_inputs_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_estimate032_rip_inputs_ui)
+  fmls <- formals(mod_estimate033_recuno_inputs_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }
 })
 
-test_that("module estimate032 for precision parameters on paired values output ui works", {
-  ui <- mod_estimate032_rip_output_ui(id = "test")
+test_that("module estimate033 for precision parameters on paired values output ui works", {
+  ui <- mod_estimate033_recuno_output_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_estimate032_rip_output_ui)
+  fmls <- formals(mod_estimate033_recuno_output_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }
