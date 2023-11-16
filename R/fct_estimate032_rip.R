@@ -29,7 +29,7 @@ boxplot_rip <- function(data,
                  "#999999",
                  "black")
 
-  ylabtitle <- paste0("differenze relative (", udm, ")")
+  ylabtitle <- paste0("differenza relativa (", udm, ")")
 
   datanoutlier <- data[data$outlier == FALSE,]
   datanoutlier$myresponse <- datanoutlier[[response]]
@@ -161,7 +161,7 @@ shewart_rip <- function(data,
     plotly::layout(
       showlegend = FALSE,
       xaxis = list(title = xlabtitle),
-      yaxis = list(title = "differenze relative assolute (%)",
+      yaxis = list(title = "| differenza relativa | (%)",
                    hoverformat = ".3r"),
       shapes = list(hline(perc_ranges_mean, "#2780E3", dash = "dash"),
                     hline(perc_ranges_limit, "#d62728", dash = "dash"))
@@ -237,8 +237,8 @@ ggboxplot_rip <- function(data,
 
   datanoutlier <- data[which(data$rimosso == "no"),]
 
-  ylabtitle1 <- "differenze relative (%)"
-  ylabtitle2 <- "differenze relative assolute (%)"
+  ylabtitle1 <- "differenza relativa (%)"
+  ylabtitle2 <- "| differenza relativa | (%)"
   myudm <- ifelse(udm == "", "", paste0(" (", udm, ")"))
   xlabtitle2 <- paste0("Valore medio", myudm)
 
@@ -366,7 +366,7 @@ rowsummary_rip <- function(data,
                                   paste0(thesummary$differenze, " ", udm),
                                   thesummary$differenze)
 
-  colnames(thesummary) <- c("statistica", "differenze relative assolute")
+  colnames(thesummary) <- c("statistica", "| differenza relativa |")
 
   thesummary
 }
