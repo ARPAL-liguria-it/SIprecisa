@@ -228,6 +228,7 @@ ggboxplot_rip <- function(data,
   )
 
   rimosso <- NULL
+  rel_diff <- NULL
   cols <- c("s\u00EC" = "#999999", "no" = "black")
   data$rimosso <- factor(data$rimosso, levels = c("s\u00EC", "no"))
   data$difference <- data[[response]] - data[[second_response]]
@@ -319,7 +320,7 @@ ggboxplot_rip <- function(data,
 #'
 #' @param data the \code{data.frame} or \code{data.table} to be summarised a
 #' column named *outlier* with a logical flag must be included.
-#' @param refuncertainty a number with the extended uncertainty for the reference value.
+#' @param response a character with the name of the data columns with the measured values.
 #' @param udm a string with the unit of measurement.
 #' @param signif an integer with the number of desired significant figures.
 #'
@@ -343,11 +344,12 @@ rowsummary_rip <- function(data,
     "outlier" %in% colnames(data)
   )
 
+  outlier <- NULL
   mydata <- data.table::data.table(data)
   myrows <- c("n esclusi", "n", "massimo", "media", "mediana", "minimo")
 
   # calculate the summary
-  mysummary <- mydata[outlier == FALSE, .(
+  mysummary <- mydata[outlier == FALSE, list(
     n = .N,
     massimo = lapply(.SD, max, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
     media = lapply(.SD, mean, na.rm = TRUE) |> unlist() |> format_sigfig(signif),

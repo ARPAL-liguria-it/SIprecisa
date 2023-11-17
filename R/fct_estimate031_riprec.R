@@ -41,13 +41,13 @@ fct_shapiro <- function(values) {
 #'
 #' @description The function displays the results of generalised
 #'  extreme studentized deviate (GESD) test for outlier detection.
-#'  The returned text is suitable for the {SI confronta} {shiny} app.
+#'  The returned text is suitable for the {SI precisa} {shiny} app.
 #'
 #' @param values a \code{vector} with the values relevant for testing.
 #' @param significance a number, typically either 0.90, 0.95 (default) or 0.99
 #'   indicating the confidence level for the test.
 #' @param m maximum number of possible outliers to be tested.
-#'   Default is one third of the number of values.
+#'   Default is 2/9 of the number of values.
 #'
 #' @details the GESD test is performed according to section 4.3.2 of
 #'  UNI ISO 16269-4:2019 - Statistical interpretation of data - Part 4: Detection
@@ -231,9 +231,9 @@ fct_ttest_riprec <- function(data,
 
   h1_text <- sprintf("%s \u2260 %s", max_mean, min_mean)
 
-  positive <- "Il bias delle misure rispetto al valore di riferimento è statisticamente significativo"
+  positive <- "Il bias delle misure rispetto al valore di riferimento \u00E8 statisticamente significativo"
 
-  negative <- "Il bias delle misure rispetto al valore di riferimento non è statisticamente significativo"
+  negative <- "Il bias delle misure rispetto al valore di riferimento non \u00E8 statisticamente significativo"
 
   result <- ifelse(tvalue < tcritical, negative, positive)
 
@@ -328,8 +328,8 @@ fct_entest_riprec <- function(data,
   h0_text <- sprintf("%s = %s", max_val_lbl, min_val_lbl)
   h1_text <- sprintf("%s \u2260 %s", max_val_lbl, min_val_lbl)
 
-  positive <- "Il bias delle misure rispetto al valore di riferimento è statisticamente significativo"
-  negative <- "Il bias delle misure rispetto al valore di riferimento non è statisticamente significativo"
+  positive <- "Il bias delle misure rispetto al valore di riferimento \u00E8 statisticamente significativo"
+  negative <- "Il bias delle misure rispetto al valore di riferimento non \u00E8 statisticamente significativo"
 
   result <- ifelse(entest < ecritical, negative, positive)
 
@@ -432,7 +432,7 @@ boxplot_riprec <- function(data,
 #' a column named *response* with the numeric values for the two groups and a
 #' column named *outlier* with a logical vector.
 #' @param response a character string with the label for the response numeric variable.
-#' @param refval a reference numeric value.
+#' @param refvalue a reference numeric value.
 #' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param conflevel confidence level for the mean confidence interval: allowed values
 #' are 0.90, 0.95 and 0.99.
@@ -445,6 +445,7 @@ boxplot_riprec <- function(data,
 #' @export
 #'
 #' @importFrom plotly plot_ly add_markers layout config
+#' @importFrom stats lm confint
 confint_riprec <- function(data,
                            response,
                            refvalue,
@@ -476,7 +477,7 @@ confint_riprec <- function(data,
   reference_confint <- c(refvalue,
                          refuncertainty)
 
-  mean_confint <- lm(datanoutlier$response ~ 1) |> confint(level = conflevel)
+  mean_confint <- stats::lm(datanoutlier$response ~ 1) |> stats::confint(level = conflevel)
 
   measurement_confint <- c(mean(datanoutlier$response, na.rm = TRUE),
                            (mean_confint[2] - mean_confint[1])/2)
@@ -529,7 +530,7 @@ confint_riprec <- function(data,
 #' The first column must be named as the response variable, while the second column
 #' must be named *rimosso*.
 #' @param response a character string with the label for the response numeric variable.
-#' @param refval a reference numeric value.
+#' @param refvalue a reference numeric value.
 #' @param refuncertainty the extended uncertainty for the reference numeric value.
 #' @param conflevel confidence level for the mean confidence interval: allowed values
 #' are 0.90, 0.95 and 0.99.
@@ -541,6 +542,7 @@ confint_riprec <- function(data,
 #'
 #' @export
 #'
+#' @importFrom stats lm confint
 #' @import patchwork
 #' @rawNamespace import(ggplot2, except = last_plot)
 ggboxplot_riprec <- function(data,
@@ -559,6 +561,10 @@ ggboxplot_riprec <- function(data,
   )
 
   rimosso <- NULL
+  label <- NULL
+  meanval <- NULL
+  lwrval <- NULL
+  uprval <- NULL
   cols <- c("s\u00EC" = "#999999", "no" = "black")
   data$rimosso <- factor(data$rimosso, levels = c("s\u00EC", "no"))
 
@@ -573,7 +579,7 @@ ggboxplot_riprec <- function(data,
                          refvalue - refuncertainty,
                          refvalue + refuncertainty)
 
-  mean_confint <- lm(datanoutlier[[response]] ~ 1) |> confint(level = conflevel)
+  mean_confint <- stats::lm(datanoutlier[[response]] ~ 1) |> stats::confint(level = conflevel)
 
   measurement_confint <- c(mean(datanoutlier[[response]], na.rm = TRUE),
                            mean_confint[1],
@@ -653,7 +659,7 @@ ggboxplot_riprec <- function(data,
 #'
 #' @param data the \code{data.frame} or \code{data.table} to be summarised a
 #' column named *outlier* with a logical flag must be included.
-#' @param refuncertainty a number with the extended uncertainty for the reference value.
+#' @param response a character with the name of the data columns with the measured values.
 #' @param udm a string with the unit of measurement.
 #' @param signif an integer with the number of desired significant figures.
 #'
@@ -677,11 +683,12 @@ rowsummary_riprec <- function(data,
     "outlier" %in% colnames(data)
   )
 
+  outlier <- NULL
   mydata <- data.table::data.table(data)
   myrows <- c("n esclusi", "n", "massimo", "media", "mediana", "minimo")
 
   # calculate the summary
-  mysummary <- mydata[outlier == FALSE, .(
+  mysummary <- mydata[outlier == FALSE, list(
       n = .N,
       massimo = lapply(.SD, max, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
       media = lapply(.SD, mean, na.rm = TRUE) |> unlist() |> format_sigfig(signif),
@@ -807,7 +814,7 @@ fct_precision_riprec <- function(data,
 #'
 #' @export
 #'
-#' @importFrom stats sd qt
+#' @importFrom stats sd qt as.formula lm confint
 fct_trueness_riprec <- function(data,
                                 response,
                                 refvalue,
@@ -826,9 +833,9 @@ fct_trueness_riprec <- function(data,
 
   n <- data[[response]] |> length()
 
-  myformula <- as.formula(paste0(response, "~ 1"))
+  myformula <- stats::as.formula(paste0(response, "~ 1"))
 
-  ci <- lm(myformula, data = data) |> confint(level = myalpha)
+  ci <- stats::lm(myformula, data = data) |> stats::confint(level = myalpha)
   lwr_mean <- ci[[1]]
   upr_mean <- ci[[2]]
 

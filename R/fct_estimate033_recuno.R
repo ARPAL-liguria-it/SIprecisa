@@ -314,8 +314,6 @@ rowsummary_recuno <- function(data,
 #'   relevant for testing. At least a \code{numeric} vector with the
 #'   measurements should be included.
 #' @param response the name of a numeric vector in \code{data}.
-#' @param significance the level of significance for the repeatability limit
-#' calculation. Typical values are 0.90, 0.95 or 0.99.
 #' @param refvalue a reference value for the set of measurement values.
 #'
 #' @details trueness expressed as recovery and bias are calculated according to

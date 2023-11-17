@@ -778,8 +778,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     precision_text <-
       "<ul>
   <li> Deviazione standard delle misure = %s %s</li>
-  <li> Limite di ripetibilità (per \u03b1 = %s) = %s %s</li>
-  <li> Limite di ripetibilità relativo (per \u03b1 = %s) = %s &percnt;</li>
+  <li> Limite di ripetibilit\u00E0 (per \u03b1 = %s) = %s %s</li>
+  <li> Limite di ripetibilit\u00E0 relativo (per \u03b1 = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
