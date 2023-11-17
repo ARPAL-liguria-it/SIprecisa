@@ -10,11 +10,11 @@ rowsummary_riprec(data, response, udm = "", signif = 3L)
 \item{data}{the \code{data.frame} or \code{data.table} to be summarised a
 column named *outlier* with a logical flag must be included.}
 
+\item{response}{a character with the name of the data columns with the measured values.}
+
 \item{udm}{a string with the unit of measurement.}
 
 \item{signif}{an integer with the number of desired significant figures.}
-
-\item{refuncertainty}{a number with the extended uncertainty for the reference value.}
 }
 \value{
 a \code{data.table} with 6 rows and \eqn{n + 1} columns for \eqn{n}

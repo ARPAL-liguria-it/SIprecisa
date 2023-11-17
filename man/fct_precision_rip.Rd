@@ -5,7 +5,7 @@
 \title{Displays the results for the determination of precision performances calculated
 from paired measurement values.}
 \usage{
-fct_precision_rip(data, response, measures, significance = 0.95)
+fct_precision_rip(data, response, significance = 0.95)
 }
 \arguments{
 \item{data}{a \code{data.frame} or \code{data.table} with the results
@@ -13,10 +13,7 @@ relevant for testing. At least a \code{numeric} vector with the
 measurements should be included.}
 
 \item{response}{the name of a numeric vector in \code{data} with the
-differences between paired measurement values.}
-
-\item{measures}{the name of the two numeric vector in \code{data} with
-the measured values.}
+relative absolute differences between paired measurement values.}
 
 \item{significance}{the level of significance for the repeatability limit
 calculation. Typical values are 0.90, 0.95 or 0.99.}
@@ -26,9 +23,9 @@ A list with the following items:
  \describe{
    \item{alpha}{a numeric value calculated as significance + (1 - significance)/2.}
    \item{n}{the number of measurements.}
-   \item{stddev}{a numeric value with the standard deviation of the values.}
-   \item{repeatability}{a numeric value with the repeatability limit.}
+   \item{mean}{a numeric value with the mean of the values.}
    \item{rsd}{a numeric value with the relative standard deviation.}
+   \item{repeatability}{a numeric value with the repeatability limit.}
  }
 }
 \description{

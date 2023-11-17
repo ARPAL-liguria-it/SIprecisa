@@ -9,7 +9,7 @@ UNI ISO 16269-4:2019 - Statistical interpretation of data -
  \url{https://store.uni.com/uni-iso-16269-4-2019}
 }
 \usage{
-fct_gesd(values, significance = 0.95, m = round(length(values)/3, 0))
+fct_gesd(values, significance = 0.95, m = round(length(values)/9 * 2, 0))
 }
 \arguments{
 \item{values}{a \code{vector} with the values relevant for testing.}
@@ -18,7 +18,7 @@ fct_gesd(values, significance = 0.95, m = round(length(values)/3, 0))
 indicating the confidence level for the test.}
 
 \item{m}{maximum number of possible outliers to be tested.
-Default is one third of the number of values.}
+Default is 2/9 of the number of values.}
 }
 \value{
 A list with the following objects:
@@ -38,7 +38,7 @@ The {data} dataframe has the following columns:
 \description{
 The function displays the results of generalised
  extreme studentized deviate (GESD) test for outlier detection.
- The returned text is suitable for the {SI confronta} {shiny} app.
+ The returned text is suitable for the {SI precisa} {shiny} app.
 }
 \details{
 the GESD test is performed according to section 4.3.2 of

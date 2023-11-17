@@ -14,14 +14,14 @@ column named *outlier* with a logical vector.}
 
 \item{response}{a character string with the label for the response numeric variable.}
 
+\item{refvalue}{a reference numeric value.}
+
 \item{refuncertainty}{the extended uncertainty for the reference numeric value.}
 
 \item{conflevel}{confidence level for the mean confidence interval: allowed values
 are 0.90, 0.95 and 0.99.}
 
 \item{udm}{a character string with the unit of measurement.}
-
-\item{refval}{a reference numeric value.}
 }
 \value{
 A {plotly} interval plot for comparing the confidence

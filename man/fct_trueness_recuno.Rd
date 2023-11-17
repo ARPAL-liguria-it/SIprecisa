@@ -15,9 +15,6 @@ measurements should be included.}
 \item{response}{the name of a numeric vector in \code{data}.}
 
 \item{refvalue}{a reference value for the set of measurement values.}
-
-\item{significance}{the level of significance for the repeatability limit
-calculation. Typical values are 0.90, 0.95 or 0.99.}
 }
 \value{
 A list with the following items:

@@ -4,13 +4,13 @@
 \alias{ggboxplot_rip}
 \title{ggplot2 boxplots for paired measurement values.}
 \usage{
-ggboxplot_rip(data, response, second_response)
+ggboxplot_rip(data, response, second_response, udm = "")
 }
 \arguments{
 \item{data}{input data.frame a numeric columns with the two numeric responses and a
 character columns with outliers flag.
 The first two columns must be named as the response and second_response variable,
-respectively, while the second column must be named *rimosso*.}
+respectively, while the third column must be named *rimosso*.}
 
 \item{response}{a character string with the label for the first response numeric variable.}
 
@@ -23,6 +23,13 @@ A {ggplot2} boxplot for the differences in paired measurement values.
 }
 \description{
 The function provides a simple {ggplot2} boxplot for a serie
- of data, and for comparing the confidence interval with a reference value
- and its extended uncertainty.
+ of paired measurement values, and a scatter plot of the absolute difference
+ between paired data vs their mean values.
+}
+\details{
+In the second panel of the plot, relative percentage difference between values
+are plotted vs the mean of the paired values.
+The central line is calculated as the mean of the relative
+differences and the upper limit is the calculated by multiplying the value of
+the central line by 3.267, as described in section 6.4 of UNI ISO 7870-2:2023.
 }
