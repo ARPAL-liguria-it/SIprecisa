@@ -157,3 +157,21 @@
 #' \url{https://store.uni.com/iso-11352-2012}
 #' @keywords data
 "uniiso_11352_b1"
+
+#' Manganese mean concentration values from UNI ISO 5725-4:2020, Table B.3.
+#'
+#' A dataset with 12 numerical values. The dataset is
+#' provided for testing the \code{fct_precision} and \code{fct_trueness} results.
+#'
+#' @format a dataframe with 12 rows and 2 columns:
+#' \describe{
+#'    \item{lab}{a numeric value for the mean value for each laboratory measurements.}
+#'    \item{value}{the percentage mean of the measured manganese contents provided by each laboratory}
+#' }
+#'
+#' @name uniiso_5725_4_b3
+#' @docType data
+#' @source UNI ISO 5725-4:2020, Table B.3, Content level 3, pag. 20.
+#' \url{https://store.uni.com/uni-iso-5725-4-2020}
+#' @keywords data
+"uniiso_5725_4_b3"
