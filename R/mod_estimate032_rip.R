@@ -488,6 +488,8 @@ mod_estimate032_rip_server <- function(id, r) {
     precision_results <- reactive({
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
             r$estimate03[[r$estimate03$myparameter]]$saved |> is.null())
+      req(selected_data())
+      req(r$estimate03x$significance)
 
       fct_precision_rip(data = selected_data(),
                         response = "abs_rel_response",
@@ -498,7 +500,7 @@ mod_estimate032_rip_server <- function(id, r) {
 
     precision_text <-
       "<ul>
-  <li> Limite di ripetibilità relativo (per \u03b1 = %s) = %s &percnt;</li>
+  <li> Limite di ripetibilit\u00E0 relativo (per \u03b1 = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
