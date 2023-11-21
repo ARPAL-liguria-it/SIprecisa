@@ -43,6 +43,29 @@ test_that("Calculations are correct for t-test on one sample and confidence = 0.
   expect_equal(ttest_result2$test[[5]], "0.0906") # not reported on the reference
 })
 
+entest_result <- fct_entest_riprec(uniiso_2854_x[which(uniiso_2854_x$group == "a"), ],
+                                  response = "value",
+                                  refvalue = 2.40,
+                                  refuncertainty = 0.05)
+
+meas_mean <- uniiso_2854_x[which(uniiso_2854_x$group == "a"), "value"] |> mean()
+meas_sd <- uniiso_2854_x[which(uniiso_2854_x$group == "a"), "value"] |> sd()
+meas_n <- uniiso_2854_x[which(uniiso_2854_x$group == "a"), "value"] |> length()
+meas_pm <- qt(0.975, meas_n - 1) * meas_sd / sqrt(meas_n)
+meas_ref <- data.frame(valore = meas_mean,
+                       incertezza = meas_pm)
+
+entest_ref <- fct_entest_recuno(data = meas_ref,
+                                response = "valore",
+                                uncertainty = "incertezza",
+                                refvalue = 2.40,
+                                refuncertainty = 0.05)
+
+test_that("En calculations are correct", {
+  expect_equal(entest_result$difference, entest_ref$difference)
+  expect_equal(entest_result$test, entest_ref$test)
+})
+
 # Results from An analysis of variance test for normality (complete samples),
 #'  Biometrika (1965), 52, 3 and 2, p. 591.
 #'  Section 4 - Examples, pag. 606, Example 1.

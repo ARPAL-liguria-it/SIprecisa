@@ -115,6 +115,41 @@ testServer(
     expect_length(names(r$estimate03x), 15)
 })
 
+testServer(
+  mod_estimate031_riprec_server,
+  # Add here your module params
+  args = list(r), {
+
+    r$loadfile02$parvar <- "parameter"
+    r$loadfile02$responsevar <- "pounds"
+    r$loadfile02$data <- tomato_yields[fertilizer == "b", .(parameter, pounds)]
+    r$estimate03$myparameter <- "yield"
+
+    session$flushReact()
+
+    ns <- session$ns
+    expect_true(inherits(ns, "function"))
+    expect_true(grepl(id, ns("")))
+    expect_true(grepl("test", ns("test")))
+
+    # testing the inputs
+    session$setInputs(significance = 0.95,
+                      refvalue = tomato_yields[fertilizer == "a", mean(pounds)],
+                      refuncertainty = 0.06,
+                      udm = "ug/L",
+                      submit = 1)
+    session$flushReact()
+    expect_true(input$significance == 0.95)
+    expect_true(input$refvalue == 20.84)
+    expect_true(input$refuncertainty == 0.06)
+    expect_true(input$udm == "ug/L")
+    expect_true(input$submit == 1)
+    expect_equal(entest_list()$result,
+                 "Il bias delle misure rispetto al valore di riferimento non è statisticamente significativo")
+})
+
+
+
 test_that("module estimate031 for precision and trueness performance parameters input ui works", {
   ui <- mod_estimate031_riprec_inputs_ui(id = "test")
   golem::expect_shinytaglist(ui)
