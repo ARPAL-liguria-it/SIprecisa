@@ -11,15 +11,16 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 Il software SIprecisa è stato sviluppato per ARPAL allo scopo di
-calcolare indicatori di precisione e scostamento in misurazioni chimiche
-e fisiche di laboratorio.
+calcolare indicatori di precisione e giustezza in misurazioni chimiche e
+fisiche di laboratorio.
 
 Il software permette di sottoporre a test sequenziali più di un analita,
 riassumendo i risultati in un unico report in formato pdf.
 
 #### Cosa può fare SIprecisa?
 
-- ottenere statistiche di base sulle serie di valori;
+- ottenere statistiche relative alla precisione e giustezza di serie di
+  valori;
 - effettuare un test di normalità (Shapiro-Wilk) sulle serie di valori;
 - identificare mediante il test *generalized extreme studentized
   deviate* (GESD) la presenza di potenziali valori anomali;
@@ -47,7 +48,7 @@ Ti servirà organizzare il file con:
 - una colonna numerica con i valori delle misure.
 
 Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30
-valori per analita
+valori per analita.
 
 Inoltre, nel corso dei calcoli per la determinazione del recupero
 servirà fornire il valore riferimento e la sua incertezza estesa.
@@ -55,33 +56,18 @@ servirà fornire il valore riferimento e la sua incertezza estesa.
 </details>
 <details>
 <summary>
-se vuoi stimare solo la ripetibilità su una serie di misure, clicca qui
+se vuoi stimare solo la ripetibilità su una serie di misure duplicate,
+clicca qui
 </summary>
 
 Ti servirà organizzare il file con:
 
 - una colonna testuale con i nomi degli analiti di interesse;
-- una colonna numerica con i valori delle misure.
+- una colonna numerica con i valori della prima serie di misure;
+- una colonna numerica con i valori della seconda serie di misure;
 
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30
-valori per analita
-
-</details>
-<details>
-<summary>
-se vuoi stimare solo il recupero su una serie di misure, clicca qui
-</summary>
-
-Ti servirà organizzare il file con:
-
-- una colonna testuale con i nomi degli analiti di interesse;
-- una colonna numerica con i valori delle misure.
-
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30
-valori per analita
-
-Inoltre, nel corso dei calcoli per la determinazione del recupero
-servirà fornire il valore riferimento e la sua incertezza estesa.
+Serviranno da un minimo di 8 a un massimo di 30 coppie di valori per
+analita.
 
 </details>
 <details>
@@ -125,25 +111,7 @@ I test per il confronto tra due medie e tra una media e un valore noto
 sono stati implementati utilizzando la funzione `t.test` della libreria
 `stats` del software R. L’implementazione risulta coerente e in grado di
 replicare i risultati riportati nella norma UNI ISO 2854:1988 (prospetti
-B’, C’ e D’). Tuttavia, rispetto a quanto riportato nella norma, le
-varianze dei due set di dati vengono supposte tra loro diverse, portando
-all’applicazione del *t*-test nella sua versione detta [Welch
-test](https://en.wikipedia.org/wiki/Welch%27s_t-test). Tale test si è
-rivelato maggiormente efficace rispetto al *t*-test classico nel
-contenere gli errori di tipo I nel caso di varianze tra loro non uguali.
-Tale capacità si è evidenziata anche in situazioni in cui la differenza
-tra le varianze non sia sufficiente ad essere rilevata da un test sulla
-varianza di Fisher (tipicamente poco potente per numerosità campionarie
-ridotte). Ulteriori informazioni in merito sono disponibili nei seguenti
-articoli:
-
-- Welch, B. L. (1951). *On the Comparison of Several Mean Values: An
-  Alternative Approach*. Biometrika. *38* (3/4): 330–336. doi:
-  [10.2307/2332579](https://doi.org/10.2307%2F2332579)
-- Zimmerman, D. W. (2004). *A note on preliminary tests of equality of
-  variances*. British Journal of Mathematical and Statistical
-  Psychology. *57* (Pt 1): 173–181. doi:
-  [10.1348/000711004849222](https://doi.org/10.1348%2F000711004849222)
+B’, C’ e D’).
 
 Il test per il confronto di due valori dotati di incertezza estesa, il
 calcolo dell’ $E_n$ è stato implementato sulla base di quanto riportato
@@ -182,7 +150,7 @@ Dalla scheda <b> Dati </b>, clicca qui
 </details>
 <details>
 <summary>
-Dalla scheda <b> Confronti </b>, clicca qui
+Dalla scheda <b> Stime </b>, clicca qui
 </summary>
 
 1.  leggere le istruzioni nella parte a destra dello schermo;
@@ -190,12 +158,11 @@ Dalla scheda <b> Confronti </b>, clicca qui
 3.  digitare le unità di misura;
 4.  digitare le eventuali altre informazioni richieste e, se presente,
     cliccare *Calcola*;
-5.  specificare l’ipotesi alternativa per i test e il loro livello di
-    confidenza;
+5.  specificare il livello di confidenza desiderato;
 6.  visualizzare il grafici e le statistiche di base;
 7.  eventualmente rimuovere dei punti cliccando su di essi;
-8.  visualizzare gli esiti dei test spostandosi tra le schede nella
-    parte destra dello schermo;
+8.  visualizzare le prestazioni di precisioni e giustezza spostandosi
+    tra le schede nella parte destra dello schermo;
 9.  cliccare su *Salva* per salvare il risultato;
 10. ripetere i punti dal 2. al 9. per tutti gli analiti di interesse;
 11. cliccare su *Avanti* e confermare la propria scelta.
@@ -232,7 +199,7 @@ sono utilizzate in ambito professionale da milioni di persone, da circa
 
 La correttezza dei risultati forniti dalle funzioni impiegate da
 SIprecisa, l’interazione tra le funzioni e la stabilità dell’interfaccia
-utente, sono oggetto di oltre 650 test. Tali test sono eseguiti in
+utente, sono oggetto di oltre 450 test. Tali test sono eseguiti in
 automatico a ogni nuovo rilascio di versione. La frazione di codice
 coperta dai test è circa il 93% del totale. L’esito dei controlli e la
 percentuale di codice coperta dai test per l’ultima versione rilasciata,

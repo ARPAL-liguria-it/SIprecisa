@@ -21,7 +21,7 @@ i risultati in un unico report in formato pdf.
 
 * calcolare i parametri prestazionali di precisione;
 * calcoare i parametri prestazionali di giustezza;
-* identificare la presenza di bias ( $t$-test o calcolo dell'$E_n$ );
+* identificare la presenza di bias ( $t$-test o calcolo dell' $E_n$ );
 * esportare i risultati in un report .pdf.
 
 #### Di cosa ha bisogno SIprecisa?
@@ -82,7 +82,7 @@ L'implementazione risulta coerente con quanto riportato nella norma ISO 5479:199
 di replicare i risultati contenuti nell'esempio 1 della sezione 4 (pag. 606) dell'articolo 
 Shapiro, S. S. e Wilk, M. B. (1965).
 _An analysis of variance test for normality (complete samples)_,
-Biometrika, *52*, 3 and 2. doi:[10.2307/2333709](https://doi.org/10.2307/2333709)
+Biometrika, *52*, 3 and 2. doi: [10.2307/2333709](https://doi.org/10.2307/2333709)
 
 Il test _generalized extreme studentized deviate_ (GESD) per l'identificazione dei valori anomali è
 stato implementato sulla base del paragrafo 4.3 e dell'Annex A della norma UNI ISO 16269-4:2019.
@@ -92,33 +92,15 @@ I test per il confronto tra due medie e tra una media e un valore noto sono stat
 utilizzando la funzione `t.test` della libreria `stats` del software R.
 L'implementazione risulta coerente e in grado di replicare i risultati riportati nella norma
 UNI ISO 2854:1988 (prospetti B', C' e D').
-Tuttavia, rispetto a quanto riportato nella norma, le varianze dei due set di dati vengono supposte
-tra loro diverse, portando all'applicazione del $t$-test nella sua versione detta
-[Welch test](https://en.wikipedia.org/wiki/Welch%27s_t-test). Tale test si è rivelato maggiormente
-efficace rispetto al $t$-test classico nel contenere gli errori di tipo I nel caso di varianze 
-tra loro non uguali. Tale capacità si è evidenziata anche in situazioni in cui la differenza tra
-le varianze non sia sufficiente ad essere rilevata da un test sulla varianza di Fisher 
-(tipicamente poco potente per numerosità campionarie ridotte).
-Ulteriori informazioni in merito sono disponibili nei seguenti articoli:
-
- - Welch, B. L. (1951). _On the Comparison of Several Mean Values: An Alternative Approach_. 
- Biometrika. *38* (3 / 4): 330–336. doi:[10.2307/2332579](https://doi.org/10.2307%2F2332579)
- - Zimmerman, D. W. (2004). _A note on preliminary tests of equality of variances_. 
- British Journal of Mathematical and Statistical Psychology. *57* (Pt 1): 173–181. 
- doi:[10.1348/000711004849222](https://doi.org/10.1348%2F000711004849222)
- 
-Il test per il confronto tra una varianza e un valore assegnato è stato implementato sulla base
-del test del $\chi^2$ riportato nel prospetto E della norma UNI ISO 2854:1988.
-Il test implementato è stato in grado di replicare i risultati riportati nella medesima norma.
-
-Il test per il confronto tra due varianze è stato implementato utilizzando la funzione
-`var.test` della libreria `stats` del software R.
-L'implementazione risulta coerente e in grado di fornire risultati in linea con quanto riportato
-nella norma UNI ISO 2854:1988 (prospetti G e H).
 
 Il test per il confronto di due valori dotati di incertezza estesa, il calcolo dell' $E_n$ è
 stato implementato sulla base di quanto riportato nella norma ISO 13528:2022, al paragrafo 9.7.
 Il calcolo implementato è stato in grado di replicare i risultati riportati nella sezione
+E.4. della medesima norma.
+
+I parametri di prestazione di precisione e giustezza sono stati calcolati in conformità
+alle definizioni fornite dalla guida 
+[Eurachem - The fitness for purpose of analytical methods](https://www.eurachem.org/images/stories/Guides/pdf/MV_guide_2nd_ed_EN.pdf).
 E.4. della medesima norma.
 
 #### Come funziona SIprecisa?
@@ -188,7 +170,7 @@ SIprecisa è basato sull'ambiente software R e molte delle sue funzioni sono uti
 in ambito professionale da milioni di persone, da circa 30 anni.
 
 La correttezza dei risultati forniti dalle funzioni impiegate da SIprecisa, l'interazione
-tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 650 test.
+tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 450 test.
 Tali test sono eseguiti in automatico a ogni nuovo rilascio di versione.
 
 L'esito dei controlli del 2023-08-14 per la versione 1.0.0,

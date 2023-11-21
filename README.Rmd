@@ -26,8 +26,9 @@ knitr::opts_chunk$set(
 [![test-coverage](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-Il software SIprecisa è stato sviluppato per ARPAL allo scopo di calcolare indicatori
-di precisione e scostamento in misurazioni chimiche e fisiche di laboratorio.
+Il software SIprecisa è stato sviluppato per ARPAL allo scopo di determinare
+parametri prestazionali di precisione e giustezza per serie di misure indipendenti
+e coppie di misure indipendenti.
 
 Il software permette di sottoporre a test sequenziali più di un analita, riassumendo
 i risultati in un unico report in formato pdf.
@@ -37,9 +38,12 @@ i risultati in un unico report in formato pdf.
 
 * ottenere statistiche di base sulle serie di valori;
 * effettuare un test di normalità (Shapiro-Wilk) sulle serie di valori;
-* identificare mediante il test _generalized extreme studentized deviate_ (GESD) la presenza di potenziali valori anomali;
+* identificare mediante il test _genaralised extreme studentized deviate_ (GESD) la presenza di potenziali valori anomali;
 * escludere manualmente i valori potenzialmente anomali;
-* effettuare un test ( $t$-test, Welch test o calcolo dell' $E_n$) per verificare la significatività del bias;
+
+* calcolare i parametri prestazionali di precisione;
+* calcoare i parametri prestazionali di giustezza;
+* identificare la presenza di bias ( $t$-test o calcolo dell'$E_n$ );
 * esportare i risultati in un report .pdf.
 
 
@@ -50,71 +54,50 @@ Ogni colonna presente nel file deve avere un'intestazione testuale ma il numero
 e la tipologia di colonne dipende dallo scopo:
 
 <details>
-
-<summary> se vuoi stimare la ripetibilità e il recupero sulla stessa serie di misure, clicca qui </summary>
-
+<summary> se vuoi determinare i parametri di prestazione di precisione e giustezza a partire da una serie di misure, clicca qui </summary>
 Ti servirà organizzare il file con:
 
   * una colonna testuale con i nomi degli analiti di interesse;
   * una colonna numerica con i valori delle misure.
   
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30 valori 
-per analita
+Servono almeno 6 valori, fino a un massimo di 30 valori per ogni analita.
 
-Inoltre, nel corso dei calcoli per la determinazione del recupero servirà fornire il valore riferimento e la sua incertezza estesa.
-
+Inoltre, per il calcolo dei parametri di prestazione di giustezza, si dovranno inserire:
+  * il valore di riferimento;
+  * l'incertezza estesa del valore di riferimento, se nota e diversa da zero.
 </details>
 
 <details>
-
-<summary> se vuoi stimare solo la ripetibilità su una serie di misure, clicca qui </summary>
+<summary> se vuoi determinare i parametri di prestazione di precisione a partire
+da una serie di misure in doppio, clicca qui </summary>
 
 Ti servirà organizzare il file con:
-
   * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna numerica con i valori delle misure.
+  * una colonna numerica con i valori delle prime misure;
+  * una colonna numerica con i valori delle seconde misure.
   
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30 valori 
-per analita
-
+Servono almeno 8 coppie di valori, fino a un massimo di 30 valori per ogni analita.
 </details>
 
 <details>
-
-<summary> se vuoi stimare solo il recupero su una serie di misure, clicca qui </summary>
-
-Ti servirà organizzare il file con:
-
-  * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna numerica con i valori delle misure.
-  
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30 valori 
-per analita
-
-Inoltre, nel corso dei calcoli per la determinazione del recupero servirà fornire il valore riferimento e la sua incertezza estesa.
-
-</details>
-
-<details>
-
-<summary>  se vuoi stimare il recupero di una singola misura, clicca qui </summary>
+<summary> se vuoi stimare i parametri di prestazione di giustezza a partire da una singola misura,
+clicca qui </summary>
 
 Ti servirà organizzare il file con:
-
   * una colonna testuale con i nomi degli analiti di interesse;
-  * una colonna numerica con i valori delle misure;
-  * una colonna numerica con l'incertezza estesa associata alla misure.
+  * una colonna numerica con il valore della misura;
+  * una colonna numerica con l'incertezza estesa della misura.
   
-Ogni serie potrà avere un solo valore per analita.
-
-Inoltre, nel corso dei calcoli per la determinazione del recupero servirà fornire il valore riferimento e la sua incertezza estesa.
-
+Può essere presente una sola misura per analita.
+    
+Inoltre, nel corso del calcolo dei parametri di prestazione, si dovranno fornire:
+  * il valore di riferimento;
+  * l'incertezza estesa del valore di riferimento, se nota e diversa da zero.
 </details>
-
 <br>
 
 
-#### Come sono stati scelti i test di SIprecisa?
+#### Come sono stati scelti i test e i parametri di prestazione calcolati da SIprecisa?
 
 Il test per verificare la normalità di una serie di dati è stato implementato utilizzando
 la funzione `shapiro.test` della libreria `stats` del software R.
@@ -132,25 +115,15 @@ I test per il confronto tra due medie e tra una media e un valore noto sono stat
 utilizzando la funzione `t.test` della libreria `stats` del software R.
 L'implementazione risulta coerente e in grado di replicare i risultati riportati nella norma
 UNI ISO 2854:1988 (prospetti B', C' e D').
-Tuttavia, rispetto a quanto riportato nella norma, le varianze dei due set di dati vengono supposte
-tra loro diverse, portando all'applicazione del _t_-test nella sua versione detta
-[Welch test](https://en.wikipedia.org/wiki/Welch%27s_t-test). Tale test si è rivelato maggiormente
-efficace rispetto al _t_-test classico nel contenere gli errori di tipo I nel caso di varianze 
-tra loro non uguali. Tale capacità si è evidenziata anche in situazioni in cui la differenza tra
-le varianze non sia sufficiente ad essere rilevata da un test sulla varianza di Fisher 
-(tipicamente poco potente per numerosità campionarie ridotte).
-Ulteriori informazioni in merito sono disponibili nei seguenti articoli:
-
- - Welch, B. L. (1951). _On the Comparison of Several Mean Values: An Alternative Approach_. 
- Biometrika. *38* (3/4): 330–336. doi: [10.2307/2332579](https://doi.org/10.2307%2F2332579)
- - Zimmerman, D. W. (2004). _A note on preliminary tests of equality of variances_. 
- British Journal of Mathematical and Statistical Psychology. *57* (Pt 1): 173–181. 
- doi: [10.1348/000711004849222](https://doi.org/10.1348%2F000711004849222)
 
 Il test per il confronto di due valori dotati di incertezza estesa, il calcolo dell' $E_n$ è
 stato implementato sulla base di quanto riportato nella norma ISO 13528:2022, al paragrafo 9.7.
 Il calcolo implementato è stato in grado di replicare i risultati riportati nella sezione
 E.4. della medesima norma.
+
+I parametri di prestazione di precisione e giustezza sono stati calcolati in conformità
+alle definizioni fornite dalla guida 
+[Eurachem - The fitness for purpose of analytical methods](https://www.eurachem.org/images/stories/Guides/pdf/MV_guide_2nd_ed_EN.pdf).
 
 
 #### Come funziona SIprecisa?
@@ -159,8 +132,7 @@ Ogni scheda possiede un pulsante _Avanti_ posizionato in basso a sinistra, una v
 su di esso e confermata la propria scelta, l'utente non potrà tornare indietro.
 
 <details>
-
-<summary> Dalla scheda <b> Scopo </b>, clicca qui </summary>
+<summary> Dalla scheda <b>Scopo</b>, clicca qui </summary>
 
   1. selezionare una delle opzioni disponibili;
   2. leggere le istruzioni nella parte a destra dello schermo;
@@ -169,8 +141,7 @@ su di esso e confermata la propria scelta, l'utente non potrà tornare indietro.
 </details>
 
 <details>
-
-<summary> Dalla scheda <b> Dati </b>, clicca qui </summary>
+<summary> Dalla scheda <b>Dati</b>, clicca qui </summary>
 
   1. leggere le istruzioni nella parte destra dello schermo;
   2. caricare il file .csv;
@@ -180,17 +151,16 @@ su di esso e confermata la propria scelta, l'utente non potrà tornare indietro.
 </details>
 
 <details>
-
-<summary> Dalla scheda <b> Confronti </b>, clicca qui </summary>
+<summary> Dalla scheda <b>Stime</b>, clicca qui </summary>
 
   1. leggere le istruzioni nella parte a destra dello schermo;
   2. selezionare il parametro di interesse;
   3. digitare le unità di misura;
   4. digitare le eventuali altre informazioni richieste e, se presente, cliccare _Calcola_;
-  5. specificare l'ipotesi alternativa per i test e il loro livello di confidenza;
+  5. specificare il livello di confidenza desiderato per il calcolo delle prestazioni e l'esecuzione        dei test;
   6. visualizzare il grafici e le statistiche di base;
   7. eventualmente rimuovere dei punti cliccando su di essi;
-  8. visualizzare gli esiti dei test spostandosi tra le schede nella parte destra dello schermo;
+  8. visualizzare i risultati spostandosi tra le schede nella parte destra dello schermo;
   9. cliccare su _Salva_ per salvare il risultato;
   10. ripetere i punti dal 2. al 9. per tutti gli analiti di interesse;
   11. cliccare su _Avanti_ e confermare la propria scelta.
@@ -207,8 +177,7 @@ Nel caso si voglia modificare un risultato già salvato:
 </details>
 
 <details>
-
-<summary> Dalla scheda <b> Report </b>, clicca qui </summary>
+<summary> Dalla scheda <b>Report</b>, clicca qui </summary>
 
   1. completare i campi con le informazioni accessorie;
   2. selezionare le sezioni da includere nel report;
@@ -216,16 +185,14 @@ Nel caso si voglia modificare un risultato già salvato:
   4. aspettare che il file .pdf compaia tra i file scaricati.
   
 </details>
-
 <br>
-
 
 #### SIprecisa è validato?
 SIprecisa è basato sull'ambiente software R e molte delle sue funzioni sono utilizzate
 in ambito professionale da milioni di persone, da circa 30 anni.
 
 La correttezza dei risultati forniti dalle funzioni impiegate da SIprecisa, l'interazione
-tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 650 test.
+tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 450 test.
 Tali test sono eseguiti in automatico a ogni nuovo rilascio di versione.
 La frazione di codice coperta dai test è circa il 93% del totale.
 L'esito dei controlli e la percentuale di codice coperta dai test per l'ultima versione rilasciata,
