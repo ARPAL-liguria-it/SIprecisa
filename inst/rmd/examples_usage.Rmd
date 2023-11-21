@@ -11,10 +11,10 @@ editor_options:
     wrap: 72
 ---
 
-## Esempi di utilizzo dell'applicazione SIconfronta
+## Esempi di utilizzo dell'applicazione SIprecisa
 
 Nel seguito del documento vengono riportati alcuni esempi di possibili
-usi dell'applicazione SIconfronta all'interno di un laboratorio di
+usi dell'applicazione SIprecisa all'interno di un laboratorio di
 analisi chimiche ambientali.
 
 Gli esempi sono suddivisi in base alle opzioni disponibili nella scheda
@@ -36,92 +36,65 @@ In generale, questa opzione è applicabile a casi di serie di misure tra
 loro indipendenti per i quali siano disponibili i valori delle singole
 misure.
 
-Alcuni esempi di applicazioni possono riguardare:
-
--   confronto con le misure ottenute da diversi metodi o laboratori;
--   il confronto tra le misure effettuate da uno strumento singolo su
-    repliche indipendenti di uno stesso campione, preparate da operatori
-    differenti utilizzando la medesima metodica;
--   il confronto tra le misure effettuate da due strumenti su repliche
-    indipendenti di uno stesso campione, preparate dal medesimo
-    operatore con la medesima metodica;
--   il confronto tra le misure effettuate da uno strumento singolo su
-    repliche indipendenti di uno stesso campione, preparate dal medesimo
-    operatore ma utilizzando due metodiche differenti.
+Le possibili applicazioni possono riguardare:
+-   il calcolo delle ripetibilità e del limite di ripetibilità di un metodo analitico,
+    in condizioni ben definite;
+-   il calcolo del bias o recupero di un metodo analitico, in condizioni ben definite;
+-   la valutazione della presenza di un bias statisticamente significativo.
 :::
 
-L'operatore Edward Mani di Forbice e Paolino Precisino confrontano le
-prestazioni ottenute nella determinazione della concentrazione di boro e
-ferro in un campione di acqua di scarico. In particolare, si chiedono se
-ci sia una differenza statisticamente significativa al 95% tra i valori
-medi e tra le deviazioni standard delle loro misure.
+Mario vuole stimare le prestazioni di precisione e giustezza del suo nuovo
+metodo per la determinazione del sifilone nelle acque superficiali.
+Ha a disposizione tre campioni di acqua a diversi contenuti noti e certificati di sifilone.
 
-1.  I due operatori prelevano 10 aliquote ciascuno a partire da un
-    campione di acqua stabilizzato e omogeneo;
-2.  gli operatori effettuano una aggiunta nota e costante degli analiti
-    di interesse sulle rispettive aliquote;
-3.  Edward e Paolino portano a termine l'intera preparazione del
-    campione per le diverse aliquote. Una delle aliquote preparata da
-    Edward viene persa a causa di un problema in fase di manipolazione
-    del campione;
-4.  l'analisi viene effettuata su un singolo strumento, disponendo le
-    aliquote preparate dai due operatori in ordine casuale.
+Per ognuno dei tre campioni Mario esegue 10 repliche indipendenti: ogni replica comprende sia
+la fase di preparazione, sia la successiva fase di determinazione strumentale.
 
-Per quanto riguarda la determinazione della concentrazione di boro, si
-ottengono i seguenti risultati:
+I valori di riferimento dei tre campioni e le relative incertezze estese sono:
+a.   3.032 $\pm$ 0.041 ng/L
+b.   20.43 $\pm$ 0.28 ng/L
+c.   104.3 $\pm$ 5.1 ng/L
 
--   Edward: 2.04, 1.97, 1.93, 2.05, 1.97, 1.91, 1.93, 2.08, 1.90 mg/l;
--   Paolino: 2.22, 1.86, 2.08, 2.01, 2.04, 1.93, 2.03, 1.95, 1.95, 1.85
-    mg/l.
+Le misure ottenute per i diversi campioni sono così riassunte:
+a.   2.860, 3.113, 2.938, 3.107, 3.071, 2.838, 3.109, 3.088, 3.012, 2.746 ng/L;
+b.   19.83, 19.10, 20.25, 20.16, 20.47, 19.12, 20.64, 22.26, 19.29, 21.77 ng/L;
+c.   97.66, 107.7, 97.28, 103.3, 95.32, 99.46, 103.1, 110.3, 104.3, 95.49 ng/L.
 
-Passando al ferro:
-
--   Edward: 1.94, 2.10, 2.06, 2.10, 2.20, 2.25, 2.30, 2.03, 1.98 mg/l;
--   Paolino: 1.76, 2.08, 2.04, 2.15, 2.00, 2.12, 1.90, 1.91, 1.90, 1.84
-    mg/l.
 
 I valori vengono organizzati nella seguente tabella:
 
-| analita | operatore | misura |
-|---------|-----------|--------|
-| boro    | Edward    | 2.04   |
-| boro    | Edward    | 1.97   |
-| boro    | Edward    | 1.93   |
-| boro    | Edward    | 2.05   |
-| boro    | Edward    | 1.97   |
-| boro    | Edward    | 1.91   |
-| boro    | Edward    | 1.93   |
-| boro    | Edward    | 2.08   |
-| boro    | Edward    | 1.90   |
-| boro    | Paolino   | 2.22   |
-| boro    | Paolino   | 1.86   |
-| boro    | Paolino   | 2.08   |
-| boro    | Paolino   | 2.01   |
-| boro    | Paolino   | 2.04   |
-| boro    | Paolino   | 1.93   |
-| boro    | Paolino   | 2.03   |
-| boro    | Paolino   | 1.95   |
-| boro    | Paolino   | 1.95   |
-| boro    | Paolino   | 1.85   |
-| ferro   | Edward    | 1.94   |
-| ferro   | Edward    | 2.10   |
-| ferro   | Edward    | 2.06   |
-| ferro   | Edward    | 2.10   |
-| ferro   | Edward    | 2.20   |
-| ferro   | Edward    | 2.25   |
-| ferro   | Edward    | 2.30   |
-| ferro   | Edward    | 2.03   |
-| ferro   | Edward    | 1.98   |
-| ferro   | Paolino   | 1.76   |
-| ferro   | Paolino   | 2.08   |
-| ferro   | Paolino   | 2.04   |
-| ferro   | Paolino   | 2.15   |
-| ferro   | Paolino   | 2.00   |
-| ferro   | Paolino   | 2.12   |
-| ferro   | Paolino   | 1.90   |
-| ferro   | Paolino   | 1.91   |
-| ferro   | Paolino   | 1.90   |
-| ferro   | Paolino   | 1.84   |
+| analita_c    | misura  |
+|--------------|---------|
+| sifilone_3   | 2.860   |
+| sifilone_3   | 3.113   |
+| sifilone_3   | 2.938   |
+| sifilone_3   | 3.107   |
+| sifilone_3   | 3.071   |
+| sifilone_3   | 2.838   |
+| sifilone_3   | 3.109   |
+| sifilone_3   | 3.088   |
+| sifilone_3   | 3.012   |
+| sifilone_3   | 2.746   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_20  | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
+| sifilone_100 | 2.04   |
 
 1.  Nella scheda *Scopo* di SIconfronta si seleziona la prima opzione;
 2.  nella scheda *Dati* si seleziona il file con la tabella dei dati in
