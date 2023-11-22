@@ -259,12 +259,19 @@ mod_estimate033_recuno_server <- function(id, r) {
 
     #### conditions for trueness results ----
     ok_click <- reactive({
-      ifelse(r$estimate03x$refvalue != 0 && r$estimate03x$click == 0,
+      ifelse(r$estimate03x$refvalue != 0 &&
+               r$estimate03x$refuncertainty != 0 &&
+               r$estimate03x$click == 0,
              0, 1)
     })
 
     ok_calc <- reactive({
       ifelse(r$estimate03x$refvalue == 0,
+             0, 1)
+    })
+
+    ok_unc <- reactive({
+      ifelse(r$estimate03x$refuncertainty == 0,
              0, 1)
     })
 
@@ -337,7 +344,8 @@ mod_estimate033_recuno_server <- function(id, r) {
         need(minval() >= 1,
              message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
         need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
       )
 
       # if results have been saved, restore the boxplot
@@ -374,7 +382,8 @@ mod_estimate033_recuno_server <- function(id, r) {
         need(minval() >= 1,
              message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
         need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
       )
       # if results have been saved, restore the summarytable
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -499,7 +508,8 @@ mod_estimate033_recuno_server <- function(id, r) {
         need(minval() >= 1,
              message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
           need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
       )
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
