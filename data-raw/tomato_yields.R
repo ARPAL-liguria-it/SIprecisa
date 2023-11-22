@@ -22,7 +22,7 @@
 #' @keywords data
 #' @importFrom data.table fread
 
-tomato_yields <- data.table::fread(system.file("extdata", "raw_tomato_yields", package = "SIconfronta"),
+tomato_yields <- data.table::fread(system.file("extdata", "raw_tomato_yields.csv", package = "SIprecisa"),
                                    stringsAsFactors = TRUE)
 
 usethis::use_data(tomato_yields, overwrite = TRUE)

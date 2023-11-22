@@ -2,7 +2,7 @@
 #'
 #' @description The function displays the results of a Shapiro-Wilk test for
 #'  normality.
-#'  The returned text is suitable for the {SI confronta} {shiny} app.
+#'  The returned text is suitable for the {SI precisa} {shiny} app.
 #'
 #' @param values a \code{vector} with the values relevant for testing.
 #'
@@ -256,7 +256,7 @@ fct_ttest_riprec <- function(data,
 #'
 #' @description The function displays the results of a \eqn{E_n}-test for two
 #' values with extended uncertainty.
-#'  The returned text is suitable for the {SI confronta} {shiny} app.
+#'  The returned text is suitable for the {SI precisa} {shiny} app.
 #'
 #' @param data a \code{data.frame} or \code{data.table} with the results
 #'   relevant for testing. A single-level grouping \code{factor} variable

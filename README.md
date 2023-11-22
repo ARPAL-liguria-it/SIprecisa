@@ -11,22 +11,29 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 Il software SIprecisa è stato sviluppato per ARPAL allo scopo di
-calcolare indicatori di precisione e giustezza in misurazioni chimiche e
-fisiche di laboratorio.
+determinare parametri prestazionali di precisione e giustezza per serie
+di misure indipendenti e coppie di misure indipendenti.
 
 Il software permette di sottoporre a test sequenziali più di un analita,
 riassumendo i risultati in un unico report in formato pdf.
 
 #### Cosa può fare SIprecisa?
 
-- ottenere statistiche relative alla precisione e giustezza di serie di
-  valori;
+- ottenere statistiche di base sulle serie di valori;
+
 - effettuare un test di normalità (Shapiro-Wilk) sulle serie di valori;
-- identificare mediante il test *generalized extreme studentized
+
+- identificare mediante il test *genaralised extreme studentized
   deviate* (GESD) la presenza di potenziali valori anomali;
+
 - escludere manualmente i valori potenzialmente anomali;
-- effettuare un test ( $t$-test, Welch test o calcolo dell’ $E_n$) per
-  verificare la significatività del bias;
+
+- calcolare i parametri prestazionali di precisione;
+
+- calcoare i parametri prestazionali di giustezza;
+
+- identificare la presenza di bias ( $t$-test o calcolo dell’$E_n$ );
+
 - esportare i risultati in un report .pdf.
 
 #### Di cosa ha bisogno SIprecisa?
@@ -38,8 +45,8 @@ dallo scopo:
 
 <details>
 <summary>
-se vuoi stimare la ripetibilità e il recupero sulla stessa serie di
-misure, clicca qui
+se vuoi determinare i parametri di prestazione di precisione e giustezza
+a partire da una serie di misure, clicca qui
 </summary>
 
 Ti servirà organizzare il file con:
@@ -47,50 +54,46 @@ Ti servirà organizzare il file con:
 - una colonna testuale con i nomi degli analiti di interesse;
 - una colonna numerica con i valori delle misure.
 
-Ognuna delle due serie potrà avere da un minimo di 6 a un massimo di 30
-valori per analita.
-
-Inoltre, nel corso dei calcoli per la determinazione del recupero
-servirà fornire il valore riferimento e la sua incertezza estesa.
-
-</details>
-<details>
-<summary>
-se vuoi stimare solo la ripetibilità su una serie di misure duplicate,
-clicca qui
-</summary>
-
-Ti servirà organizzare il file con:
-
-- una colonna testuale con i nomi degli analiti di interesse;
-- una colonna numerica con i valori della prima serie di misure;
-- una colonna numerica con i valori della seconda serie di misure;
-
-Serviranno da un minimo di 8 a un massimo di 30 coppie di valori per
+Servono almeno 6 valori, fino a un massimo di 30 valori per ogni
 analita.
 
+Inoltre, per il calcolo dei parametri di prestazione di giustezza, si
+dovranno inserire: \* il valore di riferimento; \* l’incertezza estesa
+del valore di riferimento, se nota e diversa da zero.
 </details>
 <details>
 <summary>
-se vuoi stimare il recupero di una singola misura, clicca qui
+se vuoi determinare i parametri di prestazione di precisione a partire
+da una serie di misure in doppio, clicca qui
 </summary>
 
-Ti servirà organizzare il file con:
+Ti servirà organizzare il file con: \* una colonna testuale con i nomi
+degli analiti di interesse; \* una colonna numerica con i valori delle
+prime misure; \* una colonna numerica con i valori delle seconde misure.
 
-- una colonna testuale con i nomi degli analiti di interesse;
-- una colonna numerica con i valori delle misure;
-- una colonna numerica con l’incertezza estesa associata alla misure.
+Servono almeno 8 coppie di valori, fino a un massimo di 30 valori per
+ogni analita.
+</details>
+<details>
+<summary>
+se vuoi stimare i parametri di prestazione di giustezza a partire da una
+singola misura, clicca qui
+</summary>
 
-Ogni serie potrà avere un solo valore per analita.
+Ti servirà organizzare il file con: \* una colonna testuale con i nomi
+degli analiti di interesse; \* una colonna numerica con il valore della
+misura; \* una colonna numerica con l’incertezza estesa della misura.
 
-Inoltre, nel corso dei calcoli per la determinazione del recupero
-servirà fornire il valore riferimento e la sua incertezza estesa.
+Può essere presente una sola misura per analita.
 
+Inoltre, nel corso del calcolo dei parametri di prestazione, si dovranno
+fornire: \* il valore di riferimento; \* l’incertezza estesa del valore
+di riferimento, se nota e diversa da zero.
 </details>
 
 <br>
 
-#### Come sono stati scelti i test di SIprecisa?
+#### Come sono stati scelti i test e i parametri di prestazione calcolati da SIprecisa?
 
 Il test per verificare la normalità di una serie di dati è stato
 implementato utilizzando la funzione `shapiro.test` della libreria
@@ -119,6 +122,11 @@ nella norma ISO 13528:2022, al paragrafo 9.7. Il calcolo implementato è
 stato in grado di replicare i risultati riportati nella sezione E.4.
 della medesima norma.
 
+I parametri di prestazione di precisione e giustezza sono stati
+calcolati in conformità alle definizioni fornite dalla guida [Eurachem -
+The fitness for purpose of analytical
+methods](https://www.eurachem.org/images/stories/Guides/pdf/MV_guide_2nd_ed_EN.pdf).
+
 #### Come funziona SIprecisa?
 
 L’applicazione è suddivisa in quattro schede con cui l’utente deve
@@ -128,7 +136,7 @@ confermata la propria scelta, l’utente non potrà tornare indietro.
 
 <details>
 <summary>
-Dalla scheda <b> Scopo </b>, clicca qui
+Dalla scheda <b>Scopo</b>, clicca qui
 </summary>
 
 1.  selezionare una delle opzioni disponibili;
@@ -138,7 +146,7 @@ Dalla scheda <b> Scopo </b>, clicca qui
 </details>
 <details>
 <summary>
-Dalla scheda <b> Dati </b>, clicca qui
+Dalla scheda <b>Dati</b>, clicca qui
 </summary>
 
 1.  leggere le istruzioni nella parte destra dello schermo;
@@ -150,7 +158,7 @@ Dalla scheda <b> Dati </b>, clicca qui
 </details>
 <details>
 <summary>
-Dalla scheda <b> Stime </b>, clicca qui
+Dalla scheda <b>Stime</b>, clicca qui
 </summary>
 
 1.  leggere le istruzioni nella parte a destra dello schermo;
@@ -158,11 +166,12 @@ Dalla scheda <b> Stime </b>, clicca qui
 3.  digitare le unità di misura;
 4.  digitare le eventuali altre informazioni richieste e, se presente,
     cliccare *Calcola*;
-5.  specificare il livello di confidenza desiderato;
+5.  specificare il livello di confidenza desiderato per il calcolo delle
+    prestazioni e l’esecuzione dei test;
 6.  visualizzare il grafici e le statistiche di base;
 7.  eventualmente rimuovere dei punti cliccando su di essi;
-8.  visualizzare le prestazioni di precisioni e giustezza spostandosi
-    tra le schede nella parte destra dello schermo;
+8.  visualizzare i risultati spostandosi tra le schede nella parte
+    destra dello schermo;
 9.  cliccare su *Salva* per salvare il risultato;
 10. ripetere i punti dal 2. al 9. per tutti gli analiti di interesse;
 11. cliccare su *Avanti* e confermare la propria scelta.
@@ -179,7 +188,7 @@ Nel caso si voglia modificare un risultato già salvato:
 </details>
 <details>
 <summary>
-Dalla scheda <b> Report </b>, clicca qui
+Dalla scheda <b>Report</b>, clicca qui
 </summary>
 
 1.  completare i campi con le informazioni accessorie;
@@ -210,7 +219,7 @@ Si consiglia, inoltre, di rendere disponibile SIprecisa attraverso un
 server Linux ad accesso controllato o distribuirlo mediante *docker*.
 
 A ogni modo, è sempre meglio rimanere allerta: [segnala eventuali
-bachi](https://github.com/andreabz/SIconfronta/issues).
+bachi](https://github.com/andreabz/SIprecisa/issues).
 
 #### Con quale licenza è rilasciato SIprecisa?
 

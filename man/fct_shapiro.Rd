@@ -20,7 +20,7 @@ A list with the following items:
 \description{
 The function displays the results of a Shapiro-Wilk test for
  normality.
- The returned text is suitable for the {SI confronta} {shiny} app.
+ The returned text is suitable for the {SI precisa} {shiny} app.
 }
 \details{
 the Shapiro-Wilk test is calculated using the base-R function

@@ -39,7 +39,7 @@ A list with the following items:
 \description{
 The function displays the results of a \eqn{E_n}-test for two
 values with extended uncertainty.
- The returned text is suitable for the {SI confronta} {shiny} app.
+ The returned text is suitable for the {SI precisa} {shiny} app.
 }
 \details{
 \eqn{E_n}-test is calculated with the following equation:

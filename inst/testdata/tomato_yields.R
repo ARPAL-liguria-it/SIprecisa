@@ -23,4 +23,4 @@
 #' @importFrom data.table fread
 
 tomato_yields <- data.table::fread(system.file("testdata", "tomato_yields.csv",
-                                               package = "SIconfronta"))
+                                               package = "SIprecisa"))
