@@ -29,17 +29,17 @@ esempio verosimile.
 
 ------------------------------------------------------------------------
 
-### Confronti tra due serie di dati complete
+### Stima di ripetibilità e recupero dalla stessa serie di misure
 
 ::: {.minipage style="border:5px solid #2780E3; border-radius: 12px; width: 80%; margin: 25px; padding: 10px"}
-In generale, questa opzione è applicabile a casi di serie di misure tra
-loro indipendenti per i quali siano disponibili i valori delle singole
+In generale, questa opzione è applicabile al caso di una serie di misure tra
+loro indipendenti e per i quali siano disponibili i valori delle singole
 misure.
 
 Le possibili applicazioni possono riguardare:
 -   il calcolo delle ripetibilità e del limite di ripetibilità di un metodo analitico,
     in condizioni ben definite;
--   il calcolo del bias o recupero di un metodo analitico, in condizioni ben definite;
+-   il calcolo del _bias_ o recupero di un metodo analitico, in condizioni ben definite;
 -   la valutazione della presenza di un bias statisticamente significativo.
 :::
 
@@ -51,15 +51,16 @@ Per ognuno dei tre campioni Mario esegue 10 repliche indipendenti: ogni replica 
 la fase di preparazione, sia la successiva fase di determinazione strumentale.
 
 I valori di riferimento dei tre campioni e le relative incertezze estese sono:
-a.   3.032 $\pm$ 0.041 ng/L
-b.   20.43 $\pm$ 0.28 ng/L
-c.   104.3 $\pm$ 5.1 ng/L
+
+1.   3.032 $\pm$ 0.041 ng/L;
+2.   20.43 $\pm$ 0.28 ng/L;
+3.   104.3 $\pm$ 1.8 ng/L.
 
 Le misure ottenute per i diversi campioni sono così riassunte:
-a.   2.860, 3.113, 2.938, 3.107, 3.071, 2.838, 3.109, 3.088, 3.012, 2.746 ng/L;
-b.   19.83, 19.10, 20.25, 20.16, 20.47, 19.12, 20.64, 22.26, 19.29, 21.77 ng/L;
-c.   97.66, 107.7, 97.28, 103.3, 95.32, 99.46, 103.1, 110.3, 104.3, 95.49 ng/L.
 
+1.   2.860, 3.113, 2.938, 3.107, 3.071, 2.838, 3.109, 3.088, 3.012, 2.746 ng/L;
+2.   19.83, 19.10, 20.25, 20.16, 20.47, 19.12, 20.64, 22.26, 19.29, 21.77 ng/L;
+3.   97.66, 107.7, 97.28, 103.3, 95.32, 99.46, 103.1, 110.3, 104.3, 95.49 ng/L.
 
 I valori vengono organizzati nella seguente tabella:
 
@@ -75,425 +76,183 @@ I valori vengono organizzati nella seguente tabella:
 | sifilone_3   | 3.088   |
 | sifilone_3   | 3.012   |
 | sifilone_3   | 2.746   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_20  | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
-| sifilone_100 | 2.04   |
+| sifilone_20  | 19.83   |
+| sifilone_20  | 19.10   |
+| sifilone_20  | 20.25   |
+| sifilone_20  | 20.16   |
+| sifilone_20  | 20.47   |
+| sifilone_20  | 19.12   |
+| sifilone_20  | 20.64   |
+| sifilone_20  | 22.26   |
+| sifilone_20  | 19.29   |
+| sifilone_20  | 21.77   |
+| sifilone_100 | 97.66   |
+| sifilone_100 | 107.7   |
+| sifilone_100 | 97.28   |
+| sifilone_100 | 103.3   |
+| sifilone_100 | 95.32   |
+| sifilone_100 | 99.46   |
+| sifilone_100 | 103.1   |
+| sifilone_100 | 110.3   |
+| sifilone_100 | 104.3   |
+| sifilone_100 | 95.49   |
 
-1.  Nella scheda *Scopo* di SIconfronta si seleziona la prima opzione;
-2.  nella scheda *Dati* si seleziona il file con la tabella dei dati in
+1.  Nella scheda *Scopo* di SIprecisa si seleziona la prima opzione.
+2.  Nella scheda *Dati* si seleziona il file con la tabella dei dati in
     formato csv. Si identificano le colonne relative alle informazioni
-    sugli analiti, gruppo e risposte rispettivamente come "analita",
-    "operatore" e "misura";
-3.  nella scheda *Confronti* si seleziona l'ipotesi alternativa $\neq$,
-    il livello di confidenza 95% e si visualizzano i risultati ottenuti;
-4.  nella scheda *Report* si procede all'eventuale creazione di un
+    sugli analiti e le risposte rispettivamente come "analita_c" e "misura".
+3.  Nella scheda *Stime* si seleziona il parametro di interesse, 
+    si inserisce l'unità di misura, si seleziona il livello di confidenza 95% 
+    e si digita il valore di riferimento comprensivo della sua incertezza estesa.
+    Una volta cliccato sul tasto *calcola*, si visualizzano i risultati ottenuti.
+4.  Nella scheda *Report* si procede all'eventuale creazione di un
     resoconto in formato pdf.
 
-I risultati riguardanti il boro mostrano come le serie di dati ottenuti
-dai due operatori siano compatibili con una distribuzione normale ( $W$
-= 0.899, $p$-value = 0.2479 e $W$ = 0.944, $p$-value = 0.6006), senza
-identificare la presenza di valori potenzialmente anomali. Le medie e le
-varianze ottenute dai due operatori non risultano essere statisticamente
-differenti ( $\nu$ = 14.95, $t$ = 0.3998 e $p$-value = 0.6950 e $\nu_1$
-= 9, $\nu_2$ = 8, $F$ = 2.7763 e $p$-value = 0.1653).
+A titolo di esempio, i risultati riguardanti il sifilone al livello di 
+concentrazione di 3 ng/L, evidenziano che:
+-   la serie di dati risulta essere distribuita compatibilmente
+    a una distribuzione normale ( $W$ = 0.862, $p$-value = 0.0798);
+-   la serie di dati risulta essere priva di valori anomali ai livelli di
+    confidenza del 95 e 99%;
+-   la deviazione standard delle misure risulta essere pari a 0.134 ng/L,
+    corrispondente a un coefficiente di variazione del 4.49%.
+-   il limite di ripetibilità calcolato dalla serie di misure risulta essere
+    pari 0.429 ng/L al livello di confidenza del 95%, corrispondente a un valore
+    relativo pari al 14.4%.
+-   la media delle misure risulta essere 2.99 ng/L con un intervallo di confidenza
+    al livello del 95% pari 2.89 - 3.08 ng/L.
+-   il recupero risulta pari al 98.6% e il _bias_ è -0.0438 ng/L o -1.47% rispetto
+    al valore di riferimento. Tale _bias_, secondo il calcolo dell' $E_n$ risulta
+    essere non significativo ( $E_n$ sperimentale = 0.4199).
 
-Per quanto riguarda il ferro, le due serie di dati sono nuovamente
-compatibili con distribuzioni normali ( $W$ = 0.957, $p$-value = 0.7707
-e $W$ = 0.957, $p$-value = 0.7461) prive di valori potenzialmente
-anomali. Le varianze ottenute dai due operatori non risultano essere
-statisticamente differenti ( $\nu_1$ = 9, $\nu_2$ = 8, $F$ = 1.1032 e
-$p$-value = 0.9005). Tuttavia, le medie risultano essere statisticamente
-differenti tra loro al livello di confidenza del 95% ( $\nu$ = 16.93,
-$t$ = 2.3853, $p$-value = 0.0290). Cambiando l'ipotesi alternativa da
-$\neq$ a $>$, possiamo effettivamente affermare che la concentrazione
-media di ferro determinata sui campioni preparati da Edward Mani di
-Forbice sono significativamente maggiori di quella determinata nei
-campioni preparati da Paolino Precisino ( $p$-value = 0.0145).
+Anche le prestazioni calcolate per i restanti due livelli di concentrazione di
+20 e 100 ng/L, evidenziano dati distribuiti normalmente con assenza di valori
+anomali, coefficienti di variazione prossimi al 5% e limiti di ripetibilità 
+relativi intorno al 16%, mentre il recupero si attesta sempre al di sopra del 95%,
+con un _bias_ relativo assoluto inferiore al 3% e non statisticamente signigicativo
+rispetto al valore di riferimento.
+
+Mario è soddisfatto ma, per poter affermare che il suo metodo è adatto alla
+determinazione del sifilone nelle acque superficiali, dovrà confrontare le 
+prestazioni da lui ottenute con i requisiti del metodo... ma questa è un'altra storia.
 
 ------------------------------------------------------------------------
 
-### Confrontare due serie di dati di cui una completa e l'altra riassunta nei suoi parametri
+### Stima della ripetibilità da una serie di misure in doppio
 
 ::: {.minipage style="border:5px solid #2780E3; border-radius: 12px; width: 80%; margin: 25px; padding: 10px"}
-Concettualmente, questa opzione ha un campo di applicazione e possibili
-esempi del tutto analoghi a quelli presentati nella precedente sezione.
-L'unica differenza è legata a un aspetto pratico: per una delle due
-serie non sono disponibili i valori delle singole misure, bensì solo la
-loro media, deviazione standard e numerosità.
+
+Questa opzione si applica nel caso di serie di misure duplicate, anche eseguite
+su campioni reali con diverse concentrazioni medie.
+
+Le possibili applicazioni possono riguardare:
+-   il calcolo delle ripetibilità relativa e del limite di ripetibilità relativa
+    di un metodo analitico;
+-   la stima della componente casuale dell'incertezza di misura, secondo quanto
+    previsto nella norma [UNI ISO 11352:2012. Water quality - 
+    Estimation of measurement uncertainty based on validation and quality 
+    control data](https://store.uni.com/iso-11352-2012).
 :::
 
-Nel laboratorio di analisi ambientali di Caprazoppa Superiore si è
-sviluppato un metodo di analisi per la misura della concentrazione di
-benzene nei suoli. Per verificare l'idoneità della nuova metodica, i
-risultati di una serie di misure sono stati confrontati con le
-prestazioni riportate in un metodo di riferimento.
+Peppina è diffidente e si chiede se la precisione determinata in passato da 
+Mario su acque con valori certificati di sifilone, sia simile a quella 
+determinabile su campioni reali.
 
-Sul metodo di riferimento vengono riportate la media e la deviazione
-standard, rispettivamente pari a 2.08 mg/kg e 0.17 mg/kg per 20 misure
-effettuate su un campione fortificato a 2.00 mg/kg.
-
-Un campione di suolo privo dell'analita è stato fortificato con
-l'aggiunta di una quantità di benzene tale da ottenere un campione con
-la medesima concentrazione di quella riportata nel metodo di
-riferimento. Il campione è stato suddiviso in 10 aliquote e su di esse
-si sono determinate le concentrazioni di benzene, ottenendo i seguenti
-risultati: 1.76, 2.08, 2.04, 2.15, 2.00, 2.12, 1.90, 1.91, 1.90, 1.84
-mg/kg.
+Peppina ha eseguito per un anno la determinazione del contenuto di sifilone
+nelle acque superficiali e, una volta al mese, ha sottoposto ad analisi in
+duplicato uno dei campioni.
 
 La tabella dei dati viene così organizzata:
 
-| analita | metodo | misura |
-|---------|--------|--------|
-| benzene | nuovo  | 1.76   |
-| benzene | nuovo  | 2.08   |
-| benzene | nuovo  | 2.04   |
-| benzene | nuovo  | 2.15   |
-| benzene | nuovo  | 2.00   |
-| benzene | nuovo  | 2.12   |
-| benzene | nuovo  | 1.90   |
-| benzene | nuovo  | 1.91   |
-| benzene | nuovo  | 1.90   |
-| benzene | nuovo  | 1.84   |
+| analita  | misura1 | misura2 |
+|----------|---------|---------|
+| sifilone | 3.220   | 2.896   |
+| sifilone | 4.738   | 4.293   |
+| sifilone | 9.909   | 10.43   |
+| sifilone | 22.35   | 21.95   |
+| sifilone | 35.50   | 35.46   |
+| sifilone | 42.65   | 37.47   |
+| sifilone | 52.90   | 49.84   |
+| sifilone | 56.83   | 53.67   |
+| sifilone | 76.97   | 78.89   |
+| sifilone | 74.35   | 79.46   |
+| sifilone | 112.2   | 110.2   |
+| sifilone | 113.6   | 115.9   |
 
-1.  Nella scheda *Scopo* di SIconfronta si seleziona la seconda opzione;
-2.  nella scheda *Dati* si seleziona il file con la tabella dei dati in
+1.  Nella scheda *Scopo* di SIprecisa si seleziona la seconda opzione.
+2.  Nella scheda *Dati* si seleziona il file con la tabella dei dati in
     formato csv. Si identificano le colonne relative alle informazioni
-    sugli analiti, gruppo e risposte rispettivamente come "analita",
-    "metodo" e "misura";
-3.  nella scheda *Confronti* si digita "riferimento", 2.08, 0.17 e 20
-    rispettivamente nei campi Nome del secondo gruppo, Valore medio,
-    Deviazione standard e Numero di misure. Si seleziona l'ipotesi
-    alternativa $\neq$, il livello di confidenza 95%, si preme Calcola e
-    si visualizzano i risultati ottenuti;
+    sugli analiti e le due risposte rispettivamente come "analita",
+    "misura1" e "misura2".
+3.  Nella scheda *Stime* si seleziona il parametro di interesse, 
+    si inserisce l'unità di misura e si seleziona il livello di confidenza 95%.
+    Spostandosi tra le schede nelle sezione di destra, si visualizzano i risultati.
 4.  nella scheda *Report* si procede all'eventuale creazione di un
     resoconto in formato pdf.
 
-Le serie di dati fornita è compatibile con una distribuzione normale (
-$W$ = 0.957, $p$-value = 0.7461) e risulta essere priva di valori
-potenzialmente anomali. Né la media, né la deviazione standard calcolate
-dalle misure ottenute con il nuovo metodo, risultano essere differenti
-rispetto ai valori riportati nel metodo di riferimento ( $\nu$ = 23.31,
-$t$ = 1.9819, $p$-value = 0.0594 e $\nu_1$ = 19, $\nu_2$ = 9, $F$ =
-1.7670, $p$-value = 0.3839).
+Le differenze relative tra le due misure risultano essere compatibili con una
+distribuzione normale ( $W$ = 0.958, $p$-value = 0.7585) e non vengono rilevati
+outliers al livello di confidenza del 95 e 99%.
+
+Il coefficiente di variazione e il limite di ripetibilità relativo risultano
+essere rispettivamente pari al 4.80% e 14.9%.
+
+A Peppina tocca buttare giù un boccone amaro: nonostante i dati da lei raccolti
+derivino da un esperimento protratto nel tempo e quindi producano una stima della
+precisione in condizioni di ripetibilità intermedia, il coefficiente di variazione
+ottenuto è praticamente uguale a quello stimato da Mario in condizioni di
+ripetibilità ristretta. Peppina conclude che il contributo alla precisione dovuto
+alle variazioni di matrice dei campioni reali, nonché alle variazioni temporali
+avvenute nel corso di un anno, sono trascurabili.
 
 ------------------------------------------------------------------------
 
-### Confrontare una serie di dati con un valore medio noto esattamente
+### Stima del recupero da un valore singolo
 
 ::: {.minipage style="border:5px solid #2780E3; border-radius: 12px; width: 80%; margin: 25px; padding: 10px"}
-In questa opzione, la media di una serie di misure viene paragonata a un
-valore noto, privo quindi di incertezza.
+In questa opzione, una misura dotata di incertezza estesa viene paragonata
+a un valore certificato.
 
 Alcuni esempi di applicazioni possono riguardare:
 
--   valutare se il recupero medio di una serie di misure sia differente
-    rispetto a un valore di concentrazione noto;
--   valutare se la media di una serie di recuperi sia inferiore a un
-    valore limite.
-
-Questa opzione si presta anche a valutare la differenza tra due serie di
-misure appaiate, per esempio:
-
--   confrontare una serie di misure prodotte da due diversi strumenti su
-    campioni tra loro differenti;
--   confrontare i risultati prodotti da due diverse metodiche di analisi
-    su campioni tra loro differente.
+-   valutare il recupero e il _bias_ in condizioni in cui risulti difficoltoso
+    effettuare misure ripetute con un idoneo materiale di riferimento certificato;
+-   valutare il grado di concordanza tra una misura e i valore assegnato in un
+    circuito interlaboratorio, tenendo conto anche dell'incertezza di quest'ultimo
+    valore.
 :::
 
-L'operatore Edward Mani di Forbice ha effettuato una serie di 9 misure
-su un campione di acqua di scarico privo di analita e fortificato con
-2.00 mg/l di ferro.
+Rosalia è conosciuta in paese per essere tirchia e per la sua antipatia verso
+Mario: il chimico più famoso del condominio in cui entrambi abitano.
 
-I singoli valori delle misure sono i seguenti; 1.94, 2.10, 2.06, 2.10,
-2.20, 2.25, 2.30, 2.03, 1.98 mg/l. Vista la media e la deviazione
-standard pari rispettivamente a 2.107 e 0.122 mg/l, Edward è preoccupato
-di aver contaminato il campione durante la fase di manipolazione.
+Per screditare il suo rivale, Rosalia decide quindi di acquistare una matrice 
+di acqua certificata con un contenuto di sifilone pari a 35.62 $\pm$ 0.71 ng/L ma,
+volendo risparmiare, sceglie il materiale con un volume appena sufficiente a fare
+una sola misura. Mario analizza l'acqua di Rosalia credendo sia un semplice
+campione incognito.
 
-Per prima cosa si accerta che l'incertezza associata alla fortificazione
-dell'analita sia trascurabile: la soluzione di partenza aveva una
-concentrazione nota e certificata con un'incertezza estesa pari allo
-0.01%, mentre la micropipetta e i matracci in cui sono state preparate
-le soluzione avevano un'incertezza estesa rispettivamente pari allo 0.05
-e 0.01%, producendo un'incertezza estesa finale poco oltre allo 0.5%.
+Il risultato ottenuto è 34.91 $\pm$ 4.19 ng/L di sifilone.
 
-Considerata la bassa incertezza associata al valore nominale
-dell'aggiunta, per capire se la media delle misure sia effettivamente
-maggiore del valore nominale, organizza i dati nel seguente modo:
+Rosalia predispone la seguente tabella:
 
-| analita | valore   | misura |
-|---------|----------|--------|
-| ferro   | misurato | 1.94   |
-| ferro   | misurato | 2.10   |
-| ferro   | misurato | 2.06   |
-| ferro   | misurato | 2.10   |
-| ferro   | misurato | 2.20   |
-| ferro   | misurato | 2.25   |
-| ferro   | misurato | 2.30   |
-| ferro   | misurato | 2.03   |
-| ferro   | misurato | 1.98   |
+| analita  | valore   | incertezza_estesa |
+|----------|----------|-------------------|
+| sifilone | 34.91    | 4.19              |
 
-1.  Nella scheda *Scopo* di SIconfronta seleziona la terza opzione;
-2.  nella scheda *Dati* seleziona il file con la tabella dei dati in
+1.  Nella scheda *Scopo* di SIprecisa seleziona la terza opzione.
+2.  Nella scheda *Dati* seleziona il file con la tabella dei dati in
     formato csv. Identifica le colonne relative alle informazioni sugli
-    analiti, gruppo e risposte rispettivamente come "analita", "valore"
-    e "misura";
-3.  nella scheda *Confronti* digita "riferimento" e 2.00 rispettivamente
-    nei campi Nome del valore di riferimento e Valore di riferimento.
-    Seleziona l'ipotesi alternativa $>$, il livello di confidenza 95%,
-    preme Calcola e visualizza i risultati ottenuti;
-4.  nella scheda *Report* procede all'eventuale creazione di un
+    analiti, risposte e incertezze estese rispettivamente come "analita", "valore"
+    e "incertezza_estesa".
+3.  Nella scheda *Stime* si seleziona il parametro di interesse, 
+    si inserisce l'unità di misura
+    e si digita il valore di riferimento comprensivo della sua incertezza estesa.
+    Una volta cliccato sul tasto *calcola*, si visualizzano i risultati ottenuti.
+4.  Nella scheda *Report* procede all'eventuale creazione di un
     resoconto in formato pdf.
 
-Le serie di dati fornita è compatibile con una distribuzione normale (
-$W$ = 0.957, $p$-value = 0.7707) e risulta essere priva di valori
-potenzialmente anomali. Effettivamente, la media dei valori risulta
-essere significativamente maggiore del valore nominale, rendendo
-plausibile l'ipotesi di contaminazione formulata da Edward ( $\nu$ = 8,
-$t$ = 2.6282, $p$-value = 0.0151).
-
-------------------------------------------------------------------------
-
-L'operatore Pino Dinatale vuole verificare che i due strumenti con
-cui determina la concentrazione di berillio e vanadio nei suoli
-producano valori tra loro non significativamente differenti a un livello
-di significatività del 95%.
-
-Pino non si può permettere di fermare le due linee di analisi per
-effettuare tale verifica, inoltre, vorrebbe verificare se i risultati
-siano effettivamente uguali anche con campioni reali, caratterizzati da
-matrici tra loro leggermente diverse. Decide, così, di sottoporre alle
-determinazioni una serie di 10 campioni presi a caso tra quelli ancora
-da analizzare. Ogni campione viene preparato una sola volta e
-successivamente viene suddiviso in due aliquote identiche, per poi
-essere analizzato con i due strumenti.
-
-I risultati per lo strumento A sono i seguenti:
-
--   berillio: 1.80, 1.74, 2.27, 1.95, 2.31, 2.26, 2.05, 1.99, 1.68, 2.73
-    mg/kg;
--   vanadio: 77.0, 106.9, 100.5, 98.0, 85.5, 96.3, 98.3, 75.2, 83.7,
-    84.7 mg/kg.
-
-Lo strumento B ha prodotto i seguenti risultati:
-
--   berillio: 2.25, 2.48, 1.50, 2.21, 1.55, 1.79, 2.01, 2.03, 1.75, 1.64
-    mg/kg;
--   vanadio: 106.6, 110.1, 113.2, 104.3, 111.3, 86.1, 87.3, 97.2, 114.5,
-    104.1 mg/kg.
-
-Si tratta a tutti gli effetti di risultati appaiati: non considerarli
-come tali, ricorrendo all'opzione per i confronti tra due serie di dati
-complete, porterebbe a conclusioni falsate dovute all'inclusione nei
-calcoli della variabilità tra i campioni, tutti diversi tra loro.
-
-Eseguire l'esperimento includendo la variabilità tra i campioni è
-fondamentale, in quanto permette di ottenere risultati in condizioni di
-misura simili a quelle reali, valutando un intervallo di variazioni
-nella matrice il più ampio possibile e quindi arrivando a conclusioni
-robuste. Tuttavia, la variabilità tra i campioni è solo una condizione
-in cui si svolge l'esperimento, mentre il risultato che si vuole
-valutare è la differenza tra le due risposte strumentali. Per non
-includere nei calcoli la variabilità dovuta ai diversi campioni
-Pino, che queste cose le sa, calcola la differenza tra le due serie
-di valori e sistema i dati nella seguente tabella:
-
-| parametro | gruppo | valore |
-|-----------|--------|--------|
-| berillio  | A-B    | -0.45  |
-| berillio  | A-B    | -0.74  |
-| berillio  | A-B    | 0.77   |
-| berillio  | A-B    | -0.26  |
-| berillio  | A-B    | 0.76   |
-| berillio  | A-B    | 0.47   |
-| berillio  | A-B    | 0.04   |
-| berillio  | A-B    | -0.04  |
-| berillio  | A-B    | -0.07  |
-| berillio  | A-B    | 1.09   |
-| vanadio   | A-B    | -29.6  |
-| vanadio   | A-B    | -3.2   |
-| vanadio   | A-B    | -12.7  |
-| vanadio   | A-B    | -6.3   |
-| vanadio   | A-B    | -25.8  |
-| vanadio   | A-B    | 10.2   |
-| vanadio   | A-B    | 11.0   |
-| vanadio   | A-B    | -22.0  |
-| vanadio   | A-B    | -30.8  |
-| vanadio   | A-B    | -19.4  |
-
-1.  Nella scheda *Scopo* di SIconfronta seleziona la terza opzione;
-2.  nella scheda *Dati* seleziona il file con la tabella dei dati in
-    formato csv. Identifica le colonne relative alle informazioni sugli
-    analiti, gruppo e risposte rispettivamente come "parametro",
-    "gruppo" e "valore";
-3.  nella scheda *Confronti* digita "uguale" e 0 rispettivamente nei
-    campi Nome del valore di riferimento e Valore di riferimento.
-    Seleziona l'ipotesi alternativa $\neq$, il livello di confidenza
-    95%, preme Calcola e visualizza i risultati ottenuti;
-4.  nella scheda *Report* procede all'eventuale creazione di un
-    resoconto in formato pdf.
-
-Le serie di dati fornita per l'analita berillio è compatibile con una
-distribuzione normale ( $W$ = 0.958, $p$-value = 0.7604) e risulta
-essere priva di valori potenzialmente anomali. Il valore medio delle
-differenza non risulta essere statisticamente diverso da zero ( $\nu$ =
-9, $t$ = 0.8380, $p$-value = 0.4237) e pertanto le due risposte
-strumentali non risultano essere tra loro differenti per questo analita.
-
-Per quanto riguarda il vanadio, la serie di dati fornita è compatibile
-con una distribuzione normale ( $W$ = 0.912, $p$-value = 0.2970) e non
-vengono rilevati valori potenzialmente anomali.
-
-Il valore medio della differenza risulta essere statisticamente diverso
-da zero ( $\nu$ = 9, $t$ = 2.6414, $p$-value = 0.0269) e pertanto le due
-risposte strumentali risultano essere tra loro differenti.
-
-In particolare, essendo il valore medio della differenza delle misure
-$A - B < 0$, Pino può concludere che lo strumento B produce valori di
-concentrazione sovrastimati rispetto a quelli prodotti dallo strumento A.
-
-------------------------------------------------------------------------
-
-### Confrontare una serie di dati con un valore di deviazione standard noto esattamente
-
-::: {.minipage style="border:5px solid #2780E3; border-radius: 12px; width: 80%; margin: 25px; padding: 10px"}
-In questa opzione, la deviazione standard di una serie di misure viene 
-paragonata a un valore di deviazione standard noto, privo quindi di incertezza.
-
-Un esempio di applicazioni può riguardare la valutazione se una serie di
-dati abbia una deviazione standard inferiore a un requisito.
-:::
-
-L'operatore Paolino Precisino ha scommesso con gli amici del bar del
-paese che, se non riuscirà a fare 10 misure della concentrazione di
-crisene in un'acqua sotterranea con concentrazione di 2.00
-$\mathrm{\mu g/l}$, tali da risultare caratterizzate da una deviazione
-standard relativa (RSD) non superiore al 5%, con un livello di
-confidenza del 95%, porterà alla Berta un mazzo di ortiche, in segno
-della sua pungente passione.
-
-Paolino esegue un'aggiunta nota su un'acqua sotterranea priva di
-analita, di modo da ottenere un campione con una concentrazione prossima
-a 2.00 $\mathrm{\mu g/l}$. Preleva 10 aliquote da tale campione ed
-esegue per ciascuna di esse l'intera preparazione del campione e la
-successiva analisi, ottenendo i seguenti risultati: 1.76, 2.08, 2.04,
-2.15, 2.00, 2.12, 1.90, 1.91, 1.90, 1.84 $\mathrm{\mu g/l}$.
-
-La media della serie di misure e la deviazione standard sono
-rispettivamente pari a 1.97 e 0.13 $\mathrm{\mu g/l}$, indicando un RSD%
-pari al 6.5%. Al livello medio di concentrazione determinato,
-l'obiettivo di un RSD inferiore al 10% si traduce in una deviazione
-standard inferiore a 0.10 $\mathrm{\mu g/l}$.
-
-La tabella dei dati viene così organizzata:
-
-| analita | scopo     | misura |
-|---------|-----------|--------|
-| crisene | scommessa | 1.76   |
-| crisene | scommessa | 2.08   |
-| crisene | scommessa | 2.04   |
-| crisene | scommessa | 2.15   |
-| crisene | scommessa | 2.00   |
-| crisene | scommessa | 2.12   |
-| crisene | scommessa | 1.90   |
-| crisene | scommessa | 1.91   |
-| crisene | scommessa | 1.90   |
-| crisene | scommessa | 1.84   |
-
-1.  Nella scheda *Scopo* di SIconfronta seleziona la quarta opzione;
-2.  nella scheda *Dati* seleziona il file con la tabella dei dati in
-    formato csv. Identifica le colonne relative alle informazioni sugli
-    analiti, gruppo e risposte rispettivamente come "analita", "valore"
-    e "misura";
-3.  nella scheda *Confronti* digita "riferimento" e 0.10 rispettivamente
-    nei campi Nome del valore di riferimento e Deviazione standard di
-    riferimento. Seleziona l'ipotesi alternativa $>$, il livello di
-    confidenza 95%, preme Calcola e visualizza i risultati ottenuti;
-4.  nella scheda *Report* procede all'eventuale creazione di un
-    resoconto in formato pdf.
-
-Le serie di dati fornita è compatibile con una distribuzione normale (
-$W$ = 0.957, $p$-value = 0.7461) e risulta essere priva di valori
-potenzialmente anomali. La deviazione standard calcolata dalla serie di
-misure, risulta essere non significativamente differente dal valore di
-riferimento di 0.10 $\mathrm{\mu g/l}$ ( $\nu$ = 9, $\chi^2$ = 14.7200,
-$p$-value = 0.0989).
-
-------------------------------------------------------------------------
-
-### Confrontare due valori dotati di incertezza estesa
-
-::: {.minipage style="border:5px solid #2780E3; border-radius: 12px; width: 80%; margin: 25px; padding: 10px"}
-In questa opzione, due misure dotate di incertezza estese vengono
-confrontate tra loro.
-
-Alcuni esempi di applicazioni possono riguardare:
-
--   il confronto tra il risultato di due misure;
--   il confronto tra una misura e il valore di materiale di riferimento
-    per il quale sia nota l'incertezza estesa;
--   il confronto tra le misure prodotte da due laboratori;
--   il confronto tra una misura e i risultati di un circuito
-    interlaboratorio espressi come valore assegnato e incertezza estesa
-    assegnata.
-:::
-
-Tra i due comuni di Acqualaida Soprana e Acqualaida Sottana infuria
-una disputa su chi abbia l'acqua più buona.
-
-Il laboratorio di analisi chimiche di Caprazoppa Superiore si offre di
-dirimere la questione prelevando un campione di acqua potabile
-rappresentativa in entrambi i comuni e sottoponendoli alla
-determinazione della concentrazione di arsenico, cadmio, nichel e
-piombo.
-
-I metodi di analisi impiegati dal laboratorio sono ben caratterizzati e,
-per ciascuno dei parametri analizzati, in grado di fornire un valore di
-incertezza estesa affidabile.
-
-I risultati vengono così riassunti (valori e incertezze sono espressi in
-$\mathrm{\mu g/l}$):
-
-| parametro | acqualaida | valore | incertezza |
-|-----------|-------------|--------|------------|
-| arsenico  | soprana     | 15.22  | 0.76       |
-| arsenico  | sottana     | 14.44  | 0.72       |
-| cadmio    | soprana     | 8.24   | 0.41       |
-| cadmio    | sottana     | 8.84   | 0.44       |
-| nichel    | soprana     | 22.1   | 1.1        |
-| nichel    | sottana     | 24.0   | 1.2        |
-| piombo    | soprana     | 18.10  | 0.90       |
-| piombo    | sottana     | 21.1   | 1.0        |
-
-1.  Nella scheda *Scopo* di SIconfronta si seleziona la quinta e ultima opzione;
-2.  nella scheda *Dati* si seleziona il file con la tabella dei dati in
-    formato csv. Si identificano le colonne relative alle informazioni
-    sugli analiti, gruppo, risposte e incertezza estese rispettivamente
-    come "parametro", "acqualaida", "valore" e "incertezza";
-3.  nella scheda *Confronti* si visualizzano i risultati ottenuti per i
-    vari analiti;
-4.  nella scheda *Report* si procede all'eventuale creazione di un
-    resoconto in formato pdf.
-
-I valori misurati evidenziano concentrazioni non statisticamente
-differenti di arsenico e cadmio nei due comuni ( $E_n$ pari
-rispettivamente a 0.7451 e 0.9976). Al contrario, i valori di nichel e
-piombo misurati nel campione prelevato in Acqualaida Sottana, risultano
-maggiori di quelli misurati nel campione prelevato nel comune di
-Acqualaida Soprana ( $E_n$ pari rispettivamente a 1.167 e 2.230).
+Rosalia si deve ricredere: il valore misurato da Mario risulta avere un recupero
+del 98% e un _bias_ di -0.710 ng/L, pari al -2.03% del valore di sifilone
+certificato.
+Il calcolo dell'errore normalizzato conferma l'assenza di un _bias_ statisticamente
+significativo ( $E_n$ = 0.1671).
