@@ -778,8 +778,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     precision_text <-
       "<ul>
   <li> Deviazione standard delle misure = %s %s</li>
-  <li> Limite di ripetibilit\u00E0 (per \u03b1 = %s) = %s %s</li>
-  <li> Limite di ripetibilit\u00E0 relativo (per \u03b1 = %s) = %s &percnt;</li>
+  <li> Limite di ripetibilit\u00E0 con <i>t</i> (\u03b1 = %s, \u03BD = %s) = %s %s</li>
+  <li> Limite di ripetibilit\u00E0 relativo  con <i>t</i> (\u03b1 = %s, \u03BD = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
@@ -789,10 +789,12 @@ mod_estimate031_riprec_server <- function(id, r) {
         precision_text,
         precision_results()$devstd |> format_sigfig(3L),
         r$estimate03x$udm,
-        precision_results()$alpha |> format_sigfig(3L),
+        (1 - precision_results()$alpha) |> format_sigfig(2L),
+        (precision_results()$n - 1) |> as.character(),
         precision_results()$repeatability |> format_sigfig(3L),
         r$estimate03x$udm,
-        precision_results()$alpha |> format_sigfig(3L),
+        (1 - precision_results()$alpha) |> format_sigfig(2L),
+        (precision_results()$n - 1) |> as.character(),
         precision_results()$rel_repeatability |> format_sigfig(3L),
         precision_results()$rsd |> format_sigfig(3L)
       )
