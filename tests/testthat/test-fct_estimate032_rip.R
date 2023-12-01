@@ -47,7 +47,7 @@ test_that("fct_precision_rip works well", {
   testdata <- data.table::data.table(uniiso_11352_b4)
   mytestprecision <- fct_precision_rip(testdata, "rel_diff")
 
-  expect_equal(mytestprecision$alpha, 0.975)
+  expect_equal(mytestprecision$alpha, 0.025)
   expect_equal(mytestprecision$n, 10)
   expect_equal(mytestprecision$mean, 0.0833)
   expect_equal(sprintf("%.3g", mytestprecision$rsd), "7.38")
