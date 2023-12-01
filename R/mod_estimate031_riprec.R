@@ -597,7 +597,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 <ul>
   <li> Media delle misure (valore e intervallo di confidenza) = %s %s, %s \u2013 %s %s</li>
   <li> <i>t</i> sperimentale = %s </li>
-  <li> <i>t</i> critico (\u03b1 = %s, \u03bd = %s) = %s </li>
+  <li> <i>t</i> critico (\u03b1/2 = %s, \u03bd = %s) = %s </li>
   <li> <i>p</i>-value = %s </li>
 </ul>
 \u21e8 %s"
@@ -711,7 +711,7 @@ mod_estimate031_riprec_server <- function(id, r) {
     trueness_text <-
 "<ul>
   <li> Media delle misure = %s %s</li>
-  <li> Intervallo di confidenza del valore medio (per \u03b1 = %s) = %s \u2013 %s %s</li>
+  <li> Intervallo di confidenza del valore medio (\u03b1/2 = %s, \u03BD = %s) = %s \u2013 %s %s</li>
   <li> Valore di riferimento = %s %s</li>
   <li> Incertezza estesa del valore di riferimento = %s %s</li>
   <li> Recupero = %s &percnt;</li>
@@ -727,7 +727,8 @@ mod_estimate031_riprec_server <- function(id, r) {
         trueness_text,
         trueness_results()$mean |> format_sigfig(3L),
         r$estimate03x$udm,
-        trueness_results()$alpha |> format_sigfig(3L),
+        trueness_results()$alpha |> format_sigfig(2L),
+        (trueness_results()$n - 1) |> as.character(),
         trueness_results()$lwr |> format_sigfig(3L),
         trueness_results()$upr |> format_sigfig(3L),
         r$estimate03x$udm,
@@ -762,7 +763,7 @@ mod_estimate031_riprec_server <- function(id, r) {
 
     })
 
-    # precisione performances ----
+    # precision performances ----
     precision_results <- reactive({
       req(r$estimate03x$click == 1)
       req(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE() ||
@@ -778,8 +779,8 @@ mod_estimate031_riprec_server <- function(id, r) {
     precision_text <-
       "<ul>
   <li> Deviazione standard delle misure = %s %s</li>
-  <li> Limite di ripetibilit\u00E0 con <i>t</i> (\u03b1 = %s, \u03BD = %s) = %s %s</li>
-  <li> Limite di ripetibilit\u00E0 relativo  con <i>t</i> (\u03b1 = %s, \u03BD = %s) = %s &percnt;</li>
+  <li> Limite di ripetibilit\u00E0 (\u03b1/2 = %s, \u03BD = %s) = %s %s</li>
+  <li> Limite di ripetibilit\u00E0 relativo  (\u03b1/2 = %s, \u03BD = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
@@ -789,11 +790,11 @@ mod_estimate031_riprec_server <- function(id, r) {
         precision_text,
         precision_results()$devstd |> format_sigfig(3L),
         r$estimate03x$udm,
-        (1 - precision_results()$alpha) |> format_sigfig(2L),
+        precision_results()$alpha |> format_sigfig(2L),
         (precision_results()$n - 1) |> as.character(),
         precision_results()$repeatability |> format_sigfig(3L),
         r$estimate03x$udm,
-        (1 - precision_results()$alpha) |> format_sigfig(2L),
+        precision_results()$alpha |> format_sigfig(2L),
         (precision_results()$n - 1) |> as.character(),
         precision_results()$rel_repeatability |> format_sigfig(3L),
         precision_results()$rsd |> format_sigfig(3L)

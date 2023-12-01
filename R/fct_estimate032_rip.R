@@ -429,7 +429,7 @@ fct_precision_rip <- function(data,
   relative_repeatability <- (sqrt(2) * stats::qt(myalpha, n - 1) * rsd)
 
   list(
-    alpha = myalpha,
+    alpha = (1 - myalpha),
     n = n,
     mean = mymean,
     rsd = rsd,

@@ -243,7 +243,7 @@ fct_ttest_riprec <- function(data,
                 "lwrci" = mymeanconfint[1],
                 "uprci" = mymeanconfint[2]),
        test = c("dof" = dof |> as.character(),
-                "alpha" = alpha |> (\(x) sprintf("%.3f", x))(),
+                "alpha" = (1 - alpha) |> (\(x) sprintf("%.3f", x))(),
                 "tsper" = unname(tvalue),
                 "ttheo" = tcritical,
                 "pvalue" = pvalue),
@@ -766,7 +766,7 @@ fct_precision_riprec <- function(data,
   rsd <- (100 * devstd / mean_value)
 
   list(
-    alpha = myalpha,
+    alpha = 1 - myalpha,
     devstd = devstd,
     n = n,
     repeatability = repeatability,
@@ -852,7 +852,7 @@ fct_trueness_riprec <- function(data,
   relative_bias <- (bias / mean_value * 100)
 
   list(
-    alpha = myalpha,
+    alpha = (1 - myalpha)/2,
     n = n,
     mean = mean_value,
     lwr = lwr_mean,

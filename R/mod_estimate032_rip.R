@@ -500,7 +500,7 @@ mod_estimate032_rip_server <- function(id, r) {
 
     precision_text <-
       "<ul>
-  <li> Limite di ripetibilit\u00E0 relativo con <i>t</i> (\u03b1 = %s, \u03BD = %s) = %s &percnt;</li>
+  <li> Limite di ripetibilit\u00E0 relativo (\u03b1/2 = %s, \u03BD = %s) = %s &percnt;</li>
   <li> Coefficiente di variazione = %s &percnt;</li>
 </ul>"
 
@@ -508,7 +508,7 @@ mod_estimate032_rip_server <- function(id, r) {
 
       sprintf(
         precision_text,
-        (1 - precision_results()$alpha) |> format_sigfig(2L),
+        precision_results()$alpha |> format_sigfig(2L),
         (precision_results()$n - 1) |> as.character(),
         precision_results()$rel_repeatability |> format_sigfig(3L),
         precision_results()$rsd |> format_sigfig(3L)
