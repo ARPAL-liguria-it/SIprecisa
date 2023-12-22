@@ -22,7 +22,34 @@ mod_report04_ui <- function(id){
     bslib::card(
       bslib::card_header(icon("hand-point-down"), "Aggiungi qualche informazione"),
       bslib::card_body(
-        textInput(ns("title"), label = "Titolo del report", width = "100%"),
+        textAreaInput(ns("expaim"), label = "Scopo dell'esperimento",
+                      rows = 5, width = "100%"),
+
+        bslib::layout_columns(
+          col_widths = c(7, 5),
+          fill = FALSE,
+
+          textInput(ns("method"), label = "Identificativo del metodo di misura",
+                    width = "100%"),
+
+          textInput(ns("instrument"), label = "Identificativo dello strumento di misura",
+                    width = "100%"),
+
+          textAreaInput(
+            ns("samples"),
+            label = "Campioni sottoposti a misura",
+            rows = 3,
+            width = "100%"
+          ),
+
+          textAreaInput(
+            ns("workers"),
+            label = "Operatori coinvolti nell'esperimento",
+            rows = 3,
+            width = "100%"
+          ),
+
+        ),
         textAreaInput(ns("description"), label = "Descrizione dell'esperimento",
                       rows = 10, width = "100%"),
         textAreaInput(ns("discussion"), label = "Interpretazione dei risultati",
@@ -65,6 +92,8 @@ mod_report04_ui <- function(id){
     tags$div(
       downloadButton(ns("makereport"), label = "Crea il report",
                      icon = icon("wand-magic-sparkles"),
+                     width = '25%'),
+      downloadButton(ns("getword"), label = "Crea un riepilogo modificabile",
                      width = '25%')
     )
 
@@ -150,7 +179,11 @@ mod_report04_server <- function(id, r){
 
         r$report04$logo <- logopath
         r$report04$info <- sessioninfo::session_info()
-        r$report04$title <- input$title
+        r$report04$expaim <- input$expaim
+        r$report04$samples <- input$samples
+        r$report04$workers <- input$workers
+        r$report04$method <- input$method
+        r$report04$instrument <- input$instrument
         r$report04$description <- input$description
         r$report04$discussion <- input$discussion
         r$report04$content <- input$content
@@ -169,6 +202,49 @@ mod_report04_server <- function(id, r){
         render_report(input = tempReport,
                       output = file,
                       params = params)
+
+        })
+      }
+    )
+
+    output$getword <- downloadHandler(
+      filename = function() {
+        paste0("word_report-", sysdate, ".docx")
+      },
+      content = function(file) {
+        withProgress(message = "Sto scrivendo il report...", {
+          # The report template is copied in a temporary directory to prevent
+          # user permission issues
+          wordpath <- system.file("rmd", "word_report.Rmd",
+                                  package = "SIprecisa")
+
+          wordReport <- tempfile(fileext = ".Rmd")
+          file.copy(wordpath, wordReport, overwrite = TRUE)
+
+          r$report04$info <- sessioninfo::session_info()
+          r$report04$expaim <- input$expaim
+          r$report04$samples <- input$samples
+          r$report04$workers <- input$workers
+          r$report04$method <- input$method
+          r$report04$instrument <- input$instrument
+          r$report04$description <- input$description
+          r$report04$discussion <- input$discussion
+          r$report04$content <- input$content
+          r$report04$testmode <- isTRUE(getOption("shiny.testmode"))
+
+          # input parameters for the rmd file ----
+          params <- isolate(lapply(r, reactiveValuesToList))
+
+          n_par <- length(params$estimate03) - 2
+          for (i in n_par) {
+            Sys.sleep(1)
+            incProgress(1 / n_par)
+          }
+
+          # the report is compiled in a separate R environment with a future promise
+          render_report(input = wordReport,
+                        output = file,
+                        params = params)
 
         })
       }

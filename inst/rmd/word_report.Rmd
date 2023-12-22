@@ -1,20 +1,6 @@
 ---
-documentclass: scrartcl
 output:
-   pdf_document:
-     latex_engine: pdflatex
-     fig_caption: true
-header-includes:
-  - \usepackage{graphicx}
-  - \usepackage[italian]{babel}
-  - \usepackage[utf8]{inputenc}
-  - \usepackage[T1]{fontenc}
-  - \usepackage{microtype}
-  - \usepackage{tgpagella}
-  - \usepackage{fancyhdr}
-  - \usepackage{lastpage}
-  - \usepackage{booktabs}
-  - \usepackage{array}
+  word_document: default
 params:
   aim01: NA
   loadfile02: NA
@@ -23,14 +9,6 @@ params:
   report04: NA
 title: "Determinazione di parametri prestazionali di metodi di misura"
 ---
-
-\addtolength{\headheight}{0.8cm} <!--  make more space for the header -->
-\pagestyle{fancyplain} <!-- use fancy for all pages except chapter start -->
-`r paste0("\\lhead{\\includegraphics[height=0.8cm]{", params$report04$logo, "}}")`
-\rhead{} <!-- right empty -->
-\renewcommand{\headrulewidth}{0pt} <!-- remove rule below header -->
-\let\oldrule=\rule \renewcommand{\rule}[1]{\vspace{-25pt}\oldrule{\linewidth}}
-\cfoot{\thepage\ di \pageref{LastPage}} <!-- page 1 of n pages -->
 
 ---
 ```{r libraries, include=FALSE}
@@ -127,7 +105,7 @@ if (params$aim01$aim %in% c("rip", "recuno")) {
 
 ```
 
-```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.align="center", fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
+```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
 
 for (i in ordered_analytes) {
 
@@ -155,6 +133,7 @@ for (i in ordered_analytes) {
 
   # boxplot
   print(params$estimate03[[i]]$boxplot)
+  cat('\n\n<!-- -->\n\n')
   
   if("normality" %in% params$report04$content) {
 
