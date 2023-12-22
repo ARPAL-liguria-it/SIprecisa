@@ -7,6 +7,7 @@
 #'    \item{a semicolon as field separator and a comma as decimal separator;}
 #'    \item{a semicolon as field separator and a dot as decimal separator.}
 #'  }
+#'  All files to be imported must have strings as column headings.
 #'
 #' @param mypath a string with the path of the csv file to be imported.
 #'
