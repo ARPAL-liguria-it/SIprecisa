@@ -11,8 +11,7 @@ testServer(
     r$loadfile02$responsevar <- "pounds"
     r$loadfile02$data <- tomato_yields[fertilizer == "b", .(parameter, pounds)]
     r$estimate03$myparameter <- "yield"
-
-    session$flushReact()
+    r$estimate03$yield$saved <- FALSE
 
     ns <- session$ns
     expect_true(inherits(ns, "function"))
@@ -21,11 +20,11 @@ testServer(
 
     # testing the inputs
     session$setInputs(significance = 0.95,
+                      udm = "ug/L",
                       refvalue = tomato_yields[fertilizer == "a", mean(pounds)],
                       refuncertainty = 0,
-                      udm = "ug/L",
                       submit = 1)
-    session$flushReact()
+
     expect_true(input$significance == 0.95)
     expect_true(input$refvalue == 20.84)
     expect_true(input$refuncertainty == 0)
@@ -47,7 +46,6 @@ testServer(
     keys(6)
     outlierflag6 <- outlierflag
     outlierflag6[6] <- TRUE
-    session$flushReact()
 
     expect_equal(is_outlier(), outlierflag6)
     expect_equal(selected_data()$key, c(1:5))
@@ -56,7 +54,6 @@ testServer(
     keys(c(4, 6))
     outlierflag46 <- outlierflag6
     outlierflag46[4] <- TRUE
-    session$flushReact()
 
     expect_equal(is_outlier(), outlierflag46)
     expect_equal(selected_data()$key, c(1:3, 5))
@@ -65,14 +62,12 @@ testServer(
     keys(4)
     outlierflag4 <- outlierflag
     outlierflag4[4] <- TRUE
-    session$flushReact()
 
     expect_equal(is_outlier(), outlierflag4)
     expect_equal(selected_data()$key, c(1:3, 5:6))
 
     ## re-adding all the points
     keys(NA)
-    session$flushReact()
 
     expect_equal(is_outlier(), outlierflag)
 
@@ -82,7 +77,7 @@ testServer(
 
     # testing grubbs test intermediate results
     expect_equal(outliers_html(),
-                 "nessun valore anomalo a un livello di confidenza del 95% </br> nessun valore anomalo a un livello di confidenza del 99% </br></br>")
+      "nessun valore anomalo a un livello di confidenza del 95% </br> nessun valore anomalo a un livello di confidenza del 99% </br></br>")
 
     # Testing the outputs
     ## Testing the boxplot output
@@ -125,7 +120,7 @@ testServer(
     r$loadfile02$data <- tomato_yields[fertilizer == "b", .(parameter, pounds)]
     r$estimate03$myparameter <- "yield"
 
-    session$flushReact()
+    #session$flushReact()
 
     ns <- session$ns
     expect_true(inherits(ns, "function"))
@@ -138,7 +133,7 @@ testServer(
                       refuncertainty = 0.06,
                       udm = "ug/L",
                       submit = 1)
-    session$flushReact()
+    #session$flushReact()
     expect_true(input$significance == 0.95)
     expect_true(input$refvalue == 20.84)
     expect_true(input$refuncertainty == 0.06)

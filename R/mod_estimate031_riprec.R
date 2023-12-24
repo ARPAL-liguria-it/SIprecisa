@@ -259,8 +259,6 @@ mod_estimate031_riprec_server <- function(id, r) {
             )
           )
 
-          #r$estimate03x$click <- 1
-
           # else, just use the default initial values
         } else {
 
@@ -289,13 +287,19 @@ mod_estimate031_riprec_server <- function(id, r) {
     ## reference value
     observeEvent(input$refvalue, ignoreNULL = FALSE, {
       r$estimate03x$refvalue <- input$refvalue
+
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE()) {
       r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+      }
     })
 
     ## extended uncertainty of the reference value
     observeEvent(input$refuncertainty, ignoreNULL = FALSE, {
       r$estimate03x$refuncertainty <- input$refuncertainty
-      r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE()) {
+        r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+      }
     })
 
     # conditions for trueness results ----
@@ -374,6 +378,12 @@ mod_estimate031_riprec_server <- function(id, r) {
       dim(selected_data())[1]
     })
 
+    ## check the number of values
+    observeEvent(minval(), {
+      # prevent saving with minval < 6
+      r$estimate03x$click <- ifelse(minval() < 6, 0, 1)
+    })
+
     ## reference value and uncertainty
     observeEvent(input$submit, ignoreInit = TRUE, {
       r$estimate03x$refvalue <- input$refvalue
@@ -446,6 +456,10 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       # if results have been saved, restore the boxplot
       if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
+
+        validate(
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo grafico")
+        )
 
         r$estimate03[[r$estimate03$myparameter]]$plotlyconfint
 
@@ -679,6 +693,11 @@ mod_estimate031_riprec_server <- function(id, r) {
     })
 
     output$ttest <- renderText({
+      validate(
+        need(minval() >= 6,
+             message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+        need(r$estimate03x$refvalue != 0, message = "")
+      )
 
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
@@ -686,12 +705,6 @@ mod_estimate031_riprec_server <- function(id, r) {
         r$estimate03[[r$estimate03$myparameter]]$ttest_html
 
       } else {
-
-        validate(
-          need(minval() >= 6,
-               message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
-          need(r$estimate03x$refvalue != 0, message = "")
-        )
 
         test_results()
       }
@@ -751,6 +764,11 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+        validate(
+          need(minval() >= 6,
+               message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali"),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato")
+        )
 
         r$estimate03[[r$estimate03$myparameter]]$trueness_html
 
@@ -811,6 +829,10 @@ mod_estimate031_riprec_server <- function(id, r) {
 
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+        validate(
+          need(minval() >= 6,
+               message = "Servono almeno 6 valori per poter calcolare i parametri prestazionali")
+        )
 
         r$estimate03[[r$estimate03$myparameter]]$precision_html
 
