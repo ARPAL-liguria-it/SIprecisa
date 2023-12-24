@@ -262,9 +262,6 @@ mod_estimate031_riprec_server <- function(id, r) {
           # else, just use the default initial values
         } else {
 
-          freezeReactiveValue(input, "refvalue")
-          freezeReactiveValue(input, "refuncertainty")
-
           updateNumericInput(session, "refvalue", value = 0)
           updateNumericInput(session, "refuncertainty", value = 0)
 
