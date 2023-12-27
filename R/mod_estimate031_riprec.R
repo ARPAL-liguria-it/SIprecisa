@@ -259,6 +259,8 @@ mod_estimate031_riprec_server <- function(id, r) {
             )
           )
 
+          r$estimate03x$click <- 1
+
           # else, just use the default initial values
         } else {
 
@@ -373,12 +375,6 @@ mod_estimate031_riprec_server <- function(id, r) {
       req(selected_data())
 
       dim(selected_data())[1]
-    })
-
-    ## check the number of values
-    observeEvent(minval(), {
-      # prevent saving with minval < 6
-      r$estimate03x$click <- ifelse(minval() < 6, 0, 1)
     })
 
     ## reference value and uncertainty

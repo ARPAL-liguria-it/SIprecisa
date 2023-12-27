@@ -22,13 +22,15 @@ testServer(
     session$setInputs(significance = 0.95,
                       udm = "ug/L",
                       refvalue = tomato_yields[fertilizer == "a", mean(pounds)],
-                      refuncertainty = 0,
-                      submit = 1)
+                      refuncertainty = 0)
 
     expect_true(input$significance == 0.95)
     expect_true(input$refvalue == 20.84)
     expect_true(input$refuncertainty == 0)
     expect_true(input$udm == "ug/L")
+
+    session$setInputs(submit = 1)
+
     expect_true(input$submit == 1)
 
     # testing the intermediate dataset
@@ -131,13 +133,16 @@ testServer(
     session$setInputs(significance = 0.95,
                       refvalue = tomato_yields[fertilizer == "a", mean(pounds)],
                       refuncertainty = 0.06,
-                      udm = "ug/L",
-                      submit = 1)
+                      udm = "ug/L")
+
     #session$flushReact()
     expect_true(input$significance == 0.95)
     expect_true(input$refvalue == 20.84)
     expect_true(input$refuncertainty == 0.06)
     expect_true(input$udm == "ug/L")
+
+    session$setInputs(submit = 1)
+
     expect_true(input$submit == 1)
     expect_equal(entest_list()$result,
                  "Il bias delle misure rispetto al valore di riferimento non è statisticamente significativo")

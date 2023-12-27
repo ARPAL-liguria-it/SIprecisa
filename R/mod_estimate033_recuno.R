@@ -228,9 +228,6 @@ mod_estimate033_recuno_server <- function(id, r) {
           # else, just use the default initial values
         } else {
 
-          freezeReactiveValue(input, "refvalue")
-          freezeReactiveValue(input, "refuncertainty")
-
           updateNumericInput(session, "refvalue", value = 0)
           updateNumericInput(session, "refuncertainty", value = 0)
 
@@ -248,13 +245,19 @@ mod_estimate033_recuno_server <- function(id, r) {
     ## reference value
     observeEvent(input$refvalue, ignoreNULL = FALSE, {
       r$estimate03x$refvalue <- input$refvalue
-      r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE()) {
+        r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+      }
     })
 
     ## extended uncertainty of the reference value
     observeEvent(input$refuncertainty, ignoreNULL = FALSE, {
       r$estimate03x$refuncertainty <- input$refuncertainty
-      r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+
+      if(r$estimate03[[r$estimate03$myparameter]]$saved |> isFALSE()) {
+        r$estimate03x$click <- ifelse(r$estimate03x$click == 1, 0, 0)
+      }
     })
 
     #### conditions for trueness results ----
@@ -340,21 +343,29 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
     output$boxplot <- plotly::renderPlotly({
-      validate(
-        need(minval() >= 1,
-             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
-        need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
-        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
-      )
 
       # if results have been saved, restore the boxplot
       if(r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()){
+
+        validate(
+          need(minval() >= 1,
+               message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+          need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
+        )
 
         r$estimate03[[r$estimate03$myparameter]]$plotlyboxplot
 
         # else a new boxplot is calculated and shown
       } else {
+
+        validate(
+          need(minval() >= 1,
+               message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+          need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+          need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
+        )
 
         plotlyboxplot()
       }
@@ -378,13 +389,10 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
     output$summarytable <- DT::renderDT({
-      validate(
-        need(minval() >= 1,
-             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
-        need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-        need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
-        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
-      )
+      req(minval() >= 1)
+      req(ok_calc() == 1)
+      req(ok_unc() == 1)
+
       # if results have been saved, restore the summarytable
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
 
@@ -504,19 +512,28 @@ mod_estimate033_recuno_server <- function(id, r) {
     })
 
     output$trueness <- renderText({
-      validate(
-        need(minval() >= 1,
-             message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
-          need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
-          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
-        need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
-      )
+
       # if results have been saved, restore the t-test results
       if (r$estimate03[[r$estimate03$myparameter]]$saved |> isTRUE()) {
+
+        validate(
+          need(minval() >= 1,
+               message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+          need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
+        )
 
         r$estimate03[[r$estimate03$myparameter]]$trueness_html
 
       } else {
+
+        validate(
+          need(minval() >= 1,
+               message = "Serve almeno un valore per poter calcolare i parametri prestazionali"),
+          need(ok_click() == 1, "Clicca Calcola per aggiornare i risultati."),
+          need(ok_calc() == 1, "Serve un valore di riferimento per questo risultato"),
+          need(ok_unc() == 1, "Serve l'incertezza estesa del valore di riferimento per questo risultato")
+        )
 
        trueness_html()
       }

@@ -17,7 +17,8 @@ testServer(
     r$loadfile02$parlist <- "yield"
 
     session$setInputs(parameter = "yield")
-    #session$flushReact()
+
+    session$flushReact()
 
     ns <- session$ns
     expect_true(inherits(ns, "function"))
@@ -33,6 +34,7 @@ testServer(
     r$estimate03x$refuncertainty <- 0
     r$estimate03x$submit <- 1
     r$estimate03x$click <- 1
+
     session$flushReact()
 
     ## testing the flags
@@ -40,6 +42,8 @@ testServer(
     expect_equal(somethingsaved(), "not_saved")
 
     session$setInputs(save = 1)
+
+    session$flushReact()
 
     expect_true(input$save == 1)
 
