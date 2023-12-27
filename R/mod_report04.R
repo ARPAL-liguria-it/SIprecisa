@@ -3,9 +3,11 @@
 #' @description A shiny module for simple reporting by {pdf} Rmarkdown.
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
-#' @return a text input (\code{title}), an area text input (\code{description}),
-#'  a group of check boxes (\code{content}) and a download button
-#'  (\code{makereport}).
+#' @return a text input (\code{expaim}), several area and text input (,
+#' \code{method}, \code{instrument}, \code{samples},
+#' \code{workers}, \code{description}, \code{discussion}),
+#'  a group of check boxes (\code{content}) and two download button
+#'  (\code{makereport} and \code{getword}).
 #'
 #' @noRd
 #'
@@ -76,21 +78,30 @@ mod_report04_ui <- function(id){
     bslib::card(
       bslib::card_header(icon("lightbulb"), "Suggerimento"),
       bslib::card_body(
-        "Una volta cliccato il tasto 'Crea il report',
+        shiny::tags$p(
+        "Una volta cliccato il tasto 'Crea un report archiviabile',
         non chiudere o ricaricare la pagina finch\u00E9 non troverai
-        nella tua cartella Download un file con il nome
-        'performances-report_' seguito dalla data di oggi.
+        nella tua cartella Download un file pdf con il nome
+        'performances-report_' seguito dalla data di oggi."
+        ),
 
-        A seconda di quanti parametri hai salvato, potrebbero volerci
+        shiny::tags$p(
+        "Analogamente, cliccando sul tasto 'Crea un riepilogo modificabile',
+        troverai nella tua cartella Download un file docx con il nome
+        'word_report-' seguito dalla data di oggi."),
+
+        shiny::tags$p(
+        "A seconda di quanti parametri hai salvato, potrebbero volerci
         fino a un massimo di dieci minuti,
         anche se tipicamente ne bastano un paio."
+        )
       )
     )
     )
     ),
 
     tags$div(
-      downloadButton(ns("makereport"), label = "Crea il report",
+      downloadButton(ns("makereport"), label = "Crea un report archiviabile",
                      icon = icon("wand-magic-sparkles"),
                      width = '25%'),
       downloadButton(ns("getword"), label = "Crea un riepilogo modificabile",

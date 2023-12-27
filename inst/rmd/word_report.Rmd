@@ -7,7 +7,7 @@ params:
   estimate03: NA
   estimate03x: NA
   report04: NA
-title: "Determinazione di parametri prestazionali di metodi di misura"
+title: "Riepilogo dei parametri prestazionali di metodi di misura"
 ---
 
 ---
@@ -19,6 +19,11 @@ sysdate <- ifelse(params$report04$testmode, "testdate",
 systime <- ifelse(params$report04$testmode, "testtime", 
                   strsplit(as.character(Sys.time()), " ")[[1]][2])
 ```
+
+Questo riepilogo in formato Word è liberamente modificabile e quindi non è 
+utilizzabile per l'archiviazione di informazioni rilevanti circa i parametri
+prestazionali di metodi analitici. A tale scopo, è possibile utilizzare il
+report in formato pdf prodotto da SIprecisa.
 
 ```{r aim, echo=FALSE, results = "asis"}
 cat("**Scopo:** ", params$report04$expaim, "\n")
@@ -256,13 +261,13 @@ knitr::kable(
 ```
 \renewcommand{\arraystretch}{1} <!-- reset row height/line spacing -->
 
-Report creato il `r sysdate` alle `r systime`.
+Riepilogo creato il `r sysdate` alle `r systime`.
 
 \vfill
 ```{r end, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 cat(
   paste0(
-  "© 2023. Questo report è stato prodotto con il pacchetto SIprecisa ",
+  "© 2023. Questo riepilogo è stato prodotto con il pacchetto SIprecisa ",
   utils::packageVersion("SIprecisa"), 
   " e rilasciato con licenza [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Per informazioni o segnalazioni, rivolgersi ad Andrea Bazzano ([andrea.bazzano@arpal.liguria.it](mailto:andre.bazzano@arpal.liguria.it))."
   )
