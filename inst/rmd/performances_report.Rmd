@@ -127,7 +127,7 @@ if (params$aim01$aim %in% c("rip", "recuno")) {
 
 ```
 
-```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.align="center", fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
+```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.pos="p", fig.align="center", fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
 
 for (i in ordered_analytes) {
 
@@ -144,14 +144,15 @@ for (i in ordered_analytes) {
                            params$estimate03[[i]]$udm == "",
                            sprintf(data_caption_no_udm, i),
                            sprintf(data_caption_with_udm, params$estimate03[[i]]$udm,i)
-                                          )
-                         )
+                                          ),
+                         position = "p")
             )
     }
 
   # table with summary statistics
   print(knitr::kable(params$estimate03[[i]]$summary,
-                     caption = sprintf(summary_caption, i)))
+                     caption = sprintf(summary_caption, i),
+                     position = "p"))
 
   # boxplot
   print(params$estimate03[[i]]$boxplot)
