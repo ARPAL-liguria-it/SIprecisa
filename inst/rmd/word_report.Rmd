@@ -79,38 +79,9 @@ myorder <- as.character(params$loadfile02$parlist)
 ordered_analytes <- analytes[order(match(analytes, myorder))]
 n_analytes <- length(ordered_analytes)
 
-if (params$aim01$aim %in% c("rip", "recuno")) {
-
-  boxplot_text <- switch (params$aim01$aim,
-    "recuno" = "Confronto tra valore misurato e di riferimento per l'analita %s." |>
-      sprintf(ordered_analytes),
-    "rip" = "Boxplot delle differenze relative dei valori misurati per l'analita %s." |>
-      sprintf(ordered_analytes)
-  )
-
-} else {
-  
-  boxplot_text <- sapply(ordered_analytes, function(key) NA, simplify=F)
-  for (i in ordered_analytes) {
-    boxplot_text[[i]] <- ifelse(params$estimate03[[i]]$refvalue == 0,
-                                       "Boxplot dei valori misurati per l'analita %s.",
-                                       ifelse(params$estimate03[[i]]$refuncertainty == 0,
-                                       "(a) Boxplot dei valori e (b) intervallo di confidenza della
-                                       media dei valori misurati confrontato con il valore di
-                                       riferimento per l'analita %s.",
-                                       "(a) Boxplot dei valori e (b) intervallo di confidenza della
-                                       media dei valori misurati confrontato con il valore di
-                                       riferimento e la relativa incertezza estesa per l'analita %s.")
-                                       )
-                          
-    boxplot_text[[i]] <- sprintf(boxplot_text[[i]], i)
-  }
-  
-}
-
 ```
 
-```{r dataresults, echo=FALSE, results="asis", out.width='300px', fig.cap=paste0(sprintf("\\label{%s}", ordered_analytes), boxplot_text)}
+```{r dataresults, echo=FALSE, results="asis"}
 
 for (i in ordered_analytes) {
 
@@ -120,6 +91,8 @@ for (i in ordered_analytes) {
       
       # title with analyte name
       cat(paste("#", i, "\n"))
+      cat('<br>')
+      cat('\n\n<!-- -->\n\n')
 
       # table with raw data
       print(knitr::kable(params$estimate03[[i]]$data,
@@ -130,14 +103,15 @@ for (i in ordered_analytes) {
                                           )
                          )
             )
+	cat('<br>')
+        cat('\n\n<!-- -->\n\n')
+
     }
 
   # table with summary statistics
   print(knitr::kable(params$estimate03[[i]]$summary,
                      caption = sprintf(summary_caption, i)))
-
-  # boxplot
-  print(params$estimate03[[i]]$boxplot)
+  cat('<br>')
   cat('\n\n<!-- -->\n\n')
   
   if("normality" %in% params$report04$content) {
@@ -179,14 +153,12 @@ for (i in ordered_analytes) {
            norefvalue, 
            params$estimate03[[i]]$trueness) |>
       cat()
-    
     cat('\n\n<!-- -->\n\n')
     
     ifelse(params$estimate03[[i]]$refvalue == 0, 
            "", 
            params$estimate03[[i]]$ttest) |>
       cat()
-    
   cat('\n\n<!-- -->\n\n')
 
   } else {
@@ -226,6 +198,8 @@ eventuali problemi, in questa sezione vengono riportate alcune informazioni di
 base sulla sessione dell'utente che ha richiesto la generazione di
 questo report.
 
+<br>
+
 \renewcommand{\arraystretch}{0.8} <!-- decrease line spacing for the table -->
 ```{r session_platform, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
 
@@ -243,6 +217,7 @@ knitr::kable(
         caption = "Informazioni sulla sessione: sistema operativo e varibili di sistema."
 )
 ```
+<br>
 
 \renewcommand{\arraystretch}{0.6} <!-- decrease line spacing for the table -->
 ```{r session_packages, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}

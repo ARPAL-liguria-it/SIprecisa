@@ -145,7 +145,7 @@ for (i in ordered_analytes) {
                            sprintf(data_caption_no_udm, i),
                            sprintf(data_caption_with_udm, params$estimate03[[i]]$udm,i)
                                           ),
-                         position = "p")
+                         position = "t")
             )
     }
 
@@ -218,10 +218,10 @@ for (i in ordered_analytes) {
   cat('\n\n<!-- -->\n\n')
 
   }
-  cat("\\newpage")
+  cat("\\clearpage")
 }
 ```
-\newpage
+\clearpage
 
 # Validazione dei calcoli
 
