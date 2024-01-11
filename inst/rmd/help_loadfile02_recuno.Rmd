@@ -7,6 +7,10 @@ Carica un file .csv con tre colonne:
   - una colonna con i valori numerici derivanti dalle misure effettuate per i diversi parametri;
   - una colonna con i valori numerici di incertezza estesa associati alle misure.
   
+Sono necessari file che utilizzino una delle seguenti codifiche:
+  - separatore di colonna virgola (,) e separatore decimale punto (.);
+  - separatore di colonna punto e virgola (;) e separatore decimale virgola (,).
+  
 È ammesso un solo valore numerico per ogni parametro.
   
 Ad esempio:

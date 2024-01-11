@@ -4,8 +4,8 @@ output: html_document
 Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto e virgola (;):
 
   1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
-  2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori misurati. Il separatore decimale deve essere il punto (.).
-  3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori di incertezza estesa associati ai risultati riportati nella terza colonna; anche qui il separatore decimale deve essere il punto (.).
+  2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori misurati. Il separatore decimale può essere il punto (.) o la virgola (,), rispettivamente per separatori di colonna virgola (,) o punto (.).
+  3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori di incertezza estesa associati ai risultati riportati nella terza colonna; anche qui il separatore decimale può essere il punto (.) o la virgola (,), rispettivamente per separatori di colonna virgola (,) o punto e virgola (;).
   
 È ammesso un solo valore numerico per ogni parametro.
 

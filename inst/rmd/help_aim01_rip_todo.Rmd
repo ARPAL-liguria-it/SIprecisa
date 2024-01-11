@@ -6,7 +6,7 @@ Prepara un file .csv organizzato su 3 colonne con separatore virgola (,) o punto
   1. la prima colonna conterrà un'intestazione e una variabile testuale indicante il nome dei parametri di interesse;
   2. la seconda colonna conterrà un'intestazione e una variabile numerica indicante i valori ottenuti per la prima serie di misure. 
   3. la terza colonna conterrà un'intestazione e una variabile numerica indicante i valori ottenuti per la seconda serie di misure. 
-  Il separatore decimale deve essere il punto (.).
+  Il separatore decimale può essere il punto (.) o la virgola (,), rispettivamente per separatori di colonna virgola (,) o punto e virgola (;).
   
 Non sono ammessi né meno di 8 valori, né più di 30 valori per ogni analita.
 

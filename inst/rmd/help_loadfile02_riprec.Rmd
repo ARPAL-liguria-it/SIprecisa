@@ -6,6 +6,10 @@ Carica un file .csv con due colonne:
   - una colonna con il nome o i nomi dei parametri di interesse;
   - una colonna con i valori numerici derivanti dalle misure effettuate per i diversi parametri.
   
+Sono necessari file che utilizzino una delle seguenti codifiche:
+  - separatore di colonna virgola (,) e separatore decimale punto (.);
+  - separatore di colonna punto e virgola (;) e separatore decimale virgola (,).
+  
 Non sono ammessi né meno di 6 valori, né più di 30 valori per ogni coppia di parametro e gruppo. 
   
 

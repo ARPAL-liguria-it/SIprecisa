@@ -16,7 +16,7 @@ i risultati in un unico report in formato pdf.
 #### Cosa può fare SIprecisa?
 * ottenere statistiche di base sulle serie di valori;
 * effettuare un test di normalità (Shapiro-Wilk) sulle serie di valori;
-* identificare mediante il test _genaralised extreme studentized deviate_ (GESD) la presenza di potenziali valori anomali;
+* identificare la presenza di potenziali valori anomali mediante il test _genaralised extreme studentized deviate_ (GESD);
 * escludere manualmente i valori potenzialmente anomali;
 
 * calcolare i parametri prestazionali di precisione;
@@ -26,7 +26,8 @@ i risultati in un unico report in formato pdf.
 
 #### Di cosa ha bisogno SIprecisa?
 Un file .csv con il punto (.) come separatore decimale e la virgola (,) come 
-separatore di campo. 
+separatore di campo, oppure con la virgola (,) come separatore decimale e il punto
+e virgola (;) come separatore di campo.
 Ogni colonna presente nel file deve avere un'intestazione testuale ma il numero
 e la tipologia di colonne dipende dallo scopo:
 
