@@ -102,7 +102,6 @@ mod_report04_ui <- function(id){
 
     tags$div(
       downloadButton(ns("makereport"), label = "Crea un report archiviabile",
-                     icon = icon("wand-magic-sparkles"),
                      width = '25%'),
       downloadButton(ns("getword"), label = "Crea un riepilogo modificabile",
                      width = '25%')
