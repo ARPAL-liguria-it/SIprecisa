@@ -41,7 +41,7 @@ cat('\n\n<!-- -->\n\n')
 ```
 
 ```{r workers, echo=FALSE, results = "asis"}
-cat("**Operatori:** ", params$report04$expaim, "\n")
+cat("**Operatori:** ", params$report04$workers, "\n")
 cat('\n\n<!-- -->\n\n')
 ```
 
