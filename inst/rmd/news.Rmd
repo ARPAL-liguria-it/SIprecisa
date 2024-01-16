@@ -1,0 +1,9 @@
+---
+title: "Versioni"
+author: "Andrea Bazzano"
+output: html_document
+---
+
+## Versioni e modifiche di SIprecisa
+
+-   v1.0.0 del 16/01/2023: primo rilascio stabile.
