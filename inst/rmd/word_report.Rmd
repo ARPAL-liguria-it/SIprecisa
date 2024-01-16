@@ -243,7 +243,7 @@ Riepilogo creato il `r sysdate` alle `r systime`.
 cat(
   paste0(
   "© 2023. Questo riepilogo è stato prodotto con il pacchetto SIprecisa ",
-  utils::packageVersion("SIprecisa"), 
+  df_session_packages[Pacchetto == "SIprecisa", 'Versione caricata'], 
   " e rilasciato con licenza [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Per informazioni o segnalazioni, rivolgersi ad Andrea Bazzano ([andrea.bazzano@arpal.liguria.it](mailto:andre.bazzano@arpal.liguria.it))."
   )
 )
