@@ -219,21 +219,6 @@ knitr::kable(
 ```
 <br>
 
-\renewcommand{\arraystretch}{0.6} <!-- decrease line spacing for the table -->
-```{r session_packages, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", out.width='100%', results='asis'}
-df_session_packages <- params$report04$info$packages |> 
-  data.table::data.table(keep.rownames = TRUE) |>
-  (\(x) x[attached == TRUE, .(package, loadedversion, date)])()
-
-colnames(df_session_packages) <- c("Pacchetto", "Versione caricata", "Data")
-
-knitr::kable(
-        df_session_packages, 
-        booktabs = T, 
-        align = "l",
-        caption = "Informazione sulla sessione: pacchetti caricati."
-)
-```
 \renewcommand{\arraystretch}{1} <!-- reset row height/line spacing -->
 
 Riepilogo creato il `r sysdate` alle `r systime`.
@@ -243,7 +228,7 @@ Riepilogo creato il `r sysdate` alle `r systime`.
 cat(
   paste0(
   "© 2023. Questo riepilogo è stato prodotto con il pacchetto SIprecisa ",
-  df_session_packages[Pacchetto == "SIprecisa", 'Versione caricata'], 
+  params$aim01$version, 
   " e rilasciato con licenza [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Per informazioni o segnalazioni, rivolgersi ad Andrea Bazzano ([andrea.bazzano@arpal.liguria.it](mailto:andre.bazzano@arpal.liguria.it))."
   )
 )

@@ -11,3 +11,8 @@ test_that("htmltormarkdown works well", {
   expect_equal(htmltormarkdown("<h4> Test per la verifica della normalità (Shapiro-Wilk) </h4></br>"),
                "\n### Test per la verifica della normalità (Shapiro-Wilk)  \n  \n ")
 })
+
+test_that("get_gh_version works well", {
+  expect_equal(get_gh_version("twbs", "bootstrap", tag = "v5.0.0"),
+               "v5.0.0 del 2021-05-05")
+})

@@ -143,6 +143,7 @@ mod_aim01_server <- function(id, r) {
       removeModal()
 
       r$aim01$aim <- input$aim
+      r$aim01$version <- get_gh_version("andreabz", "SIprecisa")
     })
 
   })

@@ -174,7 +174,7 @@ La correttezza dei risultati forniti dalle funzioni impiegate da SIprecisa, l'in
 tra le funzioni e la stabilità dell'interfaccia utente, sono oggetto di oltre 450 test.
 Tali test sono eseguiti in automatico a ogni nuovo rilascio di versione.
 
-L'esito dei controlli del 2024-01-16 per la versione 1.0.0,
+L'esito dei controlli del 2024-01-17 per la versione 1.0.0,
 è riassunto nelle seguenti etichette aggiornate automaticamente:
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml) [![test-coverage](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml)

@@ -28,7 +28,7 @@ mod_report04_ui <- function(id){
                       rows = 5, width = "100%"),
 
         bslib::layout_columns(
-          col_widths = c(7, 5),
+          col_widths = c(6, 6),
           fill = FALSE,
 
           textInput(ns("method"), label = "Identificativo del metodo di misura",
@@ -49,7 +49,7 @@ mod_report04_ui <- function(id){
             label = "Operatori coinvolti nell'esperimento",
             rows = 3,
             width = "100%"
-          ),
+          )
 
         ),
         textAreaInput(ns("description"), label = "Descrizione dell'esperimento",
