@@ -415,6 +415,16 @@
       ],
       "Hash": "313d31eff2274ecf4c1d3581db7241f9"
     },
+    "gh": {
+      "Package": "gh",
+      "Version": "1.4.0",
+      "Source": "Repository"
+    },
+    "gitcreds": {
+      "Package": "gitcreds",
+      "Version": "0.1.2",
+      "Source": "Repository"
+    },
     "globals": {
       "Package": "globals",
       "Version": "0.16.2",
@@ -552,6 +562,16 @@
         "openssl"
       ],
       "Hash": "ac107251d9d9fd72f0ca8049988f1d7f"
+    },
+    "httr2": {
+      "Package": "httr2",
+      "Version": "1.0.0",
+      "Source": "Repository"
+    },
+    "ini": {
+      "Package": "ini",
+      "Version": "0.3.1",
+      "Source": "Repository"
     },
     "isoband": {
       "Package": "isoband",

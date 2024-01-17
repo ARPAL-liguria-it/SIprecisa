@@ -277,7 +277,6 @@ help_accordion <- function(todotitle,
 #'
 #' @noRd
 #' @importFrom plotly plot_ly layout
-
 hline <- function(y = 0,
                   color = "blue",
                   dash = "solid") {
@@ -300,3 +299,41 @@ hline <- function(y = 0,
                 dash = dash)
   )
 }
+
+#' Latest Github tag release and publishing date
+#'
+#' @description The function returns a string with the latest Github tag release
+#' and publishing date.
+#'
+#' @param owner a character value with the owner of the repository.
+#' @param repo a character value with name of the repository.
+#' @param tag a character value with the tag of the release. Default is "latest".
+#'
+#' @return a {string} in italian language.
+#'
+#' @noRd
+#' @importFrom gh gh
+get_gh_version <- function(owner,
+                           repo,
+                           tag = "latest"){
+
+  stopifnot(
+    is.character(owner),
+    is.character(repo),
+    is.character(tag)
+  )
+
+  mytag <- ifelse(tag != "latest", paste0("tags/", tag), tag)
+
+  info <- gh::gh("GET /repos/{owner}/{repo}/releases/{tag}",
+                 owner = owner,
+                 repo = repo,
+                 tag = mytag)
+
+  paste0(info$tag_name,
+         " del ",
+         info$published_at |> as.Date())
+
+
+}
+
