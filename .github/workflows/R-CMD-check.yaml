@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   pull_request:
     branches: [stable, main, master]
+  release:
+    branches: [stable]
+    types: [published]
 
 name: R-CMD-check
 
