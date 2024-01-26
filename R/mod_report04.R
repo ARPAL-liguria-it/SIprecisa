@@ -100,7 +100,7 @@ mod_report04_ui <- function(id){
     )
     ),
 
-    tags$div(
+    tags$div(style = "padding-bottom: 15px",
       downloadButton(ns("makereport"), label = "Crea un report archiviabile",
                      width = '25%'),
       downloadButton(ns("getword"), label = "Crea un riepilogo modificabile",
