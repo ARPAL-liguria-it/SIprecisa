@@ -1,6 +1,6 @@
 Package: SIprecisa
 Title: SIprecisa
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person('Andrea', 'Bazzano', email = 'andrea.bazzano@arpal.liguria.it', role = c('cre', 'aut'),
                   comment = c(ORCID = "0000-0002-9353-3919"))
 Description: A shiny app for precision and bias calculations on analytical chemistry measurements.
