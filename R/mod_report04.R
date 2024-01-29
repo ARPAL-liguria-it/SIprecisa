@@ -100,7 +100,7 @@ mod_report04_ui <- function(id){
     )
     ),
 
-    tags$div(
+    tags$div(style = "padding-bottom: 15px",
       downloadButton(ns("makereport"), label = "Crea un report archiviabile",
                      width = '25%'),
       downloadButton(ns("getword"), label = "Crea un riepilogo modificabile",
@@ -167,7 +167,7 @@ mod_report04_server <- function(id, r){
    sysdate <- ifelse(isTRUE(getOption("shiny.testmode")), "testdate",
                      Sys.Date() |> as.character())
 
-    r$report04 <- reactiveValues()
+    r$report04 <- reactiveValues(info = sessioninfo::session_info())
 
     output$makereport <- downloadHandler(
       filename = function() {
@@ -188,7 +188,6 @@ mod_report04_server <- function(id, r){
         file.copy(logopath, tempLogo, overwrite = TRUE)
 
         r$report04$logo <- logopath
-        r$report04$info <- sessioninfo::session_info()
         r$report04$expaim <- input$expaim
         r$report04$samples <- input$samples
         r$report04$workers <- input$workers
@@ -231,7 +230,6 @@ mod_report04_server <- function(id, r){
           wordReport <- tempfile(fileext = ".Rmd")
           file.copy(wordpath, wordReport, overwrite = TRUE)
 
-          r$report04$info <- sessioninfo::session_info()
           r$report04$expaim <- input$expaim
           r$report04$samples <- input$samples
           r$report04$workers <- input$workers

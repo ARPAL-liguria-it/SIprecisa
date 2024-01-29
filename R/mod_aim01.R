@@ -12,7 +12,7 @@
 #'
 #' @import shiny
 #' @import markdown
-#' @importFrom bslib card card_header card_body navset_hidden nav_panel layout_columns
+#' @importFrom bslib card card_header card_footer card_body navset_hidden nav_panel layout_columns
 mod_aim01_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -41,7 +41,18 @@ mod_aim01_ui <- function(id) {
           label = "Avanti",
           icon = icon("circle-right")
         ))
-      )
+      ),
+
+      bslib::card_footer(
+        shiny::tags$div(
+          shiny::tags$span(style = "font-size:smaller",
+            paste0("SI precisa ", get_gh_version("andreabz", "SIprecisa"),
+                    ", validato al momento del rilascio ")),
+                    shiny::tags$a(href = "https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml",
+                      shiny::tags$img(src = "https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg",
+                                      alt = "esito della validazione")
+                                  ))
+        )
     ),
 
     # conditional tabset with examples and instructions for the different options ----
