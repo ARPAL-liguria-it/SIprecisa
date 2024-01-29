@@ -144,7 +144,15 @@ fct_gesd <- function(values,
 
  df_result$l <- 0:m
  df_result$lambda <- lamba_l(n, df_result$l, signif = significance)
- df_result$outlier <- ifelse(df_result$R > df_result$lambda, TRUE, FALSE)
+
+ df_outliers <- df_result |> (\(x) {which(x$R > x$lambda)})()
+
+ outliers_n <-  ifelse(length(df_outliers) == 0, 0, max(df_outliers))
+
+ df_result$outlier <- sapply(1:(m+1), function(x) {
+   ifelse(x <= outliers_n, TRUE, FALSE)
+   })
+
  df_result <- df_result[, c("I", "R", "lambda", "outlier")]
  txt_result <- text_result(df_result)
 
