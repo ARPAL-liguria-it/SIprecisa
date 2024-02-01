@@ -8,7 +8,7 @@
 #' @import shiny
 #' @importFrom future plan multisession
 #' @importFrom bslib bs_theme page_navbar nav_panel nav_menu nav_spacer
-future::plan(future::multisession)
+future::plan(future::multisession, workers = 5, gc = TRUE)
 
 app_ui <- function(request) {
   tagList(
