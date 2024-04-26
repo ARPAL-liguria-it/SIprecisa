@@ -120,8 +120,6 @@ mod_report04_ui <- function(id){
 #'  {comparison_report.Rmd} and a pdf logo named {"logoarpal.pdf"} located in
 #'  the {"SIprecisa/inst"} folder.
 #' @return a {pdf} report compiled following the {comparison_report.Rmd} template.
-#'  The report compilation is performed as a \code{future_promise} from package
-#'  {promises}.
 #'
 #' @noRd
 #'
@@ -207,7 +205,7 @@ mod_report04_server <- function(id, r){
           incProgress(1 / n_par)
         }
 
-        # the report is compiled in a separate R environment with a future promise
+        # the report is compiled in a separate R environment
         render_report(input = tempReport,
                       output = file,
                       params = params)
@@ -249,7 +247,7 @@ mod_report04_server <- function(id, r){
             incProgress(1 / n_par)
           }
 
-          # the report is compiled in a separate R environment with a future promise
+          # the report is compiled in a separate R environment
           render_report(input = wordReport,
                         output = file,
                         params = params)
