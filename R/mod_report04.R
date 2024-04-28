@@ -197,7 +197,7 @@ mod_report04_server <- function(id, r){
         r$report04$testmode <- isTRUE(getOption("shiny.testmode"))
 
         # input parameters for the rmd file ----
-        params <- isolate(lapply(r, reactiveValuesToList))
+        params <- isolate(lapply(reactiveValuesToList(r), reactiveValuesToList))
 
         n_par <- length(params$estimate03) - 2
         for (i in n_par) {
@@ -239,7 +239,7 @@ mod_report04_server <- function(id, r){
           r$report04$testmode <- isTRUE(getOption("shiny.testmode"))
 
           # input parameters for the rmd file ----
-          params <- isolate(lapply(r, reactiveValuesToList))
+          params <- isolate(lapply(reactiveValuesToList(r), reactiveValuesToList))
 
           n_par <- length(params$estimate03) - 2
           for (i in n_par) {
