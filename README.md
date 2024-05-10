@@ -16,17 +16,7 @@ Per maggiori informazioni a riguardo delle funzionalità e caratteristiche di SI
 
 1.  installare *docker* seguendo le istruzioni specifiche per il sistema operativo in uso (ad esempio, per [Ubuntu](https://docs.docker.com/engine/install/ubuntu/))
 
-2.  creare nella propria `home` la cartella `shinyproxy` e scaricare al suo interno il [Dockerfile](https://github.com/openanalytics/shinyproxy-config-examples/blob/master/02-containerized-docker-engine/Dockerfile) e l'[application.yml](https://github.com/openanalytics/shinyproxy-config-examples/blob/master/02-containerized-docker-engine/application.yml) di esempio sviluppati dagli sviluppatori di *shinyproxy*. A causa di un [bug noto](https://github.com/openanalytics/shinyproxy/issues/474), si consiglia di modificare il [Dockerfile](https://github.com/openanalytics/shinyproxy-config-examples/blob/master/02-containerized-docker-engine/Dockerfile) inserendo
-
-    ``` bash
-    FROM openanalytics/shinyproxy:2.6.1
-    ```
-
-    anziché
-
-    ``` bash
-    FROM openanalytics/shinyproxy:3.0.2
-    ```
+2.  creare nella propria `home` la cartella `shinyproxy` e scaricare al suo interno il [Dockerfile](https://github.com/openanalytics/shinyproxy-config-examples/blob/master/02-containerized-docker-engine/Dockerfile) e l'[application.yml](https://github.com/openanalytics/shinyproxy-config-examples/blob/master/02-containerized-docker-engine/application.yml) di esempio sviluppati dagli sviluppatori di *shinyproxy*.
 
 3.  creare la rete attraverso cui i *container* di *docker* comunicheranno
 
