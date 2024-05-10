@@ -1,6 +1,6 @@
 Package: SIprecisa
 Title: SIprecisa
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: 
     person("Andrea", "Bazzano", , "andrea.bazzano@arpal.liguria.it", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0002-9353-3919"))
