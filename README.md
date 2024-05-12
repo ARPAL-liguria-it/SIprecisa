@@ -50,7 +50,7 @@ Per maggiori informazioni a riguardo delle funzionalità e caratteristiche di SI
 8.  avviare *shinyproxy*
 
     ``` bash
-    docker run --detach -v /var/run/docker.sock:/var/run/docker.sock:ro --group-add $(getent group docker | cut -d: -f3) --net sp-example-net -p 8080:8080 shinyproxy
+    docker run --restart=unless-stopped --name shinyproxy -dv /var/run/docker.sock:/var/run/docker.sock:ro --group-add $(getent group docker | cut -d: -f3) --net sp-example-net -p 8080:8080 shinyproxy
     ```
 
 9.  aprire un browser web all'indirizzo <http://localhost:8080/> e inserire le seguenti credenziali
