@@ -121,6 +121,7 @@ if (params$aim01$aim %in% c("rip", "recuno")) {
                                        )
                           
     boxplot_text[[i]] <- sprintf(boxplot_text[[i]], i)
+    gc()
   }
   
 }
@@ -219,6 +220,7 @@ for (i in ordered_analytes) {
 
   }
   cat("\\clearpage")
+  gc()
 }
 ```
 \clearpage

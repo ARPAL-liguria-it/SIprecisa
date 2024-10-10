@@ -1,18 +1,21 @@
 Package: SIprecisa
 Title: SIprecisa
-Version: 1.0.1
-Authors@R: person('Andrea', 'Bazzano', email = 'andrea.bazzano@arpal.liguria.it', role = c('cre', 'aut'),
-                  comment = c(ORCID = "0000-0002-9353-3919"))
-Description: A shiny app for precision and bias calculations on analytical chemistry measurements.
+Version: 1.1.0
+Authors@R: 
+    person("Andrea", "Bazzano", , "andrea.bazzano@arpal.liguria.it", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0002-9353-3919"))
+Description: A shiny app for precision and bias calculations on analytical
+    chemistry measurements.
 License: AGPL (>= 3)
 URL: https://github.com/andreabz/SIprecisa
 BugReports: https://github.com/andreabz/SIprecisa/issues
+Depends: 
+    R (>= 2.10)
 Imports: 
     bslib,
     config (>= 0.3.1),
     data.table,
     DT,
-    future,
     ggplot2,
     gh,
     golem (>= 0.4.1),
@@ -20,7 +23,6 @@ Imports:
     markdown,
     patchwork,
     plotly,
-    promises,
     rmarkdown,
     sessioninfo,
     shiny (>= 1.7.5),
@@ -33,5 +35,3 @@ Encoding: UTF-8
 Language: it-IT
 LazyData: true
 RoxygenNote: 7.2.3
-Depends: 
-    R (>= 2.10)

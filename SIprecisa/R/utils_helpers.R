@@ -129,30 +129,25 @@ htmltormarkdown <- function(htmlstring){
   }
 }
 
-#' Rendering of an RMarkdown report as future promise
+#' Rendering of an RMarkdown report
 #'
 #' @description The function passes some parameters to a RMarkdown file for
-#'  automatic reporting. The report is processed as a \code{future_promise}
-#'  from the {promises} package.
+#'  automatic reporting.
 #'
 #' @param input the {rmd} report template.
 #' @param output a temporary file for writing the content of the new report.
 #' @param params the parameters to be passed to the remport template.
 #'
-#' @return the function passes the parameters to a {Rmd} report template as
-#'  {future_promise}
+#' @return the function passes the parameters to a {Rmd} report template
 #'
 #' @noRd
 #' @importFrom rmarkdown render
-#' @importFrom promises future_promise
 render_report <- function(input, output, params) {
-  promises::future_promise({
   rmarkdown::render(input,
                     output_file = output,
                     params = params,
                     envir = new.env(parent = globalenv())
                     )
-  }, seed = TRUE)
 }
 
 #' {\%notin\%} operator
