@@ -1,3 +1,11 @@
-# SIprecisa (development version)
+# SIprecisa v1.1.0
 
-* Initial CRAN submission.
+Added a dockerfile for docker and shinyproxy deployment.
+
+# SIprecisa v1.0.1
+
+Bug fixed in outlier tests.
+
+# SIprecisa v1.0.0
+
+First stable release.
