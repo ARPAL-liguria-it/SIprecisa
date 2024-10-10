@@ -82,18 +82,6 @@ mod_aim01_ui <- function(id) {
                        )
       ),
 
-      bslib::nav_panel("rec",
-                       withMathJax(
-                         help_accordion(
-                           todotitle = "Cosa ti serve",
-                           tipstitle = "Suggerimento",
-                           togettitle = "Cosa otterrai",
-                           todofile = "help_aim01_riprec_todo.Rmd",
-                           tipsfile = "help_aim01_tips.Rmd",
-                           togetfile = "help_aim01_rec_toget.Rmd"
-                         )
-                       )),
-
       bslib::nav_panel("recuno",
                        withMathJax(
                          help_accordion(
