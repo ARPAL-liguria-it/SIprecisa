@@ -6,6 +6,6 @@ output: html_document
 
 ## Versioni e modifiche di SIprecisa
 
--   v1.1.0 del 10 ottobre 2024: aggiunto dockerfile per utilizzo con docker e shinyproxy.
+-   v1.1.0 del 12 ottobre 2024: aggiunto dockerfile per utilizzo con docker e shinyproxy.
 -   v1.0.1 del 29 gennaio 2024: risolto un errore nella funzione per identificare i possibili valori anomali.
 -   v1.0.0 del 29 gennaio 2024: primo rilascio stabile.

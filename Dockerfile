@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.3.3
+FROM rocker/r-ver:4.4.1
 
 RUN /rocker_scripts/setup_R.sh https://packagemanager.posit.co/cran/__linux__/jammy/2024-09-20
 RUN echo "\noptions(shiny.port=3838, shiny.host='0.0.0.0')" >> /usr/local/lib/R/etc/Rprofile.site
@@ -16,7 +16,7 @@ RUN apt-get update -y && apt-get install -y \
     git \
     libicu-dev \
     && rm -rf /var/lib/apt/lists/*
-    
+
 # pin renv version
 ENV RENV_VERSION="1.0.7"
 RUN R -q -e "options(warn=2); install.packages('remotes')"
