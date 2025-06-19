@@ -46,10 +46,10 @@ mod_aim01_ui <- function(id) {
       bslib::card_footer(
         shiny::tags$div(
           shiny::tags$span(style = "font-size:smaller",
-            paste0("SI precisa ", get_gh_version("andreabz", "SIprecisa"),
+            paste0("SI precisa ", get_gh_version("ARPAL-liguria-it", "SIprecisa"),
                     ", validato al momento del rilascio ")),
-                    shiny::tags$a(href = "https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml",
-                      shiny::tags$img(src = "https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg",
+                    shiny::tags$a(href = "https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml",
+                      shiny::tags$img(src = "https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg",
                                       alt = "esito della validazione")
                                   ))
         )
@@ -62,6 +62,7 @@ mod_aim01_ui <- function(id) {
 
       bslib::nav_panel("riprec",
                        help_accordion(
+                         id = "help_riprec",
                          todotitle = "Cosa ti serve",
                          tipstitle = "Suggerimento",
                          togettitle = "Cosa otterrai",
@@ -73,6 +74,7 @@ mod_aim01_ui <- function(id) {
 
       bslib::nav_panel("rip",
                        help_accordion(
+                         id = "help_rip",
                          todotitle = "Cosa ti serve",
                          tipstitle = "Suggerimento",
                          togettitle = "Cosa otterrai",
@@ -83,16 +85,17 @@ mod_aim01_ui <- function(id) {
       ),
 
       bslib::nav_panel("recuno",
-                       withMathJax(
                          help_accordion(
+                           id = "help_recuno",
                            todotitle = "Cosa ti serve",
                            tipstitle = "Suggerimento",
                            togettitle = "Cosa otterrai",
                            todofile = "help_aim01_recuno_todo.Rmd",
                            tipsfile = "help_aim01_tips.Rmd",
                            togetfile = "help_aim01_recuno_toget.Rmd"
-                         )
-                       ))
+                         ) |>
+                         withMathJax()
+                       )
     )
 
   ))
@@ -142,7 +145,7 @@ mod_aim01_server <- function(id, r) {
       removeModal()
 
       r$aim01$aim <- input$aim
-      r$aim01$version <- get_gh_version("andreabz", "SIprecisa")
+      r$aim01$version <- get_gh_version("ARPAL-liguria-it", "SIprecisa")
     })
 
   })

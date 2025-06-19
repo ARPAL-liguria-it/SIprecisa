@@ -25,7 +25,7 @@ golem::fill_desc(
   author_first_name = "Andrea", # Your First Name
   author_last_name = "Bazzano", # Your Last Name
   author_email = "andrea.bazzano@arpal.liguria.it", # Your Email
-  repo_url = "https://github.com/andreabz/SIprecisa", # The URL of the GitHub Repo (optional),
+  repo_url = "https://github.com/ARPAL-liguria-it/SIprecisa", # The URL of the GitHub Repo (optional),
   pkg_version = "0.0.0.9000" # The Version of the package containing the App
 )
 

@@ -177,7 +177,7 @@ Tali test sono eseguiti in automatico a ogni nuovo rilascio di versione.
 L'esito dei controlli del 2024-05-10 per la versione 1.1.0,
 è riassunto nelle seguenti etichette aggiornate automaticamente:
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml) [![test-coverage](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml)
+[![R-CMD-check](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/R-CMD-check.yaml) [![test-coverage](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
 Infine, il software SIprecisa è ospitato all'interno di un server ad accesso controllato

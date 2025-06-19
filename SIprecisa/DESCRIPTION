@@ -7,8 +7,8 @@ Authors@R:
 Description: A shiny app for precision and bias calculations on analytical
     chemistry measurements.
 License: AGPL (>= 3)
-URL: https://github.com/andreabz/SIprecisa
-BugReports: https://github.com/andreabz/SIprecisa/issues
+URL: https://github.com/ARPAL-liguria-it/SIprecisa
+BugReports: https://github.com/ARPAL-liguria-it/SIprecisa/issues
 Depends: 
     R (>= 2.10)
 Imports: 

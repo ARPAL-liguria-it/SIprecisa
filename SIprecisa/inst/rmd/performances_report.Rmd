@@ -234,7 +234,7 @@ Il rilascio avviene solo nel caso in cui tutti i test risultino superati.
 L'applicazione è distribuita in un ambiente protetto da aggiornamenti o modifiche
 accidentali.
 
-Maggiori dettagli sono consultabili all'indirizzo (https://github.com/andreabz/SIprecisa/actions)
+Maggiori dettagli sono consultabili all'indirizzo (https://github.com/ARPAL-liguria-it/SIprecisa/actions)
 o eseguendo `devtools::check()` e `covr::report()` sulla macchina su cui risiede l'applicazione,
 all'interno della cartella `/srv/shiny-server/SIprecisa`.
 

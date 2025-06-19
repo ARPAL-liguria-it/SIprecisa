@@ -6,8 +6,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/andreabz/SIprecisa/actions/workflows/test-coverage.yaml)
+[![R-CMD-check](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/ARPAL-liguria-it/SIprecisa/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
 Il software SIprecisa è stato sviluppato per ARPAL allo scopo di
@@ -219,7 +219,7 @@ Si consiglia, inoltre, di rendere disponibile SIprecisa attraverso un
 server Linux ad accesso controllato o distribuirlo mediante *docker*.
 
 A ogni modo, è sempre meglio rimanere allerta: [segnala eventuali
-bachi](https://github.com/andreabz/SIprecisa/issues).
+bachi](https://github.com/ARPAL-liguria-it/SIprecisa/issues).
 
 #### Con quale licenza è rilasciato SIprecisa?
 
