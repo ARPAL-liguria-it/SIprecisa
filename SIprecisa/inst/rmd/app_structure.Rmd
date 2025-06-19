@@ -4,7 +4,7 @@ author: "Andrea Bazzano"
 date: "2023-08-18"
 output: 
   html_document: 
-    toc: yes
+    toc: true
     toc_float: true
 editor_options: 
   markdown: 
