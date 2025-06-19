@@ -198,6 +198,7 @@ help_card <- function(card_title,
 #' The help text is stored in Rmarkwdown files placed into the \code{/inst/rmd}
 #' package folder.
 #'
+#' @param id the class id.
 #' @param todotitle the title for the first panel.
 #' @param tipstitle the title for the second panel.
 #' @param togettitle the title for the third panel.
@@ -212,7 +213,8 @@ help_card <- function(card_title,
 #' @noRd
 #' @importFrom bslib accordion accordion_panel
 #' @importFrom shiny icon includeMarkdown
-help_accordion <- function(todotitle,
+help_accordion <- function(id,
+                           todotitle,
                            tipstitle,
                            togettitle,
                            todofile,
@@ -232,7 +234,7 @@ help_accordion <- function(todotitle,
     eval()
 
   bslib::accordion(
-    id = "help",
+    id = id,
     open = "todo",
     bslib::accordion_panel(icon = shiny::icon("hammer"),
                     title = todotitle,

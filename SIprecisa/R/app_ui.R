@@ -18,14 +18,15 @@ app_ui <- function(request) {
       id = "navbar",
       theme = bslib::bs_theme(bootswatch = "cosmo",
                               version = 5,
-                              "navbar-bg" = "#2780E3",
-                              "navbar-brand-font-size" = "2rem"),
+                              navbar_bg = "#2780E3",
+                              navbar_brand_font_size = "2rem"),
       title = "SI precisa",
       window_title = "SI precisa",
-      inverse = TRUE,
-      fluid = TRUE,
-      collapsible = TRUE,
       lang = "it",
+      navbar_options = bslib::navbar_options(
+        theme = "dark",
+        collapsible = TRUE
+      ),
 
       # Navbar items ----
       bslib::nav_panel("Scopo", value = "aim", mod_aim01_ui("scopo")),

@@ -89,7 +89,9 @@ mod_estimate033_recuno_output_ui <- function(id) {
     bslib::navset_hidden(
     id = ns("help_results"),
 
-    bslib::nav_panel("help",
+    bslib::nav_panel(
+      "help",
+
       help_card(
         card_title = "Cosa devi fare",
         rmdfile = "help_estimate031_riprec.Rmd",
@@ -97,7 +99,8 @@ mod_estimate033_recuno_output_ui <- function(id) {
       )
     ),
 
-    bslib::nav_panel("results",
+    bslib::nav_panel(
+      "results",
 
       bslib::layout_columns(
         bslib::card(
